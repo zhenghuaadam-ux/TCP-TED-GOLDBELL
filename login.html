@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goldbell Queue Management System - Login</title>
+    <style>
+        :root {
+            --blue: #005bbb;
+            --light: #f4f8fb;
+            --card: #ffffff;
+            --muted: #6b7b8f;
+            --accent: #e9f2ff;
+            --error: #d9534f;
+            --success: #2e8b57;
+            --warning: #ffc107;
+            --radius: 10px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            color: #0b2540;
+            line-height: 1.6;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+        }
+        
+        .login-header {
+            background: var(--blue);
+            color: white;
+            padding: 30px;
+            border-radius: var(--radius) var(--radius) 0 0;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .website-url {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .login-card {
+            background: var(--card);
+            border-radius: 0 0 var(--radius) var(--radius);
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1, h2, h3 {
+            color: var(--blue);
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--blue);
+        }
+        
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d6e9fb;
+            border-radius: var(--radius);
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 2px rgba(0, 91, 187, 0.2);
+        }
+        
+        .btn {
+            background: var(--blue);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background: #004a9e;
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .message {
+            padding: 10px;
+            border-radius: var(--radius);
+            margin: 10px 0;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: var(--error);
+            border: 1px solid #f5c6cb;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            max-width: 400px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification.success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .notification.error {
+            background: var(--error);
+            color: white;
+        }
+        
+        .notification.info {
+            background: var(--blue);
+            color: white;
+        }
+        
+        .notification.warning {
+            background: var(--warning);
+            color: black;
+        }
+        
+        @media (max-width: 768px) {
+            .login-container {
+                padding: 15px;
+            }
+            
+            .login-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo">GOLDBELL</div>
+            <h1>Queue Management System</h1>
+            <div class="website-url">www.goldbellservices.com.sg</div>
+        </div>
+        
+        <div class="login-card">
+            <h2>Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <div class="form-group">
+                    <button type="submit" class="btn">Login</button>
+                </div>
+            </form>
+            
+            <div id="loginMessage" class="message hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        // Predefined users for the system
+        const users = [
+            { username: 'admin', password: 'admin123', role: 'Admin' },
+            { username: 'staff1', password: 'staff123', role: 'Staff' },
+            { username: 'staff2', password: 'staff123', role: 'Staff' }
+        ];
+        
+        // DOM elements
+        const loginForm = document.getElementById('loginForm');
+        const loginMessage = document.getElementById('loginMessage');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        
+        // Initialize the application
+        function init() {
+            // Check if user is already logged in
+            const authToken = localStorage.getItem('authToken');
+            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            
+            if (authToken && currentUser) {
+                // Redirect to dashboard if already logged in
+                window.location.href = 'dashboard.html';
+                return;
+            }
+            
+            // Set up event listeners
+            setupEventListeners();
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            loginForm.addEventListener('submit', handleLogin);
+            
+            // Keyboard shortcut for login (Enter key)
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && document.activeElement !== passwordInput) {
+                    usernameInput.focus();
+                }
+            });
+        }
+        
+        // Handle login form submission
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value;
+            
+            // Validate inputs
+            if (!username || !password) {
+                showMessage(loginMessage, 'Please enter both username and password', 'error');
+                return;
+            }
+            
+            // Find user
+            const user = users.find(u => u.username === username && u.password === password);
+            
+            if (user) {
+                // Generate auth token (simple implementation)
+                const authToken = generateAuthToken();
+                
+                // Store authentication data
+                localStorage.setItem('authToken', authToken);
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                
+                // Show success message
+                showMessage(loginMessage, `Login successful! Welcome ${user.username}`, 'success');
+                showNotification(`Login successful! Welcome ${user.username}`, 'success');
+                
+                // Redirect to dashboard after a short delay
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1000);
+            } else {
+                showMessage(loginMessage, 'Invalid username or password', 'error');
+                showNotification('Invalid username or password', 'error');
+            }
+        }
+        
+        // Generate a simple auth token
+        function generateAuthToken() {
+            return 'token_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+        }
+        
+        // Show message
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = 'message ' + type;
+            element.classList.remove('hidden');
+            
+            // Clear message after 5 seconds
+            setTimeout(() => {
+                element.classList.add('hidden');
+            }, 5000);
+        }
+        
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove notification after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        // Initialize the application when the page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

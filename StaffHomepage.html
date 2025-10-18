@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goldbell Queue Management System</title>
+    <title>Goldbell Queue Management System - Dashboard</title>
     <style>
         :root {
             --blue: #005bbb;
@@ -157,11 +157,6 @@
             display: none;
         }
         
-        .login-section {
-            max-width: 400px;
-            margin: 0 auto;
-        }
-        
         .user-info {
             background: var(--accent);
             padding: 15px;
@@ -259,6 +254,11 @@
         
         .admin-badge {
             background: #dc3545;
+            color: white;
+        }
+        
+        .staff-badge {
+            background: #17a2b8;
             color: white;
         }
         
@@ -583,35 +583,8 @@
             <div class="website-url">www.goldbellservices.com.sg</div>
         </header>
 
-        <!-- Login Section -->
-        <section id="loginSection" class="card login-section">
-            <h2>Admin Login</h2>
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required autocomplete="username" placeholder="Enter admin">
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter password">
-                </div>
-                <button type="submit" class="btn" id="loginBtn">
-                    <span id="loginBtnText">Login</span>
-                    <span id="loginBtnLoader" class="loading hidden"></span>
-                </button>
-            </form>
-            <div id="loginMessage" class="message"></div>
-            
-            <!-- Login Help -->
-            <div class="message info">
-                <strong>Login Credentials:</strong><br>
-                Username: admin<br>
-                Password: 1234567890
-            </div>
-        </section>
-
-        <!-- User Info Section (shown after login) -->
-        <section id="userInfo" class="user-info hidden">
+        <!-- User Info Section -->
+        <section id="userInfo" class="user-info">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h3 style="margin: 0;">Queue Management Dashboard</h3>
@@ -623,7 +596,7 @@
         </section>
 
         <!-- Main Dashboard -->
-        <section id="mainDashboard" class="card hidden">
+        <section id="mainDashboard" class="card">
             <!-- Counter Assignment Box -->
             <div class="counter-assignment-box">
                 <div class="counter-box-header" id="counterBoxHeader">
@@ -807,11 +780,9 @@
         };
         
         // DOM elements
-        const loginSection = document.getElementById('loginSection');
         const userInfo = document.getElementById('userInfo');
         const mainDashboard = document.getElementById('mainDashboard');
         const countersGrid = document.getElementById('countersGrid');
-        const loginForm = document.getElementById('loginForm');
         const editForm = document.getElementById('editForm');
         const logoutBtn = document.getElementById('logoutBtn');
         const nextCustomerBtn = document.getElementById('nextCustomerBtn');
@@ -826,8 +797,6 @@
         const editCustomerBtn = document.getElementById('editCustomerBtn');
         const editCustomerForm = document.getElementById('editCustomerForm');
         const cancelEditBtn = document.getElementById('cancelEditBtn');
-        const loginMessage = document.getElementById('loginMessage');
-        const formMessage = document.getElementById('formMessage');
         const specificMessage = document.getElementById('specificMessage');
         const counterMessage = document.getElementById('counterMessage');
         const editMessage = document.getElementById('editMessage');
@@ -843,9 +812,6 @@
         const servingQueueList = document.getElementById('servingQueueList');
         const completedQueueList = document.getElementById('completedQueueList');
         const missedQueueList = document.getElementById('missedQueueList');
-        const loginBtn = document.getElementById('loginBtn');
-        const loginBtnText = document.getElementById('loginBtnText');
-        const loginBtnLoader = document.getElementById('loginBtnLoader');
         const counterBoxHeader = document.getElementById('counterBoxHeader');
         const counterBoxContent = document.getElementById('counterBoxContent');
         const toggleIcon = document.querySelector('.toggle-icon');
@@ -866,23 +832,16 @@
         const editVehicleNo = document.getElementById('editVehicleNo');
         const editContactNo = document.getElementById('editContactNo');
         
-        // User credentials - Only admin account
-        const users = {
-            'admin': { 
-                password: '1234567890', 
-                role: 'admin',
-                permissions: ['view_stats', 'call_next', 'call_specific', 'reset_queue', 'edit_customer', 'view_all_customers', 'assign_counter']
-            }
-        };
-        
         // Initialize the application
         function init() {
-            // Check if user is already logged in
-            if (authToken && currentUser) {
-                showAuthenticatedUI();
-            } else {
-                showLoginUI();
+            // Check if user is logged in
+            if (!authToken || !currentUser) {
+                // Redirect to login page if not authenticated
+                window.location.href = 'login.html';
+                return;
             }
+            
+            showAuthenticatedUI();
             
             // Load any existing queue data from localStorage
             loadQueueData();
@@ -1002,7 +961,6 @@
         
         // Set up all event listeners
         function setupEventListeners() {
-            loginForm.addEventListener('submit', handleLogin);
             logoutBtn.addEventListener('click', handleLogout);
             editForm.addEventListener('submit', handleCustomerEdit);
             nextCustomerBtn.addEventListener('click', callNextCustomer);
@@ -1049,51 +1007,6 @@
             }
         }
         
-        // Handle login form submission
-        function handleLogin(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            // Show loading state
-            loginBtnText.classList.add('hidden');
-            loginBtnLoader.classList.remove('hidden');
-            loginBtn.disabled = true;
-            
-            // Simulate network delay for better UX
-            setTimeout(() => {
-                // Simple authentication
-                if (users[username] && users[username].password === password) {
-                    // Successful login
-                    currentUser = {
-                        username: username,
-                        role: users[username].role,
-                        permissions: users[username].permissions
-                    };
-                    
-                    // Generate a simple token
-                    authToken = 'token_' + Math.random().toString(36).substr(2, 9);
-                    
-                    // Save to localStorage
-                    localStorage.setItem('authToken', authToken);
-                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                    
-                    showAuthenticatedUI();
-                    showMessage(loginMessage, `Welcome ${username}!`, 'success');
-                    showNotification(`Welcome ${username}!`, 'success');
-                } else {
-                    // Failed login
-                    showMessage(loginMessage, 'Invalid username or password', 'error');
-                }
-                
-                // Reset login button
-                loginBtnText.classList.remove('hidden');
-                loginBtnLoader.classList.add('hidden');
-                loginBtn.disabled = false;
-            }, 800);
-        }
-        
         // Handle logout
         function handleLogout() {
             // Clear counter assignment
@@ -1110,8 +1023,8 @@
             currentUser = null;
             currentCounter = null;
             
-            showLoginUI();
-            showNotification('You have been logged out', 'info');
+            // Redirect to login page
+            window.location.href = 'login.html';
         }
         
         // Handle customer edit form submission (Admin only)
@@ -1176,10 +1089,9 @@
                 speak(`Counter ${currentCounter} now serving ${nextSubmission.queueNumber}`);
                 
                 // Show notification
-                showMessage(formMessage, `Counter ${currentCounter} now serving ${nextSubmission.queueNumber}`, 'success');
                 showNotification(`Counter ${currentCounter} now serving ${nextSubmission.queueNumber}`, 'success');
             } else {
-                showMessage(formMessage, 'No more customers in queue', 'info');
+                showMessage(specificMessage, 'No more customers in queue', 'info');
             }
         }
         
@@ -1296,7 +1208,6 @@
                 saveQueueData();
                 updateQueueDisplay();
                 generateCounters();
-                showMessage(formMessage, `Customer ${queueNumber} marked as completed`, 'success');
                 showNotification(`Customer ${queueNumber} marked as completed`, 'success');
             }
         }
@@ -1317,7 +1228,6 @@
                 saveQueueData();
                 updateQueueDisplay();
                 generateCounters();
-                showMessage(formMessage, `Customer ${queueNumber} marked as missed`, 'info');
                 showNotification(`Customer ${queueNumber} marked as missed`, 'warning');
             }
         }
@@ -1325,7 +1235,7 @@
         // Recall missed customer
         function recallMissedCustomer(queueNumber) {
             if (!currentCounter) {
-                showMessage(formMessage, 'Please assign yourself to a counter first', 'error');
+                showNotification('Please assign yourself to a counter first', 'error');
                 return;
             }
             
@@ -1350,7 +1260,6 @@
                 // Announce
                 speak(`Counter ${currentCounter} now serving recalled customer ${queueNumber}`);
                 
-                showMessage(formMessage, `Counter ${currentCounter} now serving recalled customer ${queueNumber}`, 'success');
                 showNotification(`Counter ${currentCounter} now serving recalled customer ${queueNumber}`, 'success');
             }
         }
@@ -1363,7 +1272,6 @@
                     queue.submissions.splice(index, 1);
                     saveQueueData();
                     updateQueueDisplay();
-                    showMessage(formMessage, `Customer ${queueNumber} deleted from missed queue`, 'success');
                     showNotification(`Customer ${queueNumber} deleted from missed queue`, 'success');
                 }
             }
@@ -1381,7 +1289,6 @@
                 
                 saveQueueData();
                 updateQueueDisplay();
-                showMessage(formMessage, 'Queue has been reset', 'success');
                 showNotification('Queue has been reset', 'success');
             }
         }
@@ -1519,14 +1426,11 @@
         
         // Show authenticated UI
         function showAuthenticatedUI() {
-            loginSection.classList.add('hidden');
-            userInfo.classList.remove('hidden');
-            mainDashboard.classList.remove('hidden');
             loggedInUser.textContent = currentUser.username;
             
             // Set role badge
             roleBadge.textContent = currentUser.role;
-            roleBadge.className = `role-badge admin-badge`;
+            roleBadge.className = `role-badge ${currentUser.role === 'Admin' ? 'admin-badge' : 'staff-badge'}`;
             
             // All admin features are always visible
             resetQueueBtn.classList.remove('hidden');
@@ -1536,13 +1440,6 @@
             
             // Auto-refresh queue every 3 seconds
             setInterval(updateQueueDisplay, 3000);
-        }
-        
-        // Show login UI
-        function showLoginUI() {
-            loginSection.classList.remove('hidden');
-            userInfo.classList.add('hidden');
-            mainDashboard.classList.add('hidden');
         }
         
         // Show message
