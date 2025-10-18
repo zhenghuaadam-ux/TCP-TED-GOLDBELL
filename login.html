@@ -3,48 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goldbell Queue Management System - Login</title>
+    <title>Goldbell - Login</title>
     <style>
-        :root {
-            --blue: #005bbb;
-            --light: #f4f8fb;
-            --card: #ffffff;
-            --muted: #6b7b8f;
-            --accent: #e9f2ff;
-            --error: #d9534f;
-            --success: #2e8b57;
-            --warning: #ffc107;
-            --radius: 10px;
-        }
-        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--light);
-            color: #0b2540;
-            line-height: 1.6;
-            height: 100vh;
+            background: linear-gradient(135deg, #005bbb 0%, #003d82 100%);
             display: flex;
             justify-content: center;
             align-items: center;
-        }
-        
-        .login-container {
-            width: 100%;
-            max-width: 450px;
+            min-height: 100vh;
             padding: 20px;
         }
         
+        .login-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 420px;
+            overflow: hidden;
+        }
+        
         .login-header {
-            background: var(--blue);
+            background-color: #005bbb;
             color: white;
-            padding: 30px;
-            border-radius: var(--radius) var(--radius) 0 0;
+            padding: 30px 20px;
             text-align: center;
         }
         
@@ -52,23 +41,16 @@
             font-size: 2.5rem;
             font-weight: bold;
             margin-bottom: 10px;
+            letter-spacing: 1px;
         }
         
-        .website-url {
-            font-size: 1.2rem;
+        .tagline {
+            font-size: 1.1rem;
             opacity: 0.9;
         }
         
-        .login-card {
-            background: var(--card);
-            border-radius: 0 0 var(--radius) var(--radius);
+        .login-form {
             padding: 30px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        h1, h2, h3 {
-            color: var(--blue);
-            margin-bottom: 15px;
         }
         
         .form-group {
@@ -79,43 +61,39 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: var(--blue);
+            color: #333;
         }
         
-        input[type="text"],
-        input[type="password"],
-        input[type="number"],
-        select {
+        input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #d6e9fb;
-            border-radius: var(--radius);
+            padding: 14px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
             font-size: 16px;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
         
-        input:focus, select:focus {
+        input:focus {
             outline: none;
-            border-color: var(--blue);
-            box-shadow: 0 0 0 2px rgba(0, 91, 187, 0.2);
+            border-color: #005bbb;
+            box-shadow: 0 0 0 3px rgba(0, 91, 187, 0.2);
         }
         
         .btn {
-            background: var(--blue);
+            background-color: #005bbb;
             color: white;
             border: none;
-            padding: 12px 25px;
-            border-radius: var(--radius);
+            padding: 14px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 16px;
             font-weight: 600;
-            transition: all 0.3s;
-            margin: 5px;
             width: 100%;
+            transition: all 0.3s;
         }
         
         .btn:hover {
-            background: #004a9e;
+            background-color: #004a9e;
             transform: translateY(-2px);
         }
         
@@ -124,64 +102,53 @@
         }
         
         .message {
-            padding: 10px;
-            border-radius: var(--radius);
-            margin: 10px 0;
-        }
-        
-        .error {
-            background: #f8d7da;
-            color: var(--error);
-            border: 1px solid #f5c6cb;
-        }
-        
-        .hidden {
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            text-align: center;
+            font-weight: 500;
             display: none;
         }
         
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            border-radius: var(--radius);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 1000;
-            max-width: 400px;
-            animation: slideIn 0.3s ease-out;
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
         
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
         }
         
-        .notification.success {
-            background: var(--success);
-            color: white;
+        .demo-info {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            text-align: center;
+            border: 1px solid #e9ecef;
         }
         
-        .notification.error {
-            background: var(--error);
-            color: white;
+        .demo-info strong {
+            color: #005bbb;
         }
         
-        .notification.info {
-            background: var(--blue);
-            color: white;
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
         }
         
-        .notification.warning {
-            background: var(--warning);
-            color: black;
-        }
-        
-        @media (max-width: 768px) {
+        @media (max-width: 480px) {
             .login-container {
-                padding: 15px;
+                max-width: 100%;
             }
             
-            .login-card {
+            .login-form {
                 padding: 20px;
             }
         }
@@ -191,145 +158,68 @@
     <div class="login-container">
         <div class="login-header">
             <div class="logo">GOLDBELL</div>
-            <h1>Queue Management System</h1>
-            <div class="website-url">www.goldbellservices.com.sg</div>
+            <div class="tagline">Queue Management System</div>
         </div>
         
-        <div class="login-card">
-            <h2>Login</h2>
+        <div class="login-form">
             <form id="loginForm">
                 <div class="form-group">
                     <label for="username">Username</label>
-                    <input type="text" id="username" name="username" required>
+                    <input type="text" id="username" name="username" placeholder="Enter your username" required>
                 </div>
                 
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
                 </div>
                 
-                <div class="form-group">
-                    <button type="submit" class="btn">Login</button>
-                </div>
+                <button type="submit" class="btn">Login</button><a href="StaffHomepage.html" >Login</a>
             </form>
             
-            <div id="loginMessage" class="message hidden"></div>
+            <div id="loginMessage" class="message"></div>
+            
+            <div class="demo-info">
+                <strong>Demo Credentials:</strong><br>
+                Username: admin<br>
+                Password: 123
+            </div>
+            
+            <div class="footer">
+                &copy; 2025 Goldbell Services. All rights reserved.
+            </div>
         </div>
     </div>
 
     <script>
-        // Predefined users for the system
-        const users = [
-            { username: 'admin', password: 'admin123', role: 'Admin' },
-            { username: 'staff1', password: 'staff123', role: 'Staff' },
-            { username: 'staff2', password: 'staff123', role: 'Staff' }
-        ];
-        
-        // DOM elements
-        const loginForm = document.getElementById('loginForm');
-        const loginMessage = document.getElementById('loginMessage');
-        const usernameInput = document.getElementById('username');
-        const passwordInput = document.getElementById('password');
-        
-        // Initialize the application
-        function init() {
-            // Check if user is already logged in
-            const authToken = localStorage.getItem('authToken');
-            const currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
-            
-            if (authToken && currentUser) {
-                // Redirect to dashboard if already logged in
-                window.location.href = 'dashboard.html';
-                return;
-            }
-            
-            // Set up event listeners
-            setupEventListeners();
-        }
-        
-        // Set up event listeners
-        function setupEventListeners() {
-            loginForm.addEventListener('submit', handleLogin);
-            
-            // Keyboard shortcut for login (Enter key)
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && document.activeElement !== passwordInput) {
-                    usernameInput.focus();
-                }
-            });
-        }
-        
-        // Handle login form submission
-        function handleLogin(e) {
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const messageElement = document.getElementById('loginMessage');
             
-            // Validate inputs
-            if (!username || !password) {
-                showMessage(loginMessage, 'Please enter both username and password', 'error');
-                return;
-            }
-            
-            // Find user
-            const user = users.find(u => u.username === username && u.password === password);
-            
-            if (user) {
-                // Generate auth token (simple implementation)
-                const authToken = generateAuthToken();
+            // Simple validation
+            if (username === 'admin' && password === '123') {
+                // Success
+                messageElement.textContent = 'Login successful! Redirecting...';
+                messageElement.className = 'message success';
+                messageElement.style.display = 'block';
                 
-                // Store authentication data
-                localStorage.setItem('authToken', authToken);
-                localStorage.setItem('currentUser', JSON.stringify(user));
-                
-                // Show success message
-                showMessage(loginMessage, `Login successful! Welcome ${user.username}`, 'success');
-                showNotification(`Login successful! Welcome ${user.username}`, 'success');
-                
-                // Redirect to dashboard after a short delay
+                // Simulate redirect (in a real app, this would go to the dashboard)
                 setTimeout(() => {
-                    window.location.href = 'dashboard.html';
-                }, 1000);
+                    alert('Login successful! In a real application, you would be redirected to the dashboard.');
+                    // window.location.href = 'dashboard.html';
+                }, 1500);
             } else {
-                showMessage(loginMessage, 'Invalid username or password', 'error');
-                showNotification('Invalid username or password', 'error');
+                // Error
+                messageElement.textContent = 'Invalid username or password. Please try again.';
+                messageElement.className = 'message error';
+                messageElement.style.display = 'block';
+                
+                // Clear password field
+                document.getElementById('password').value = '';
             }
-        }
-        
-        // Generate a simple auth token
-        function generateAuthToken() {
-            return 'token_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-        }
-        
-        // Show message
-        function showMessage(element, message, type) {
-            element.textContent = message;
-            element.className = 'message ' + type;
-            element.classList.remove('hidden');
-            
-            // Clear message after 5 seconds
-            setTimeout(() => {
-                element.classList.add('hidden');
-            }, 5000);
-        }
-        
-        // Show notification
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            // Remove notification after 5 seconds
-            setTimeout(() => {
-                notification.remove();
-            }, 5000);
-        }
-        
-        // Initialize the application when the page loads
-        document.addEventListener('DOMContentLoaded', init);
+        });
     </script>
 </body>
 </html>
