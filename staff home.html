@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goldbell Queue Management System</title>
+    <style>
+        :root {
+            --blue: #005bbb;
+            --light: #f4f8fb;
+            --card: #ffffff;
+            --muted: #6b7b8f;
+            --accent: #e9f2ff;
+            --error: #d9534f;
+            --success: #2e8b57;
+            --warning: #ffc107;
+            --radius: 10px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            color: #0b2540;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: var(--blue);
+            color: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .website-url {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1, h2, h3 {
+            color: var(--blue);
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--blue);
+        }
+        
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d6e9fb;
+            border-radius: var(--radius);
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 2px rgba(0, 91, 187, 0.2);
+        }
+        
+        .btn {
+            background: var(--blue);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: #004a9e;
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: #7f8fa6;
+        }
+        
+        .btn-secondary:hover {
+            background: #6a7a8f;
+        }
+        
+        .btn-success {
+            background: var(--success);
+        }
+        
+        .btn-success:hover {
+            background: #26734d;
+        }
+        
+        .btn-danger {
+            background: var(--error);
+        }
+        
+        .btn-danger:hover {
+            background: #c9302c;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: #000;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .login-section {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .user-info {
+            background: var(--accent);
+            padding: 15px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+        }
+        
+        .queue-number {
+            background: var(--accent);
+            padding: 30px;
+            border-radius: var(--radius);
+            margin: 20px 0;
+            text-align: center;
+            border: 3px solid var(--blue);
+        }
+        
+        .number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--blue);
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .message {
+            padding: 10px;
+            border-radius: var(--radius);
+            margin: 10px 0;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: var(--success);
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: var(--error);
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #e9f2ff;
+            color: var(--blue);
+            border: 1px solid #cfe6ff;
+        }
+        
+        .queue-item {
+            padding: 15px;
+            border: 1px solid #e1e8ed;
+            border-radius: var(--radius);
+            margin-bottom: 10px;
+            background: #f9f9f9;
+            transition: all 0.2s;
+        }
+        
+        .queue-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .serving {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            border-left: 4px solid var(--success);
+        }
+        
+        .waiting {
+            background: #fff3cd;
+            border-color: #ffeaa7;
+            border-left: 4px solid var(--warning);
+        }
+        
+        .completed {
+            background: #e2e3e5;
+            border-color: #d6d8db;
+            border-left: 4px solid #6c757d;
+        }
+        
+        .missed {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            border-left: 4px solid var(--error);
+        }
+        
+        .role-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .admin-badge {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        /* Updated counter assignment styles */
+        .counter-assignment-box {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid #e1e8ed;
+            margin-bottom: 20px;
+            overflow: hidden;
+            max-width: 100%;
+            margin-left: auto;
+        }
+        
+        .counter-box-header {
+            background: var(--accent);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        
+        .counter-box-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--blue);
+        }
+        
+        .counter-box-content {
+            padding: 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+        }
+        
+        .counter-box-content.expanded {
+            max-height: 400px;
+            padding: 15px;
+            overflow-x: auto;
+        }
+        
+        .counters-grid {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            padding-bottom: 10px;
+            overflow-x: auto;
+            min-width: min-content;
+        }
+        
+        .counter-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+            border: 2px solid #e1e8ed;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 150px;
+            flex-shrink: 0;
+        }
+        
+        .counter-card:hover {
+            border-color: var(--blue);
+            transform: translateY(-2px);
+        }
+        
+        .counter-card.active {
+            border-color: var(--success);
+            background: #f8fff9;
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+        }
+        
+        .counter-card.assigned {
+            border-color: var(--blue);
+            background: var(--accent);
+        }
+        
+        .counter-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--blue);
+            margin-bottom: 10px;
+        }
+        
+        .counter-status {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+        
+        .toggle-icon {
+            transition: transform 0.3s;
+        }
+        
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+        
+        .counter-status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .counter-status-indicator.assigned {
+            background-color: var(--success);
+        }
+        
+        .counter-status-indicator.available {
+            background-color: var(--muted);
+        }
+        
+        /* Custom scrollbar for counters grid */
+        .counters-grid::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .counters-grid::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .counters-grid::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        
+        .counters-grid::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        .customer-details {
+            background: var(--accent);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin: 15px 0;
+            border-left: 4px solid var(--blue);
+        }
+        
+        .detail-row {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: var(--blue);
+        }
+        
+        .detail-value {
+            padding: 8px 12px;
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid #d6e9fb;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            max-width: 400px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification.success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .notification.error {
+            background: var(--error);
+            color: white;
+        }
+        
+        .notification.info {
+            background: var(--blue);
+            color: white;
+        }
+        
+        .notification.warning {
+            background: var(--warning);
+            color: black;
+        }
+        
+        .queue-scroll {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .queue-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .queue-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .queue-scroll::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        
+        .queue-scroll::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        .missed-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .missed-btn {
+            padding: 6px 12px;
+            font-size: 0.8em;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .recall-btn {
+            background: var(--warning);
+            color: black;
+        }
+        
+        .recall-btn:hover {
+            background: #e0a800;
+        }
+        
+        .delete-btn {
+            background: var(--error);
+            color: white;
+        }
+        
+        .delete-btn:hover {
+            background: #c9302c;
+        }
+        
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .number {
+                font-size: 3rem;
+            }
+            
+            .detail-row {
+                grid-template-columns: 1fr;
+            }
+            
+            #queuesView {
+                grid-template-columns: 1fr;
+            }
+            
+            .missed-actions {
+                flex-direction: column;
+            }
+            
+            .counter-assignment-box {
+                max-width: 100%;
+                margin-left: 0;
+            }
+            
+            .counters-grid {
+                gap: 10px;
+            }
+            
+            .counter-card {
+                min-width: 130px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">GOLDBELL</div>
+            <h1>Queue Management System</h1>
+            <div class="website-url">www.goldbellservices.com.sg</div>
+        </header>
+
+        <!-- Login Section -->
+        <section id="loginSection" class="card login-section">
+            <h2>Admin Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required autocomplete="username" placeholder="Enter admin">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter password">
+                </div>
+                <button type="submit" class="btn" id="loginBtn">
+                    <span id="loginBtnText">Login</span>
+                    <span id="loginBtnLoader" class="loading hidden"></span>
+                </button>
+            </form>
+            <div id="loginMessage" class="message"></div>
+            
+            <!-- Login Help -->
+            <div class="message info">
+                <strong>Login Credentials:</strong><br>
+                Username: admin<br>
+                Password: 1234567890
+            </div>
+        </section>
+
+        <!-- User Info Section (shown after login) -->
+        <section id="userInfo" class="user-info hidden">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0;">Queue Management Dashboard</h3>
+                    <p style="margin: 5px 0;">Logged in as: <strong id="loggedInUser">User</strong> <span id="roleBadge" class="role-badge admin-badge">Admin</span></p>
+                    <p style="margin: 0; font-size: 0.9em;" id="counterAssignment">Not assigned to any counter</p>
+                </div>
+                <button id="logoutBtn" class="btn btn-secondary">Logout</button>
+            </div>
+        </section>
+
+        <!-- Main Dashboard -->
+        <section id="mainDashboard" class="card hidden">
+            <!-- Counter Assignment Box -->
+            <div class="counter-assignment-box">
+                <div class="counter-box-header" id="counterBoxHeader">
+                    <h3>Counter Assignment</h3>
+                    <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6L8 10L12 6" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="counter-box-content" id="counterBoxContent">
+                    <div class="counters-grid" id="countersGrid">
+                        <!-- Counters 1-8 will be generated here -->
+                    </div>
+                    <div id="counterMessage" class="message"></div>
+                </div>
+            </div>
+
+            <!-- Current Queue Display -->
+            <div class="queue-number">
+                <h3>Now Serving</h3>
+                <div class="number" id="currentQueueNumber">E000000</div>
+                <div class="action-buttons">
+                    <button id="nextCustomerBtn" class="btn btn-success">Call Next Customer</button>
+                    <button id="callSpecificBtn" class="btn btn-warning">Call Specific Number</button>
+                    <button id="resetQueueBtn" class="btn btn-danger">Reset Queue</button>
+                </div>
+            </div>
+
+            <!-- Call Specific Number Form -->
+            <div id="callSpecificForm" class="form-group hidden" style="background: #fff3cd; padding: 20px; border-radius: var(--radius); border: 2px solid #ffc107;">
+                <h3>Call Specific Queue Number</h3>
+                <div style="display: grid; grid-template-columns: 1fr auto; gap: 15px; align-items: end;">
+                    <div>
+                        <label for="specificNumber">Enter Queue Number</label>
+                        <input type="text" id="specificNumber" placeholder="e.g. E000123" style="text-transform: uppercase;">
+                    </div>
+                    <div class="action-buttons">
+                        <button id="callThisNumberBtn" class="btn btn-warning">Call This Number</button>
+                        <button id="cancelSpecificBtn" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </div>
+                <div id="specificMessage" class="message"></div>
+            </div>
+
+            <!-- Customer Details View -->
+            <div id="customerDetailsView" class="hidden">
+                <h3>Customer Details</h3>
+                <div class="customer-details">
+                    <div class="detail-row">
+                        <div class="detail-label">Queue Number:</div>
+                        <div class="detail-value" id="detailQueueNumber">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Customer Name:</div>
+                        <div class="detail-value" id="detailCustomerName">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Service Type:</div>
+                        <div class="detail-value" id="detailServiceType">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Vehicle No:</div>
+                        <div class="detail-value" id="detailVehicleNo">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Contact No:</div>
+                        <div class="detail-value" id="detailContactNo">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Status:</div>
+                        <div class="detail-value" id="detailStatus">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Added Time:</div>
+                        <div class="detail-value" id="detailAddedTime">-</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button id="closeDetailsBtn" class="btn btn-secondary">Close Details</button>
+                        <button id="editCustomerBtn" class="btn">Edit Customer</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Customer Form -->
+            <div id="editCustomerForm" class="form-group hidden" style="background: #e9f2ff; padding: 20px; border-radius: var(--radius); border: 2px solid var(--blue);">
+                <h3>Edit Customer Details</h3>
+                <form id="editForm">
+                    <input type="hidden" id="editQueueNumber">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label for="editCustomerName">Customer Name *</label>
+                            <input type="text" id="editCustomerName" name="editCustomerName" required>
+                        </div>
+                        <div>
+                            <label for="editServiceType">Service Type *</label>
+                            <select id="editServiceType" name="editServiceType" required>
+                                <option value="">-- Select Service --</option>
+                                <option value="Vehicle Repair">Vehicle Repair</option>
+                                <option value="Repair Service">Repair Service</option>
+                                <option value="Speed Limiter Installation">Speed Limiter Installation</option>
+                                <option value="Other Services">Other Services</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label for="editVehicleNo">Vehicle No.</label>
+                            <input type="text" id="editVehicleNo" name="editVehicleNo">
+                        </div>
+                        <div>
+                            <label for="editContactNo">Contact No.</label>
+                            <input type="text" id="editContactNo" name="editContactNo">
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                        <button type="button" id="cancelEditBtn" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </form>
+                <div id="editMessage" class="message"></div>
+            </div>
+
+            <!-- Queue Lists - Four Column Layout -->
+            <div id="queuesView" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;">
+                <!-- Waiting Queue -->
+                <div class="form-group">
+                    <h3>Waiting Queue (<span id="queueCount">0</span> customers)</h3>
+                    <div id="queueList" class="queue-scroll">
+                        <!-- Queue items will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Serving Queue -->
+                <div class="form-group">
+                    <h3>Serving Queue (<span id="servingQueueCount">0</span> customers)</h3>
+                    <div id="servingQueueList" class="queue-scroll">
+                        <!-- Serving queue items will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Completed Queue -->
+                <div class="form-group">
+                    <h3>Completed Queue (<span id="completedQueueCount">0</span> customers)</h3>
+                    <div id="completedQueueList" class="queue-scroll">
+                        <!-- Completed queue items will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Missed Queue -->
+                <div class="form-group">
+                    <h3>Missed Queue (<span id="missedQueueCount">0</span> customers)</h3>
+                    <div id="missedQueueList" class="queue-scroll">
+                        <!-- Missed queue items will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Queue Management System - Admin Only
+        // Authentication state
+        let authToken = localStorage.getItem('authToken');
+        let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        let currentCounter = localStorage.getItem('currentCounter') || null;
+        
+        // Queue data
+        let queue = {
+            total: 0,
+            current: 0,
+            submissions: [],
+            counters: {
+                1: { assignedTo: null, currentCustomer: null },
+                2: { assignedTo: null, currentCustomer: null },
+                3: { assignedTo: null, currentCustomer: null },
+                4: { assignedTo: null, currentCustomer: null },
+                5: { assignedTo: null, currentCustomer: null },
+                6: { assignedTo: null, currentCustomer: null },
+                7: { assignedTo: null, currentCustomer: null },
+                8: { assignedTo: null, currentCustomer: null }
+            }
+        };
+        
+        // DOM elements
+        const loginSection = document.getElementById('loginSection');
+        const userInfo = document.getElementById('userInfo');
+        const mainDashboard = document.getElementById('mainDashboard');
+        const countersGrid = document.getElementById('countersGrid');
+        const loginForm = document.getElementById('loginForm');
+        const editForm = document.getElementById('editForm');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const nextCustomerBtn = document.getElementById('nextCustomerBtn');
+        const resetQueueBtn = document.getElementById('resetQueueBtn');
+        const callSpecificBtn = document.getElementById('callSpecificBtn');
+        const callSpecificForm = document.getElementById('callSpecificForm');
+        const callThisNumberBtn = document.getElementById('callThisNumberBtn');
+        const cancelSpecificBtn = document.getElementById('cancelSpecificBtn');
+        const specificNumber = document.getElementById('specificNumber');
+        const customerDetailsView = document.getElementById('customerDetailsView');
+        const closeDetailsBtn = document.getElementById('closeDetailsBtn');
+        const editCustomerBtn = document.getElementById('editCustomerBtn');
+        const editCustomerForm = document.getElementById('editCustomerForm');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const loginMessage = document.getElementById('loginMessage');
+        const formMessage = document.getElementById('formMessage');
+        const specificMessage = document.getElementById('specificMessage');
+        const counterMessage = document.getElementById('counterMessage');
+        const editMessage = document.getElementById('editMessage');
+        const loggedInUser = document.getElementById('loggedInUser');
+        const roleBadge = document.getElementById('roleBadge');
+        const counterAssignment = document.getElementById('counterAssignment');
+        const currentQueueNumber = document.getElementById('currentQueueNumber');
+        const queueCount = document.getElementById('queueCount');
+        const servingQueueCount = document.getElementById('servingQueueCount');
+        const completedQueueCount = document.getElementById('completedQueueCount');
+        const missedQueueCount = document.getElementById('missedQueueCount');
+        const queueList = document.getElementById('queueList');
+        const servingQueueList = document.getElementById('servingQueueList');
+        const completedQueueList = document.getElementById('completedQueueList');
+        const missedQueueList = document.getElementById('missedQueueList');
+        const loginBtn = document.getElementById('loginBtn');
+        const loginBtnText = document.getElementById('loginBtnText');
+        const loginBtnLoader = document.getElementById('loginBtnLoader');
+        const counterBoxHeader = document.getElementById('counterBoxHeader');
+        const counterBoxContent = document.getElementById('counterBoxContent');
+        const toggleIcon = document.querySelector('.toggle-icon');
+        
+        // Detail elements
+        const detailQueueNumber = document.getElementById('detailQueueNumber');
+        const detailCustomerName = document.getElementById('detailCustomerName');
+        const detailServiceType = document.getElementById('detailServiceType');
+        const detailVehicleNo = document.getElementById('detailVehicleNo');
+        const detailContactNo = document.getElementById('detailContactNo');
+        const detailStatus = document.getElementById('detailStatus');
+        const detailAddedTime = document.getElementById('detailAddedTime');
+        
+        // Edit form elements
+        const editQueueNumber = document.getElementById('editQueueNumber');
+        const editCustomerName = document.getElementById('editCustomerName');
+        const editServiceType = document.getElementById('editServiceType');
+        const editVehicleNo = document.getElementById('editVehicleNo');
+        const editContactNo = document.getElementById('editContactNo');
+        
+        // User credentials - Only admin account
+        const users = {
+            'admin': { 
+                password: '1234567890', 
+                role: 'admin',
+                permissions: ['view_stats', 'call_next', 'call_specific', 'reset_queue', 'edit_customer', 'view_all_customers', 'assign_counter']
+            }
+        };
+        
+        // Initialize the application
+        function init() {
+            // Check if user is already logged in
+            if (authToken && currentUser) {
+                showAuthenticatedUI();
+            } else {
+                showLoginUI();
+            }
+            
+            // Load any existing queue data from localStorage
+            loadQueueData();
+            
+            // Generate counters
+            generateCounters();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            updateQueueDisplay();
+        }
+        
+        // Load queue data from localStorage with error handling
+        function loadQueueData() {
+            try {
+                const savedQueue = localStorage.getItem('goldbellQueue');
+                if (savedQueue) {
+                    const parsed = JSON.parse(savedQueue);
+                    queue = { ...queue, ...parsed };
+                }
+            } catch (error) {
+                console.error('Error loading queue data:', error);
+                showNotification('Error loading queue data. Starting with fresh data.', 'error');
+                // Reset to default queue structure
+                queue = {
+                    total: 0,
+                    current: 0,
+                    submissions: [],
+                    counters: queue.counters
+                };
+                saveQueueData();
+            }
+        }
+        
+        // Save queue data to localStorage with error handling
+        function saveQueueData() {
+            try {
+                localStorage.setItem('goldbellQueue', JSON.stringify(queue));
+            } catch (error) {
+                console.error('Error saving queue data:', error);
+                showNotification('Error saving queue data. Changes may not persist.', 'error');
+            }
+        }
+        
+        // Generate counters 1-8
+        function generateCounters() {
+            countersGrid.innerHTML = '';
+            for (let i = 1; i <= 8; i++) {
+                const counter = queue.counters[i];
+                const counterCard = document.createElement('div');
+                counterCard.className = `counter-card ${currentCounter === i.toString() ? 'active' : ''} ${counter.assignedTo ? 'assigned' : ''}`;
+                counterCard.innerHTML = `
+                    <div class="counter-number">Counter ${i}</div>
+                    <div class="counter-status">
+                        ${counter.assignedTo ? `Assigned to: ${counter.assignedTo}` : 'Available'}
+                        ${counter.currentCustomer ? `<br>Serving: ${counter.currentCustomer}` : ''}
+                    </div>
+                `;
+                counterCard.onclick = () => assignToCounter(i);
+                countersGrid.appendChild(counterCard);
+            }
+        }
+        
+        // Assign user to counter
+        function assignToCounter(counterNumber) {
+            const counter = queue.counters[counterNumber];
+            
+            // If counter is assigned to someone else, don't allow assignment
+            if (counter.assignedTo && counter.assignedTo !== currentUser.username) {
+                showMessage(counterMessage, `Counter ${counterNumber} is already assigned to ${counter.assignedTo}`, 'error');
+                return;
+            }
+            
+            // Clear previous assignment
+            if (currentCounter) {
+                queue.counters[currentCounter].assignedTo = null;
+            }
+            
+            // Assign to new counter
+            currentCounter = counterNumber.toString();
+            queue.counters[counterNumber].assignedTo = currentUser.username;
+            
+            // Save to localStorage
+            saveQueueData();
+            localStorage.setItem('currentCounter', currentCounter);
+            
+            // Update display
+            generateCounters();
+            updateCounterAssignmentDisplay();
+            showMessage(counterMessage, `Assigned to Counter ${counterNumber}`, 'success');
+            
+            // Auto-collapse the counter box after assignment
+            setTimeout(() => {
+                counterBoxContent.classList.remove('expanded');
+                toggleIcon.classList.remove('rotated');
+            }, 1500);
+        }
+        
+        // Update counter assignment display
+        function updateCounterAssignmentDisplay() {
+            if (currentCounter) {
+                counterAssignment.textContent = `Assigned to: Counter ${currentCounter}`;
+                counterAssignment.style.color = 'var(--success)';
+                counterAssignment.style.fontWeight = 'bold';
+            } else {
+                counterAssignment.textContent = 'Not assigned to any counter';
+                counterAssignment.style.color = 'var(--muted)';
+            }
+        }
+        
+        // Toggle counter assignment box
+        function toggleCounterBox() {
+            counterBoxContent.classList.toggle('expanded');
+            toggleIcon.classList.toggle('rotated');
+        }
+        
+        // Set up all event listeners
+        function setupEventListeners() {
+            loginForm.addEventListener('submit', handleLogin);
+            logoutBtn.addEventListener('click', handleLogout);
+            editForm.addEventListener('submit', handleCustomerEdit);
+            nextCustomerBtn.addEventListener('click', callNextCustomer);
+            resetQueueBtn.addEventListener('click', resetQueue);
+            callSpecificBtn.addEventListener('click', () => callSpecificForm.classList.remove('hidden'));
+            cancelSpecificBtn.addEventListener('click', () => callSpecificForm.classList.add('hidden'));
+            callThisNumberBtn.addEventListener('click', callSpecificNumber);
+            closeDetailsBtn.addEventListener('click', () => customerDetailsView.classList.add('hidden'));
+            editCustomerBtn.addEventListener('click', showEditForm);
+            cancelEditBtn.addEventListener('click', () => editCustomerForm.classList.add('hidden'));
+            counterBoxHeader.addEventListener('click', toggleCounterBox);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', handleKeyboardShortcuts);
+        }
+        
+        // Handle keyboard shortcuts
+        function handleKeyboardShortcuts(e) {
+            // Only process if user is logged in and not in an input field
+            if (!currentUser || e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+            
+            switch(e.key) {
+                case 'n':
+                case 'N':
+                    if (e.ctrlKey) {
+                        e.preventDefault();
+                        callNextCustomer();
+                    }
+                    break;
+                case 's':
+                case 'S':
+                    if (e.ctrlKey) {
+                        e.preventDefault();
+                        callSpecificForm.classList.remove('hidden');
+                        specificNumber.focus();
+                    }
+                    break;
+                case 'Escape':
+                    // Close any open forms
+                    callSpecificForm.classList.add('hidden');
+                    customerDetailsView.classList.add('hidden');
+                    editCustomerForm.classList.add('hidden');
+                    break;
+            }
+        }
+        
+        // Handle login form submission
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Show loading state
+            loginBtnText.classList.add('hidden');
+            loginBtnLoader.classList.remove('hidden');
+            loginBtn.disabled = true;
+            
+            // Simulate network delay for better UX
+            setTimeout(() => {
+                // Simple authentication
+                if (users[username] && users[username].password === password) {
+                    // Successful login
+                    currentUser = {
+                        username: username,
+                        role: users[username].role,
+                        permissions: users[username].permissions
+                    };
+                    
+                    // Generate a simple token
+                    authToken = 'token_' + Math.random().toString(36).substr(2, 9);
+                    
+                    // Save to localStorage
+                    localStorage.setItem('authToken', authToken);
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    showAuthenticatedUI();
+                    showMessage(loginMessage, `Welcome ${username}!`, 'success');
+                    showNotification(`Welcome ${username}!`, 'success');
+                } else {
+                    // Failed login
+                    showMessage(loginMessage, 'Invalid username or password', 'error');
+                }
+                
+                // Reset login button
+                loginBtnText.classList.remove('hidden');
+                loginBtnLoader.classList.add('hidden');
+                loginBtn.disabled = false;
+            }, 800);
+        }
+        
+        // Handle logout
+        function handleLogout() {
+            // Clear counter assignment
+            if (currentCounter) {
+                queue.counters[currentCounter].assignedTo = null;
+                saveQueueData();
+            }
+            
+            // Clear authentication data
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentCounter');
+            authToken = null;
+            currentUser = null;
+            currentCounter = null;
+            
+            showLoginUI();
+            showNotification('You have been logged out', 'info');
+        }
+        
+        // Handle customer edit form submission (Admin only)
+        function handleCustomerEdit(e) {
+            e.preventDefault();
+            
+            const queueNumber = editQueueNumber.value;
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            
+            if (submission) {
+                // Update submission data
+                submission.customerName = editCustomerName.value;
+                submission.serviceType = editServiceType.value;
+                submission.vehicleNo = editVehicleNo.value;
+                submission.contactNo = editContactNo.value;
+                
+                // Save to localStorage
+                saveQueueData();
+                
+                // Update display
+                updateQueueDisplay();
+                
+                // Show success and hide form
+                showMessage(editMessage, `Customer ${queueNumber} details updated`, 'success');
+                showNotification(`Customer ${queueNumber} details updated`, 'success');
+                editCustomerForm.classList.add('hidden');
+                customerDetailsView.classList.add('hidden');
+            }
+        }
+        
+        // Call next customer
+        function callNextCustomer() {
+            if (!currentCounter) {
+                showMessage(specificMessage, 'Please assign yourself to a counter first', 'error');
+                return;
+            }
+            
+            // Find the next waiting customer
+            const nextSubmission = queue.submissions.find(sub => sub.status === 'waiting');
+            
+            if (nextSubmission) {
+                // Update submission status
+                nextSubmission.status = 'serving';
+                nextSubmission.calledAt = new Date();
+                nextSubmission.servedBy = currentUser.username;
+                nextSubmission.counter = currentCounter;
+                
+                // Update current queue number
+                queue.current = parseInt(nextSubmission.queueNumber.substring(1));
+                
+                // Update counter
+                queue.counters[currentCounter].currentCustomer = nextSubmission.queueNumber;
+                
+                // Save to localStorage
+                saveQueueData();
+                
+                // Update display
+                updateQueueDisplay();
+                generateCounters();
+                
+                // Announce
+                speak(`Counter ${currentCounter} now serving ${nextSubmission.queueNumber}`);
+                
+                // Show notification
+                showMessage(formMessage, `Counter ${currentCounter} now serving ${nextSubmission.queueNumber}`, 'success');
+                showNotification(`Counter ${currentCounter} now serving ${nextSubmission.queueNumber}`, 'success');
+            } else {
+                showMessage(formMessage, 'No more customers in queue', 'info');
+            }
+        }
+        
+        // Call specific number
+        function callSpecificNumber() {
+            if (!currentCounter) {
+                showMessage(specificMessage, 'Please assign yourself to a counter first', 'error');
+                return;
+            }
+            
+            const numberToCall = specificNumber.value.trim().toUpperCase();
+            
+            if (!numberToCall.match(/^E\d{6}$/)) {
+                showMessage(specificMessage, 'Please enter a valid queue number (e.g., E000123)', 'error');
+                return;
+            }
+            
+            const submission = queue.submissions.find(sub => sub.queueNumber === numberToCall);
+            
+            if (!submission) {
+                showMessage(specificMessage, `Queue number ${numberToCall} not found`, 'error');
+                return;
+            }
+            
+            if (submission.status === 'serving') {
+                showMessage(specificMessage, `Customer ${numberToCall} is already being served`, 'info');
+                return;
+            }
+            
+            if (submission.status === 'completed') {
+                showMessage(specificMessage, `Customer ${numberToCall} has already been completed`, 'info');
+                return;
+            }
+            
+            // Update status to serving
+            submission.status = 'serving';
+            submission.calledAt = new Date();
+            submission.servedBy = currentUser.username;
+            submission.counter = currentCounter;
+            
+            // Update counter
+            queue.counters[currentCounter].currentCustomer = numberToCall;
+            
+            // Update current queue number if this is a higher number
+            const numberValue = parseInt(numberToCall.substring(1));
+            if (numberValue > queue.current) {
+                queue.current = numberValue;
+            }
+            
+            // Save to localStorage
+            saveQueueData();
+            
+            // Update display
+            updateQueueDisplay();
+            generateCounters();
+            
+            // Announce
+            speak(`Counter ${currentCounter} now serving ${numberToCall}`);
+            
+            // Show success and hide form
+            showMessage(specificMessage, `Counter ${currentCounter} now serving ${numberToCall}`, 'success');
+            showNotification(`Counter ${currentCounter} now serving ${numberToCall}`, 'success');
+            callSpecificForm.classList.add('hidden');
+            specificNumber.value = '';
+        }
+        
+        // Show customer details
+        function showCustomerDetails(queueNumber) {
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            if (submission) {
+                detailQueueNumber.textContent = submission.queueNumber;
+                detailCustomerName.textContent = submission.customerName;
+                detailServiceType.textContent = submission.serviceType;
+                detailVehicleNo.textContent = submission.vehicleNo || '-';
+                detailContactNo.textContent = submission.contactNo || '-';
+                detailStatus.textContent = submission.status;
+                detailAddedTime.textContent = new Date(submission.timestamp).toLocaleString();
+                
+                // Show edit button (always available for admin)
+                editCustomerBtn.classList.remove('hidden');
+                
+                customerDetailsView.classList.remove('hidden');
+            }
+        }
+        
+        // Show edit form
+        function showEditForm() {
+            const queueNumber = detailQueueNumber.textContent;
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            
+            if (submission) {
+                editQueueNumber.value = submission.queueNumber;
+                editCustomerName.value = submission.customerName;
+                editServiceType.value = submission.serviceType;
+                editVehicleNo.value = submission.vehicleNo || '';
+                editContactNo.value = submission.contactNo || '';
+                
+                editCustomerForm.classList.remove('hidden');
+            }
+        }
+        
+        // Complete a customer
+        function completeCustomer(queueNumber) {
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            if (submission) {
+                submission.status = 'completed';
+                submission.completedAt = new Date();
+                
+                // Clear counter assignment if this customer was being served
+                if (submission.counter && queue.counters[submission.counter].currentCustomer === queueNumber) {
+                    queue.counters[submission.counter].currentCustomer = null;
+                }
+                
+                saveQueueData();
+                updateQueueDisplay();
+                generateCounters();
+                showMessage(formMessage, `Customer ${queueNumber} marked as completed`, 'success');
+                showNotification(`Customer ${queueNumber} marked as completed`, 'success');
+            }
+        }
+        
+        // Mark customer as missed
+        function markAsMissed(queueNumber) {
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            if (submission) {
+                submission.status = 'missed';
+                submission.missedAt = new Date();
+                submission.missedBy = currentUser.username;
+                
+                // Clear counter assignment if this customer was being served
+                if (submission.counter && queue.counters[submission.counter].currentCustomer === queueNumber) {
+                    queue.counters[submission.counter].currentCustomer = null;
+                }
+                
+                saveQueueData();
+                updateQueueDisplay();
+                generateCounters();
+                showMessage(formMessage, `Customer ${queueNumber} marked as missed`, 'info');
+                showNotification(`Customer ${queueNumber} marked as missed`, 'warning');
+            }
+        }
+        
+        // Recall missed customer
+        function recallMissedCustomer(queueNumber) {
+            if (!currentCounter) {
+                showMessage(formMessage, 'Please assign yourself to a counter first', 'error');
+                return;
+            }
+            
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            
+            if (submission) {
+                submission.status = 'serving';
+                submission.calledAt = new Date();
+                submission.servedBy = currentUser.username;
+                submission.counter = currentCounter;
+                
+                // Update counter
+                queue.counters[currentCounter].currentCustomer = queueNumber;
+                
+                // Save to localStorage
+                saveQueueData();
+                
+                // Update display
+                updateQueueDisplay();
+                generateCounters();
+                
+                // Announce
+                speak(`Counter ${currentCounter} now serving recalled customer ${queueNumber}`);
+                
+                showMessage(formMessage, `Counter ${currentCounter} now serving recalled customer ${queueNumber}`, 'success');
+                showNotification(`Counter ${currentCounter} now serving recalled customer ${queueNumber}`, 'success');
+            }
+        }
+        
+        // Delete missed customer permanently
+        function deleteMissedCustomer(queueNumber) {
+            if (confirm(`Are you sure you want to permanently delete customer ${queueNumber} from the missed queue?`)) {
+                const index = queue.submissions.findIndex(sub => sub.queueNumber === queueNumber);
+                if (index !== -1) {
+                    queue.submissions.splice(index, 1);
+                    saveQueueData();
+                    updateQueueDisplay();
+                    showMessage(formMessage, `Customer ${queueNumber} deleted from missed queue`, 'success');
+                    showNotification(`Customer ${queueNumber} deleted from missed queue`, 'success');
+                }
+            }
+        }
+        
+        // Reset queue
+        function resetQueue() {
+            if (confirm('Are you sure you want to reset the entire queue? This cannot be undone.')) {
+                queue = {
+                    total: 0,
+                    current: 0,
+                    submissions: [],
+                    counters: queue.counters // Keep counter assignments
+                };
+                
+                saveQueueData();
+                updateQueueDisplay();
+                showMessage(formMessage, 'Queue has been reset', 'success');
+                showNotification('Queue has been reset', 'success');
+            }
+        }
+        
+        // Update queue display
+        function updateQueueDisplay() {
+            // Update current queue number
+            const currentDisplayNumber = 'E' + queue.current.toString().padStart(6, '0');
+            currentQueueNumber.textContent = currentDisplayNumber;
+            
+            // Get queue counts
+            const waitingCount = queue.submissions.filter(sub => sub.status === 'waiting').length;
+            const servingCount = queue.submissions.filter(sub => sub.status === 'serving').length;
+            const completedCount = queue.submissions.filter(sub => sub.status === 'completed').length;
+            const missedCount = queue.submissions.filter(sub => sub.status === 'missed').length;
+            
+            // Update counts
+            queueCount.textContent = waitingCount;
+            servingQueueCount.textContent = servingCount;
+            completedQueueCount.textContent = completedCount;
+            missedQueueCount.textContent = missedCount;
+            
+            // Update waiting queue list
+            const waitingSubmissions = queue.submissions.filter(sub => sub.status === 'waiting');
+            queueList.innerHTML = '';
+            if (waitingSubmissions.length === 0) {
+                queueList.innerHTML = '<div class="queue-item">No customers waiting</div>';
+            } else {
+                waitingSubmissions.forEach(submission => {
+                    const queueItem = document.createElement('div');
+                    queueItem.className = 'queue-item waiting';
+                    queueItem.innerHTML = `
+                        <div onclick="showCustomerDetails('${submission.queueNumber}')" style="cursor: pointer;">
+                            <strong>${submission.queueNumber}</strong> - ${submission.serviceType}
+                            <div style="font-size: 0.9em; color: #666;">
+                                ${submission.customerName} ${submission.vehicleNo ? '| Vehicle: ' + submission.vehicleNo : ''}
+                            </div>
+                            <div style="font-size: 0.8em; color: #888;">
+                                Added: ${new Date(submission.timestamp).toLocaleTimeString()}
+                            </div>
+                        </div>
+                        <div class="missed-actions">
+                            <button onclick="markAsMissed('${submission.queueNumber}')" class="missed-btn delete-btn">Mark as Missed</button>
+                        </div>
+                    `;
+                    queueList.appendChild(queueItem);
+                });
+            }
+            
+            // Update serving queue list
+            const servingSubmissions = queue.submissions.filter(sub => sub.status === 'serving');
+            servingQueueList.innerHTML = '';
+            if (servingSubmissions.length === 0) {
+                servingQueueList.innerHTML = '<div class="queue-item">No customers being served</div>';
+            } else {
+                servingSubmissions.forEach(submission => {
+                    const queueItem = document.createElement('div');
+                    queueItem.className = 'queue-item serving';
+                    queueItem.innerHTML = `
+                        <div onclick="showCustomerDetails('${submission.queueNumber}')" style="cursor: pointer;">
+                            <strong>${submission.queueNumber}</strong> - ${submission.serviceType}
+                            <div style="font-size: 0.9em; color: #666;">
+                                ${submission.customerName} ${submission.vehicleNo ? '| Vehicle: ' + submission.vehicleNo : ''}
+                            </div>
+                            <div style="font-size: 0.8em; color: #888;">
+                                Serving at: Counter ${submission.counter} | Called: ${new Date(submission.calledAt).toLocaleTimeString()}
+                            </div>
+                        </div>
+                        <div class="action-buttons" style="margin-top: 10px;">
+                            <button onclick="completeCustomer('${submission.queueNumber}')" class="btn btn-success" style="padding: 5px 10px; font-size: 0.8em;">Complete</button>
+                            <button onclick="markAsMissed('${submission.queueNumber}')" class="btn btn-warning" style="padding: 5px 10px; font-size: 0.8em;">Mark Missed</button>
+                        </div>
+                    `;
+                    servingQueueList.appendChild(queueItem);
+                });
+            }
+            
+            // Update completed queue list
+            const completedSubmissions = queue.submissions.filter(sub => sub.status === 'completed');
+            completedQueueList.innerHTML = '';
+            if (completedSubmissions.length === 0) {
+                completedQueueList.innerHTML = '<div class="queue-item">No completed customers</div>';
+            } else {
+                // Show only last 20 completed
+                const displayCompleted = completedSubmissions.slice(-20).reverse();
+                
+                displayCompleted.forEach(submission => {
+                    const queueItem = document.createElement('div');
+                    queueItem.className = 'queue-item completed';
+                    queueItem.innerHTML = `
+                        <div onclick="showCustomerDetails('${submission.queueNumber}')" style="cursor: pointer;">
+                            <strong>${submission.queueNumber}</strong> - ${submission.serviceType}
+                            <div style="font-size: 0.9em; color: #666;">
+                                ${submission.customerName} ${submission.vehicleNo ? '| Vehicle: ' + submission.vehicleNo : ''}
+                            </div>
+                            <div style="font-size: 0.8em; color: #888;">
+                                Completed: ${new Date(submission.completedAt).toLocaleTimeString()}
+                                ${submission.servedBy ? ` | By: ${submission.servedBy}` : ''}
+                            </div>
+                        </div>
+                    `;
+                    completedQueueList.appendChild(queueItem);
+                });
+            }
+            
+            // Update missed queue list
+            const missedSubmissions = queue.submissions.filter(sub => sub.status === 'missed');
+            missedQueueList.innerHTML = '';
+            if (missedSubmissions.length === 0) {
+                missedQueueList.innerHTML = '<div class="queue-item">No missed customers</div>';
+            } else {
+                missedSubmissions.forEach(submission => {
+                    const queueItem = document.createElement('div');
+                    queueItem.className = 'queue-item missed';
+                    queueItem.innerHTML = `
+                        <div onclick="showCustomerDetails('${submission.queueNumber}')" style="cursor: pointer;">
+                            <strong>${submission.queueNumber}</strong> - ${submission.serviceType}
+                            <div style="font-size: 0.9em; color: #666;">
+                                ${submission.customerName} ${submission.vehicleNo ? '| Vehicle: ' + submission.vehicleNo : ''}
+                            </div>
+                            <div style="font-size: 0.8em; color: #888;">
+                                Missed: ${new Date(submission.missedAt).toLocaleTimeString()}
+                                ${submission.missedBy ? ` | By: ${submission.missedBy}` : ''}
+                            </div>
+                        </div>
+                        <div class="missed-actions">
+                            <button onclick="recallMissedCustomer('${submission.queueNumber}')" class="missed-btn recall-btn">Recall Customer</button>
+                            <button onclick="deleteMissedCustomer('${submission.queueNumber}')" class="missed-btn delete-btn">Delete</button>
+                        </div>
+                    `;
+                    missedQueueList.appendChild(queueItem);
+                });
+            }
+        }
+        
+        // Show authenticated UI
+        function showAuthenticatedUI() {
+            loginSection.classList.add('hidden');
+            userInfo.classList.remove('hidden');
+            mainDashboard.classList.remove('hidden');
+            loggedInUser.textContent = currentUser.username;
+            
+            // Set role badge
+            roleBadge.textContent = currentUser.role;
+            roleBadge.className = `role-badge admin-badge`;
+            
+            // All admin features are always visible
+            resetQueueBtn.classList.remove('hidden');
+            
+            updateCounterAssignmentDisplay();
+            updateQueueDisplay();
+            
+            // Auto-refresh queue every 3 seconds
+            setInterval(updateQueueDisplay, 3000);
+        }
+        
+        // Show login UI
+        function showLoginUI() {
+            loginSection.classList.remove('hidden');
+            userInfo.classList.add('hidden');
+            mainDashboard.classList.add('hidden');
+        }
+        
+        // Show message
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = 'message ' + type;
+            element.classList.remove('hidden');
+            
+            // Clear message after 5 seconds
+            setTimeout(() => {
+                element.classList.add('hidden');
+            }, 5000);
+        }
+        
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove notification after 5 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        // Text-to-speech for announcements
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+        
+        // Initialize the application when the page loads
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
