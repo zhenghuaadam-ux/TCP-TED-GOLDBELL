@@ -765,7 +765,7 @@
         };
         let currentCounter = localStorage.getItem('currentCounter') || null;
         
-        // Queue data
+        // Queue data - Load from localStorage
         let queue = {
             total: 0,
             current: 0,
@@ -840,7 +840,7 @@
             // Set default user info
             showAuthenticatedUI();
             
-            // Load any existing queue data from localStorage
+            // Load queue data from localStorage
             loadQueueData();
             
             // Generate counters
@@ -850,15 +850,32 @@
             setupEventListeners();
             
             updateQueueDisplay();
+            
+            // Auto-refresh queue every 3 seconds
+            setInterval(updateQueueDisplay, 3000);
         }
         
         // Load queue data from localStorage with error handling
         function loadQueueData() {
             try {
-                const savedQueue = localStorage.getItem('goldbellQueue');
+                const savedQueue = localStorage.getItem('goldbellQueueData');
                 if (savedQueue) {
                     const parsed = JSON.parse(savedQueue);
                     queue = { ...queue, ...parsed };
+                    
+                    // Ensure counters structure is maintained
+                    if (!queue.counters) {
+                        queue.counters = {
+                            1: { assignedTo: null, currentCustomer: null },
+                            2: { assignedTo: null, currentCustomer: null },
+                            3: { assignedTo: null, currentCustomer: null },
+                            4: { assignedTo: null, currentCustomer: null },
+                            5: { assignedTo: null, currentCustomer: null },
+                            6: { assignedTo: null, currentCustomer: null },
+                            7: { assignedTo: null, currentCustomer: null },
+                            8: { assignedTo: null, currentCustomer: null }
+                        };
+                    }
                 }
             } catch (error) {
                 console.error('Error loading queue data:', error);
@@ -877,7 +894,7 @@
         // Save queue data to localStorage with error handling
         function saveQueueData() {
             try {
-                localStorage.setItem('goldbellQueue', JSON.stringify(queue));
+                localStorage.setItem('goldbellQueueData', JSON.stringify(queue));
             } catch (error) {
                 console.error('Error saving queue data:', error);
                 showNotification('Error saving queue data. Changes may not persist.', 'error');
@@ -1297,6 +1314,9 @@
                     counters: queue.counters // Keep counter assignments
                 };
                 
+                // Also reset the queue counter
+                localStorage.setItem('goldbellQueueCounter', '0');
+                
                 saveQueueData();
                 updateQueueDisplay();
                 showNotification('Queue has been reset', 'success');
@@ -1447,9 +1467,6 @@
             
             updateCounterAssignmentDisplay();
             updateQueueDisplay();
-            
-            // Auto-refresh queue every 3 seconds
-            setInterval(updateQueueDisplay, 3000);
         }
         
         // Show message
