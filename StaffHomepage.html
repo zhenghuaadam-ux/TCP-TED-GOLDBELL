@@ -591,7 +591,7 @@
                     <p style="margin: 5px 0;">Logged in as: <strong id="loggedInUser">Admin</strong> <span id="roleBadge" class="role-badge admin-badge">Admin</span></p>
                     <p style="margin: 0; font-size: 0.9em;" id="counterAssignment">Not assigned to any counter</p>
                 </div>
-                <button id="logoutBtn" class="btn btn-secondary"><a href="login.html">Logout</a></button>
+                <button id="logoutBtn" class="btn btn-secondary">Logout</button>
             </div>
         </section>
 
@@ -1004,27 +1004,37 @@
             }
         }
         
-        // Handle logout
+        // Handle logout with confirmation
         function handleLogout() {
-            // Clear counter assignment
-            if (currentCounter) {
-                queue.counters[currentCounter].assignedTo = null;
-                saveQueueData();
+            // Show confirmation dialog
+            const confirmLogout = confirm('Are you sure you want to log out?');
+            
+            if (confirmLogout) {
+                // Clear counter assignment
+                if (currentCounter) {
+                    queue.counters[currentCounter].assignedTo = null;
+                    saveQueueData();
+                }
+                
+                // Clear authentication data
+                localStorage.removeItem('currentCounter');
+                currentCounter = null;
+                
+                // Reset to default user
+                currentUser = {
+                    username: "Admin",
+                    role: "Admin"
+                };
+                
+                // Update UI
+                showAuthenticatedUI();
+                showNotification('Logged out successfully', 'info');
+                
+                // Redirect to login page after a short delay
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1000);
             }
-            
-            // Clear authentication data
-            localStorage.removeItem('currentCounter');
-            currentCounter = null;
-            
-            // Reset to default user
-            currentUser = {
-                username: "Admin",
-                role: "Admin"
-            };
-            
-            // Update UI
-            showAuthenticatedUI();
-            showNotification('Logged out successfully', 'info');
         }
         
         // Handle customer edit form submission (Admin only)
