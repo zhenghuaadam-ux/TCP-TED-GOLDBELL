@@ -298,83 +298,98 @@ h2 {
       </div>
       
       <div style="margin-top: 30px;">
-        <a href="option.html" class="btn" data-i18n="newRequestBtn">Submit Another Request</a>
+        <a href="option.html" class="btn" id="newRequestBtn" data-i18n="newRequestBtn">Submit Another Request</a>
       </div>
     </div>
   </div>
 
   <script>
-    // Generate sequential queue number and save to localStorage
-    function generateQueueNumber() {
-      // Get or initialize queue counter from localStorage
-      let queueCounter = localStorage.getItem('goldbellQueueCounter');
-      if (!queueCounter) {
-        queueCounter = 1;
-      } else {
-        queueCounter = parseInt(queueCounter) + 1;
+    // Generate random 6-digit number for queue number
+    function generateRandomQueueNumber() {
+      // Generate a random 6-digit number
+      const randomNumber = Math.floor(100000 + Math.random() * 900000);
+      return `E${randomNumber}`;
+    }
+
+    // Get customer data from URL parameters or form submission
+    function getCustomerData() {
+      // Try to get from URL parameters first
+      const urlParams = new URLSearchParams(window.location.search);
+      const customerName = urlParams.get('customerName') || 'Customer';
+      const serviceType = urlParams.get('serviceType') || 'General Service';
+      const vehicleNo = urlParams.get('vehicleNo') || '';
+      const contactNo = urlParams.get('contactNo') || '';
+      
+      // If no URL parameters, try to get from localStorage (from form submission)
+      if (customerName === 'Customer') {
+        const formData = JSON.parse(localStorage.getItem('latestFormData') || '{}');
+        return {
+          customerName: formData.customerName || 'Customer',
+          serviceType: formData.serviceType || 'General Service',
+          vehicleNo: formData.vehicleNo || '',
+          contactNo: formData.contactNo || ''
+        };
       }
       
-      // Save updated counter
-      localStorage.setItem('goldbellQueueCounter', queueCounter.toString());
-      
-      // Format as E000001, E000002, etc.
-      return `E${queueCounter.toString().padStart(6, '0')}`;
-    }
-    
-    // Save queue submission to localStorage
-    function saveQueueSubmission(queueNumber, customerData = {}) {
-      // Get existing queue data
-      let queueData = JSON.parse(localStorage.getItem('goldbellQueueData') || '{"submissions": []}');
-      
-      // Create new submission
-      const newSubmission = {
-        queueNumber: queueNumber,
-        customerName: customerData.customerName || 'Customer',
-        serviceType: customerData.serviceType || 'General Service',
-        vehicleNo: customerData.vehicleNo || '',
-        contactNo: customerData.contactNo || '',
-        status: 'waiting',
-        timestamp: new Date().toISOString(),
-        ...customerData
-      };
-      
-      // Add to submissions
-      queueData.submissions.push(newSubmission);
-      
-      // Update total and current
-      queueData.total = queueData.submissions.length;
-      queueData.current = Math.max(...queueData.submissions.map(s => parseInt(s.queueNumber.substring(1))));
-      
-      // Save back to localStorage
-      localStorage.setItem('goldbellQueueData', JSON.stringify(queueData));
-      
-      return newSubmission;
-    }
-    
-    // Get customer data from URL parameters (if coming from form)
-    function getCustomerDataFromURL() {
-      const urlParams = new URLSearchParams(window.location.search);
       return {
-        customerName: urlParams.get('customerName') || 'Customer',
-        serviceType: urlParams.get('serviceType') || 'General Service',
-        vehicleNo: urlParams.get('vehicleNo') || '',
-        contactNo: urlParams.get('contactNo') || ''
+        customerName,
+        serviceType,
+        vehicleNo,
+        contactNo
       };
     }
-    
+
+    // Save queue submission to localStorage
+    function saveQueueSubmission(queueNumber, customerData) {
+      try {
+        // Get existing queue data or initialize
+        const existingData = localStorage.getItem('goldbellQueue');
+        let queueData = existingData ? JSON.parse(existingData) : {
+          total: 0,
+          current: 0,
+          submissions: []
+        };
+        
+        // Create new submission with actual customer data
+        const newSubmission = {
+          queueNumber: queueNumber,
+          customerName: customerData.customerName,
+          serviceType: customerData.serviceType,
+          vehicleNo: customerData.vehicleNo,
+          contactNo: customerData.contactNo,
+          status: "waiting",
+          timestamp: new Date().toISOString()
+        };
+        
+        console.log('Saving submission:', newSubmission);
+        
+        // Add to submissions
+        queueData.submissions.push(newSubmission);
+        queueData.total = queueData.submissions.length;
+        
+        // Save back to localStorage
+        localStorage.setItem('goldbellQueue', JSON.stringify(queueData));
+        
+        console.log('Queue submission saved:', newSubmission);
+        console.log('Current queue data:', queueData);
+        
+      } catch (error) {
+        console.error('Error saving queue submission:', error);
+      }
+    }
+
     // Update the queue number when the page loads
     document.addEventListener('DOMContentLoaded', function() {
       const queueNumberElement = document.getElementById('queueNumber');
-      const customerData = getCustomerDataFromURL();
-      const queueNumber = generateQueueNumber();
-      
-      // Display the queue number
+      const queueNumber = generateRandomQueueNumber();
       queueNumberElement.textContent = queueNumber;
       
-      // Save the submission to localStorage
+      // Get customer data and save the queue submission
+      const customerData = getCustomerData();
       saveQueueSubmission(queueNumber, customerData);
       
-      console.log(`Queue number ${queueNumber} generated and saved for customer:`, customerData.customerName);
+      console.log('Customer data:', customerData);
+      console.log('Queue number generated:', queueNumber);
     });
   </script>
 </body>

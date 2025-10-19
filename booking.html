@@ -244,21 +244,21 @@ input:focus, select:focus {
   display: inline-block;
 }
 
-.btn:first-of-type {
+.btn-primary {
   background: #005bbb;
   color: white;
 }
 
-.btn:first-of-type:hover {
+.btn-primary:hover {
   background: #003d82;
 }
 
-.btn.secondary {
+.btn-secondary {
   background: #e0e0e0;
   color: #333;
 }
 
-.btn.secondary:hover {
+.btn-secondary:hover {
   background: #d0d0d0;
 }
 
@@ -454,8 +454,8 @@ input:focus, select:focus {
         </div>
 
         <div style="margin-top:14px;display:flex;gap:10px;align-items:center;">
-          <button type="submit" id="submitBtn" class="btn"><a href="thankyou.html" class="btn btn-secondary">Submit</a></button>
-          <button type="reset" id="resetBtn" class="btn secondary">Reset</button>
+          <button type="submit" id="submitBtn" class="btn btn-primary">Submit</button>
+          <button type="reset" id="resetBtn" class="btn btn-secondary">Reset</button>
         </div>
 
         <div id="formMessage" class="message" aria-live="polite"></div>
@@ -477,7 +477,9 @@ input:focus, select:focus {
       const otherModelInput = document.getElementById('otherModelInput');
       const otherVehicleModel = document.getElementById('otherVehicleModel');
       const vehicleModelRadios = document.querySelectorAll('input[name="vehicleModel"]');
-      const backBtn = document.getElementById('backBtn');
+      const customerNameInput = document.getElementById('customerName');
+      const vehicleNoInput = document.getElementById('vehicleNo');
+      const companyNameInput = document.getElementById('companyName');
       
       // Initially hide vehicle model section
       vehicleModelSection.style.display = 'none';
@@ -566,7 +568,7 @@ input:focus, select:focus {
         }
       });
       
-      // Form validation
+      // Form submission handler
       form.addEventListener('submit', function(e) {
         e.preventDefault();
         
@@ -578,7 +580,7 @@ input:focus, select:focus {
         let isValid = true;
         
         // Vehicle No validation (Singapore format)
-        const vehicleNo = document.getElementById('vehicleNo').value;
+        const vehicleNo = vehicleNoInput.value;
         const vehicleNoPattern = /^[A-Z]{2,}\d{1,4}[A-Z]$/i;
         if (!vehicleNoPattern.test(vehicleNo)) {
           document.getElementById('vehicleError').style.display = 'block';
@@ -586,7 +588,7 @@ input:focus, select:focus {
         }
         
         // Mileage validation
-        const mileage = document.getElementById('mileage').value;
+        const mileage = mileageInput.value;
         const mileagePattern = /^\d{1,7}$/;
         if (!mileagePattern.test(mileage)) {
           document.getElementById('mileageError').style.display = 'block';
@@ -594,7 +596,7 @@ input:focus, select:focus {
         }
         
         // Contact No validation
-        const contactNo = document.getElementById('contactNo').value;
+        const contactNo = contactInput.value;
         const contactPattern = /^[689]\d{7}$/;
         if (!contactPattern.test(contactNo)) {
           document.getElementById('contactError').style.display = 'block';
@@ -607,7 +609,7 @@ input:focus, select:focus {
         }
         
         // Customer name validation
-        const customerName = document.getElementById('customerName').value;
+        const customerName = customerNameInput.value;
         if (!customerName.trim()) {
           isValid = false;
         }
@@ -622,22 +624,43 @@ input:focus, select:focus {
           otherVehicleModel.style.borderColor = '#ddd';
         }
         
-        // If form is valid, show success message
+        // If form is valid, save data and redirect to thank you page
         if (isValid) {
+          // Get all form data
+          const formData = {
+            customerName: customerNameInput.value,
+            serviceType: serviceType.value,
+            vehicleNo: vehicleNoInput.value,
+            contactNo: contactInput.value,
+            companyName: companyNameInput.value || '',
+            mileage: mileageInput.value
+          };
+          
+          // Get vehicle model data
+          const vehicleModelRadio = document.querySelector('input[name="vehicleModel"]:checked');
+          if (vehicleModelRadio) {
+            if (vehicleModelRadio.value === 'OTHERS') {
+              formData.vehicleModel = otherVehicleModel.value;
+            } else {
+              formData.vehicleModel = vehicleModelRadio.value;
+            }
+          }
+          
+          // Save form data to localStorage
+          localStorage.setItem('latestFormData', JSON.stringify(formData));
+          
+          console.log('Form data saved:', formData);
+          
+          // Show success message
           const message = document.getElementById('formMessage');
-          message.textContent = 'Service request submitted successfully!';
+          message.textContent = 'Service request submitted successfully! Redirecting...';
           message.className = 'message success';
           message.style.display = 'block';
           
-          // Reset form after 3 seconds
+          // Redirect to thank you page after 2 seconds
           setTimeout(() => {
-            form.reset();
-            message.style.display = 'none';
-            vehicleModelSection.style.display = 'none';
-            serviceExamples.style.display = 'none';
-            defaultExample.style.display = 'block';
-            otherModelInput.style.display = 'none';
-          }, 3000);
+            window.location.href = 'thankyou.html';
+          }, 2000);
         } else {
           const message = document.getElementById('formMessage');
           message.textContent = 'Please correct the errors above.';
@@ -665,9 +688,6 @@ input:focus, select:focus {
           otherVehicleModel.style.borderColor = '#ddd';
         }
       });
-      
-      // Back button handler - removed JavaScript interference to allow navigation
-      // The back button will now properly navigate to option.html
     });
   </script>
 </body>
