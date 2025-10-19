@@ -588,10 +588,10 @@
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h3 style="margin: 0;">Queue Management Dashboard</h3>
-                    <p style="margin: 5px 0;">Logged in as: <strong id="loggedInUser">User</strong> <span id="roleBadge" class="role-badge admin-badge">Admin</span></p>
+                    <p style="margin: 5px 0;">Logged in as: <strong id="loggedInUser">Admin</strong> <span id="roleBadge" class="role-badge admin-badge">Admin</span></p>
                     <p style="margin: 0; font-size: 0.9em;" id="counterAssignment">Not assigned to any counter</p>
                 </div>
-                <!-- <button id="logoutBtn" class="btn btn-secondary"><a href="login.html" >Logout</a></button> -->
+                <button id="logoutBtn" class="btn btn-secondary"><a href="login.html">Logout</a></button>
             </div>
         </section>
 
@@ -757,9 +757,12 @@
 
     <script>
         // Queue Management System - Admin Only
-        // Authentication state
-        let authToken = localStorage.getItem('authToken');
-        let currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        // Authentication state - Set default user
+        let authToken = "default-token";
+        let currentUser = {
+            username: "Admin",
+            role: "Admin"
+        };
         let currentCounter = localStorage.getItem('currentCounter') || null;
         
         // Queue data
@@ -834,13 +837,7 @@
         
         // Initialize the application
         function init() {
-            // Check if user is logged in
-            if (!authToken || !currentUser) {
-                // Redirect to login page if not authenticated
-                window.location.href = 'login.html';
-                return;
-            }
-            
+            // Set default user info
             showAuthenticatedUI();
             
             // Load any existing queue data from localStorage
@@ -1016,15 +1013,18 @@
             }
             
             // Clear authentication data
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('currentUser');
             localStorage.removeItem('currentCounter');
-            authToken = null;
-            currentUser = null;
             currentCounter = null;
             
-            // Redirect to login page
-            window.location.href = 'login.html';
+            // Reset to default user
+            currentUser = {
+                username: "Admin",
+                role: "Admin"
+            };
+            
+            // Update UI
+            showAuthenticatedUI();
+            showNotification('Logged out successfully', 'info');
         }
         
         // Handle customer edit form submission (Admin only)
