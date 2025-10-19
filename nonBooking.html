@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>GOLDBELL SERVICE REQUEST</title>
 <style>
+/* Base styles */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -13,82 +14,112 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f5f5f5;
-  color: #333;
+  background: linear-gradient(135deg, #005bbb 0%, #003d82 100%);
+  color: rgb(74, 74, 220);
   line-height: 1.6;
   padding: 20px;
+  min-height: 100vh;
 }
 
 .wrap {
   max-width: 800px;
   margin: 0 auto;
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  position: relative;
 }
 
+/* Header styles */
 header {
-  background: linear-gradient(135deg, #005bbb, #003d82);
-  color: white;
+  background: rgba(255, 255, 255, 0.1);
   padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
   text-align: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   position: relative;
 }
 
 .logo-container {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
   margin-bottom: 15px;
 }
 
 .logo-svg {
-  width: 80px;
-  height: 80px;
-  margin-bottom: 10px;
+  width: 60px;
+  height: 60px;
+  margin-right: 15px;
 }
 
 .logo-text {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
-  color: white;
+  color: #FFD700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 h1 {
-  font-size: 28px;
+  color: #fff;
   margin-bottom: 10px;
+  font-size: 24px;
 }
 
 .website-url {
-  font-size: 16px;
+  color: #FFD700;
+  font-weight: bold;
   margin-bottom: 15px;
-  opacity: 0.9;
 }
 
 .lang {
-  position: absolute;
-  top: 20px;
-  right: 20px;
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .lang label {
-  margin-bottom: 5px;
+  color: #fff;
+  font-weight: 700;
+  margin: 0;
 }
 
 .lang select {
   padding: 5px 10px;
-  border-radius: 4px;
-  border: none;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background: white;
 }
 
+.back-btn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 8px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Card styles */
 .card {
+  background: white;
+  border-radius: 10px;
   padding: 25px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* Form styles */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -103,14 +134,22 @@ label {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
+  color: #003d82;
 }
 
 input, select {
   width: 100%;
   padding: 12px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 5px;
   font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #005bbb;
+  box-shadow: 0 0 0 2px rgba(0, 91, 187, 0.2);
 }
 
 .muted {
@@ -126,102 +165,144 @@ input, select {
   display: none;
 }
 
-.row {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.vehicle-model-section, .service-examples {
-  margin-top: 20px;
+/* Vehicle model section */
+.vehicle-model-section {
+  margin: 15px 0;
   padding: 15px;
-  background-color: #f9f9f9;
+  background: #f8f9fa;
   border-radius: 5px;
   border-left: 4px solid #005bbb;
+}
+
+.vehicle-model-section h4 {
+  margin-bottom: 10px;
+  color: #003d82;
 }
 
 .vehicle-model-options {
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
-  margin-top: 10px;
+  margin-bottom: 15px;
 }
 
 .vehicle-model-options label {
   display: flex;
   align-items: center;
+  gap: 8px;
   font-weight: normal;
-  margin-bottom: 0;
+  cursor: pointer;
 }
 
-.vehicle-model-options input {
+.vehicle-model-options input[type="radio"] {
   width: auto;
-  margin-right: 8px;
+}
+
+.other-model-input {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed #ccc;
+  display: none;
+}
+
+.other-model-input input {
+  margin-top: 8px;
+}
+
+/* Service examples */
+.service-examples {
+  margin: 15px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  border-left: 4px solid #FFD700;
+}
+
+.service-examples h4 {
+  margin-bottom: 10px;
+  color: #003d82;
 }
 
 .service-examples ul {
-  margin-left: 20px;
-  margin-top: 10px;
+  padding-left: 20px;
 }
 
 .service-examples li {
-  margin-bottom: 8px;
+  margin-bottom: 5px;
 }
 
+/* Button styles */
 .btn {
-  padding: 12px 24px;
+  padding: 12px 25px;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: all 0.3s;
+  text-decoration: none;
+  display: inline-block;
 }
 
 .btn:first-of-type {
-  background-color: #005bbb;
+  background: #005bbb;
   color: white;
 }
 
 .btn:first-of-type:hover {
-  background-color: #003d82;
+  background: #003d82;
 }
 
 .btn.secondary {
-  background-color: #e0e0e0;
+  background: #e0e0e0;
   color: #333;
 }
 
 .btn.secondary:hover {
-  background-color: #d0d0d0;
+  background: #d0d0d0;
 }
 
+/* Message styles */
 .message {
+  padding: 12px;
+  border-radius: 5px;
   margin-top: 15px;
-  padding: 10px;
-  border-radius: 4px;
   display: none;
 }
 
 .message.success {
-  background-color: #d4edda;
+  background: #d4edda;
   color: #155724;
   border: 1px solid #c3e6cb;
 }
 
 .message.error {
-  background-color: #f8d7da;
+  background: #f8d7da;
   color: #721c24;
   border: 1px solid #f5c6cb;
 }
 
+/* Responsive styles */
 @media (max-width: 768px) {
   .grid {
     grid-template-columns: 1fr;
   }
   
-  .lang {
-    position: static;
-    align-items: center;
-    margin-top: 15px;
+  .vehicle-model-options {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .back-btn {
+    position: relative;
+    top: auto;
+    right: auto;
+    margin-top: 10px;
   }
 }
 </style>
@@ -280,6 +361,7 @@ input, select {
           <option value="zh">中文</option>
         </select>
       </div>
+      <a href="#" class="back-btn" id="backBtn">Back</a>
     </header>
 
     <!-- Main Form Card -->
@@ -290,8 +372,7 @@ input, select {
             <label id="serviceTypeLabel" data-i18n="serviceType">Service Type</label>
             <select id="serviceType" required>
               <option value="" data-i18n="selectOption">-- Select --</option>
-              <option value="Vehicle Repair" data-i18n="vehicleRepair">Vehicle Repair</option>
-              <option value="Repair Service" data-i18n="repairService">Repair Service</option>
+              <option value="Repair / Service" data-i18n="repairService">Repair / Service</option>
               <option value="Speed Limiter Installation" data-i18n="speedLimiter">Speed Limiter Installation</option>
               <option value="Other Services" data-i18n="otherServices">Other Services</option>
             </select>
@@ -317,6 +398,16 @@ input, select {
                   <input type="radio" name="vehicleModel" value="FUSO" checked />
                   <span>FUSO</span>
                 </label>
+                <label>
+                  <input type="radio" name="vehicleModel" value="OTHERS" />
+                  <span>OTHERS</span>
+                </label>
+              </div>
+              
+              <!-- Other Vehicle Model Input -->
+              <div class="other-model-input" id="otherModelInput">
+                <label for="otherVehicleModel">Please specify vehicle model:</label>
+                <input type="text" id="otherVehicleModel" placeholder="Enter vehicle model (e.g., ISUZU, MITSUBISHI, etc.)" />
               </div>
             </div>
             
@@ -345,7 +436,7 @@ input, select {
 
           <div>
             <label id="companyNameLabel" data-i18n="companyName">Company Name</label>
-            <input id="companyName" type="text" placeholder="e.g. Goldbell Group" />
+            <input id="companyName" type="text" placeholder="e.g. Goldbell Group (Optional)" />
           </div>
 
           <div>
@@ -356,15 +447,15 @@ input, select {
           <div>
             <label id="contactNoLabel" data-i18n="contactNo">Contact No.</label>
             <input id="contactNo" type="text" placeholder="e.g. 91234567" maxlength="8" required aria-describedby="contactHelp" />
-            <div id="contactHelp" class="muted" data-i18n="contactHelp">8 digits only — Singapore mobile number.</div>
-            <div id="contactError" class="error-text" data-i18n="contactError">Must be 8-digit Singapore mobile number.</div>
+            <div id="contactHelp" class="muted" data-i18n="contactHelp">8 digits only — must start with 8, 9, or 6.</div>
+            <div id="contactError" class="error-text" data-i18n="contactError">Must be 8-digit Singapore number starting with 8, 9, or 6.</div>
           </div>
 
         </div>
 
         <div style="margin-top:14px;display:flex;gap:10px;align-items:center;">
-          <button type="submit" id="submitBtn" class="btn" data-i18n="submitBtn"><a href="thankyou.html" >Submit</a></button>
-          <button type="reset" id="resetBtn" class="btn secondary" data-i18n="resetBtn">Reset</button>
+          <button type="submit" id="submitBtn" class="btn">Submit</button>
+          <button type="reset" id="resetBtn" class="btn secondary">Reset</button>
         </div>
 
         <div id="formMessage" class="message" aria-live="polite"></div>
@@ -373,59 +464,65 @@ input, select {
   </div>
 
   <script>
-    // Basic form validation and functionality
     document.addEventListener('DOMContentLoaded', function() {
+      // Form elements
       const form = document.getElementById('jobForm');
       const serviceType = document.getElementById('serviceType');
       const vehicleModelSection = document.getElementById('vehicleModelSection');
       const serviceExamples = document.getElementById('serviceExamples');
       const examplesList = document.getElementById('examplesList');
       const defaultExample = document.getElementById('defaultExample');
+      const mileageInput = document.getElementById('mileage');
+      const contactInput = document.getElementById('contactNo');
+      const otherModelInput = document.getElementById('otherModelInput');
+      const otherVehicleModel = document.getElementById('otherVehicleModel');
+      const vehicleModelRadios = document.querySelectorAll('input[name="vehicleModel"]');
+      const backBtn = document.getElementById('backBtn');
       
       // Initially hide vehicle model section
       vehicleModelSection.style.display = 'none';
       
       // Service type examples
-      const serviceExamplesMap = {
-        'Vehicle Repair': [
-          'Engine repair and maintenance',
-          'Brake system servicing',
-          'Transmission issues',
-          'Electrical system repairs'
-        ],
-        'Repair Service': [
-          'General vehicle maintenance',
-          'Suspension and steering repairs',
-          'Exhaust system repairs',
-          'Cooling system maintenance'
+      const serviceExamplesData = {
+        'Repair / Service': [
+          'Engine diagnostics and repair',
+          'Brake system repair',
+          'Transmission repair',
+          'Electrical system repair',
+          'Suspension and steering repair'
         ],
         'Speed Limiter Installation': [
-          'Installation of speed limiting devices',
-          'Calibration and test drive',
-          'Compliance certification'
+          'Speed limiter device installation',
+          'Calibration and testing',
+          'Compliance certification',
+          'Regular maintenance check'
         ],
         'Other Services': [
-          'Vehicle inspection'
+          'Vehicle inspection',
+          'Road tax renewal assistance',
+          'Insurance claims assistance',
+          'Vehicle customization'
         ]
       };
       
-      // Show/hide vehicle model section based on service type
+      // Service type change handler
       serviceType.addEventListener('change', function() {
         const selectedService = this.value;
         
-        // Show vehicle model section only for Speed Limiter Installation
+        // Show/hide vehicle model section for Speed Limiter Installation
         if (selectedService === 'Speed Limiter Installation') {
           vehicleModelSection.style.display = 'block';
         } else {
           vehicleModelSection.style.display = 'none';
+          otherModelInput.style.display = 'none';
         }
         
         // Update service examples
-        if (selectedService && serviceExamplesMap[selectedService]) {
+        if (selectedService && serviceExamplesData[selectedService]) {
           defaultExample.style.display = 'none';
           examplesList.innerHTML = '';
           
-          serviceExamplesMap[selectedService].forEach(example => {
+          serviceExamplesData[selectedService].forEach(example => {
             const li = document.createElement('li');
             li.textContent = example;
             examplesList.appendChild(li);
@@ -438,77 +535,143 @@ input, select {
         }
       });
       
+      // Vehicle model radio button change handler
+      vehicleModelRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+          if (this.value === 'OTHERS') {
+            otherModelInput.style.display = 'block';
+            otherVehicleModel.required = true;
+          } else {
+            otherModelInput.style.display = 'none';
+            otherVehicleModel.required = false;
+            otherVehicleModel.value = '';
+          }
+        });
+      });
+      
+      // Mileage input validation - only allow numbers
+      mileageInput.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+      });
+      
+      // Contact number input validation - only allow numbers and check first digit
+      contactInput.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        
+        // If first digit is entered and not 6, 8, or 9, show error
+        if (this.value.length > 0 && !['6', '8', '9'].includes(this.value[0])) {
+          document.getElementById('contactError').style.display = 'block';
+        } else {
+          document.getElementById('contactError').style.display = 'none';
+        }
+      });
+      
       // Form validation
       form.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Simple validation
-        let isValid = true;
-        const vehicleNo = document.getElementById('vehicleNo');
-        const mileage = document.getElementById('mileage');
-        const contactNo = document.getElementById('contactNo');
-        const formMessage = document.getElementById('formMessage');
+        // Reset previous errors
+        document.querySelectorAll('.error-text').forEach(el => {
+          el.style.display = 'none';
+        });
         
-        // Vehicle number validation (Singapore format)
-        const vehicleRegex = /^[A-Z]{2,}\d{1,}[A-Z]{1}$/;
-        if (!vehicleRegex.test(vehicleNo.value)) {
+        let isValid = true;
+        
+        // Vehicle No validation (Singapore format)
+        const vehicleNo = document.getElementById('vehicleNo').value;
+        const vehicleNoPattern = /^[A-Z]{2,}\d{1,4}[A-Z]$/i;
+        if (!vehicleNoPattern.test(vehicleNo)) {
           document.getElementById('vehicleError').style.display = 'block';
           isValid = false;
-        } else {
-          document.getElementById('vehicleError').style.display = 'none';
         }
         
-        // Mileage validation (numbers only)
-        const mileageRegex = /^\d+$/;
-        if (!mileageRegex.test(mileage.value) || mileage.value.length > 7) {
+        // Mileage validation
+        const mileage = document.getElementById('mileage').value;
+        const mileagePattern = /^\d{1,7}$/;
+        if (!mileagePattern.test(mileage)) {
           document.getElementById('mileageError').style.display = 'block';
           isValid = false;
-        } else {
-          document.getElementById('mileageError').style.display = 'none';
         }
         
-        // Contact number validation (8 digits)
-        const contactRegex = /^\d{8}$/;
-        if (!contactRegex.test(contactNo.value)) {
+        // Contact No validation
+        const contactNo = document.getElementById('contactNo').value;
+        const contactPattern = /^[689]\d{7}$/;
+        if (!contactPattern.test(contactNo)) {
           document.getElementById('contactError').style.display = 'block';
           isValid = false;
-        } else {
-          document.getElementById('contactError').style.display = 'none';
         }
         
+        // Service type validation
+        if (!serviceType.value) {
+          isValid = false;
+        }
+        
+        // Customer name validation
+        const customerName = document.getElementById('customerName').value;
+        if (!customerName.trim()) {
+          isValid = false;
+        }
+        
+        // If "Others" is selected for vehicle model, validate the input
+        const selectedVehicleModel = document.querySelector('input[name="vehicleModel"]:checked');
+        if (selectedVehicleModel && selectedVehicleModel.value === 'OTHERS' && !otherVehicleModel.value.trim()) {
+          isValid = false;
+          // Add visual indication for required field
+          otherVehicleModel.style.borderColor = '#e74c3c';
+        } else if (otherVehicleModel) {
+          otherVehicleModel.style.borderColor = '#ddd';
+        }
+        
+        // If form is valid, show success message
         if (isValid) {
-          // Show success message
-          formMessage.textContent = 'Form submitted successfully!';
-          formMessage.className = 'message success';
-          formMessage.style.display = 'block';
+          const message = document.getElementById('formMessage');
+          message.textContent = 'Service request submitted successfully!';
+          message.className = 'message success';
+          message.style.display = 'block';
           
-          // Reset form after 2 seconds
+          // Reset form after 3 seconds
           setTimeout(() => {
             form.reset();
-            formMessage.style.display = 'none';
+            message.style.display = 'none';
             vehicleModelSection.style.display = 'none';
             serviceExamples.style.display = 'none';
             defaultExample.style.display = 'block';
-          }, 2000);
+            otherModelInput.style.display = 'none';
+          }, 3000);
         } else {
-          // Show error message
-          formMessage.textContent = 'Please correct the errors above.';
-          formMessage.className = 'message error';
-          formMessage.style.display = 'block';
+          const message = document.getElementById('formMessage');
+          message.textContent = 'Please correct the errors above.';
+          message.className = 'message error';
+          message.style.display = 'block';
         }
       });
       
-      // Reset button functionality
+      // Reset button handler
       document.getElementById('resetBtn').addEventListener('click', function() {
+        document.querySelectorAll('.error-text').forEach(el => {
+          el.style.display = 'none';
+        });
+        
+        const message = document.getElementById('formMessage');
+        message.style.display = 'none';
+        
         vehicleModelSection.style.display = 'none';
         serviceExamples.style.display = 'none';
         defaultExample.style.display = 'block';
-        document.getElementById('formMessage').style.display = 'none';
+        otherModelInput.style.display = 'none';
         
-        // Clear error messages
-        document.getElementById('vehicleError').style.display = 'none';
-        document.getElementById('mileageError').style.display = 'none';
-        document.getElementById('contactError').style.display = 'none';
+        // Reset border color for other vehicle model input
+        if (otherVehicleModel) {
+          otherVehicleModel.style.borderColor = '#ddd';
+        }
+      });
+      
+      // Back button handler
+      backBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        // In a real application, this would navigate back to the previous page
+        // For this demo, we'll just show an alert
+        alert('Back button clicked - would navigate to previous page');
       });
     });
   </script>
