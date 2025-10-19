@@ -666,12 +666,17 @@ input:focus, select:focus {
         }
       });
       
-      // Back button handler
+      // Fixed Back button handler
       backBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        // In a real application, this would navigate back to the previous page
-        // For this demo, we'll just show an alert
-        alert('Back button clicked - would navigate to previous page');
+        // Go back in browser history
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          // If no history, redirect to a default page or show message
+          alert('No previous page in history. Redirecting to home page.');
+          window.location.href = 'index.html'; // Change to your actual home page
+        }
       });
     });
   </script>
