@@ -361,7 +361,7 @@ input:focus, select:focus {
           <option value="zh">中文</option>
         </select>
       </div>
-      <a href="#" class="back-btn" id="backBtn">Back</a>
+      <a href="option.html" class="back-btn" id="backBtn">Back</a>
     </header>
 
     <!-- Main Form Card -->
@@ -666,18 +666,8 @@ input:focus, select:focus {
         }
       });
       
-      // Fixed Back button handler
-      backBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        // Go back in browser history
-        if (window.history.length > 1) {
-          window.history.back();
-        } else {
-          // If no history, redirect to a default page or show message
-          alert('No previous page in history. Redirecting to home page.');
-          window.location.href = 'index.html'; // Change to your actual home page
-        }
-      });
+      // Back button handler - removed JavaScript interference to allow navigation
+      // The back button will now properly navigate to option.html
     });
   </script>
 </body>
