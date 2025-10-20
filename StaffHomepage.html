@@ -262,6 +262,30 @@
             color: white;
         }
         
+        .booking-type-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .walkin-badge {
+            background: #28a745;
+            color: white;
+        }
+        
+        .appointment-badge {
+            background: #6f42c1;
+            color: white;
+        }
+        
+        .online-badge {
+            background: #fd7e14;
+            color: white;
+        }
+        
         .action-buttons {
             display: flex;
             gap: 10px;
@@ -567,6 +591,7 @@
             <div class="queue-number">
                 <h3>Now Serving</h3>
                 <div class="number" id="currentQueueNumber">E000000</div>
+                <div id="bookingTypeBadge" class="booking-type-badge walkin-badge">Walk-in</div>
                 <div class="action-buttons">
                     <button id="nextCustomerBtn" class="btn btn-success">Call Next Customer</button>
                     <button id="callSpecificBtn" class="btn btn-warning">Call Specific Number</button>
@@ -615,6 +640,10 @@
                         <div class="detail-value" id="detailContactNo">-</div>
                     </div>
                     <div class="detail-row">
+                        <div class="detail-label">Booking Type:</div>
+                        <div class="detail-value" id="detailBookingType">-</div>
+                    </div>
+                    <div class="detail-row">
                         <div class="detail-label">Status:</div>
                         <div class="detail-value" id="detailStatus">-</div>
                     </div>
@@ -658,6 +687,17 @@
                         <div>
                             <label for="editContactNo">Contact No.</label>
                             <input type="text" id="editContactNo" name="editContactNo">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label for="editBookingType">Booking Type *</label>
+                            <select id="editBookingType" name="editBookingType" required>
+                                <option value="">-- Select Booking Type --</option>
+                                <option value="Walk-in">Walk-in</option>
+                                <option value="Appointment">Appointment</option>
+                                <option value="Online">Online</option>
+                            </select>
                         </div>
                     </div>
                     <div class="action-buttons">
@@ -753,6 +793,7 @@
         const roleBadge = document.getElementById('roleBadge');
         const counterAssignment = document.getElementById('counterAssignment');
         const currentQueueNumber = document.getElementById('currentQueueNumber');
+        const bookingTypeBadge = document.getElementById('bookingTypeBadge');
         const queueCount = document.getElementById('queueCount');
         const servingQueueCount = document.getElementById('servingQueueCount');
         const completedQueueCount = document.getElementById('completedQueueCount');
@@ -771,6 +812,7 @@
         const detailServiceType = document.getElementById('detailServiceType');
         const detailVehicleNo = document.getElementById('detailVehicleNo');
         const detailContactNo = document.getElementById('detailContactNo');
+        const detailBookingType = document.getElementById('detailBookingType');
         const detailStatus = document.getElementById('detailStatus');
         const detailAddedTime = document.getElementById('detailAddedTime');
         
@@ -780,6 +822,7 @@
         const editServiceType = document.getElementById('editServiceType');
         const editVehicleNo = document.getElementById('editVehicleNo');
         const editContactNo = document.getElementById('editContactNo');
+        const editBookingType = document.getElementById('editBookingType');
         
         // Initialize the application
         function init() {
@@ -827,6 +870,7 @@
                         serviceType: "Vehicle Repair",
                         vehicleNo: "SBA1234A",
                         contactNo: "91234567",
+                        bookingType: "Walk-in",
                         status: "waiting",
                         timestamp: new Date(Date.now() - 30 * 60000).toISOString()
                     },
@@ -836,6 +880,7 @@
                         serviceType: "Speed Limiter Installation",
                         vehicleNo: "SBB5678B",
                         contactNo: "98765432",
+                        bookingType: "Appointment",
                         status: "waiting",
                         timestamp: new Date(Date.now() - 15 * 60000).toISOString()
                     }
@@ -978,6 +1023,7 @@
                 submission.serviceType = editServiceType.value;
                 submission.vehicleNo = editVehicleNo.value;
                 submission.contactNo = editContactNo.value;
+                submission.bookingType = editBookingType.value;
                 
                 saveQueueData();
                 updateQueueDisplay();
@@ -1081,6 +1127,7 @@
                 detailServiceType.textContent = submission.serviceType;
                 detailVehicleNo.textContent = submission.vehicleNo || '-';
                 detailContactNo.textContent = submission.contactNo || '-';
+                detailBookingType.textContent = submission.bookingType || '-';
                 detailStatus.textContent = submission.status;
                 detailAddedTime.textContent = new Date(submission.timestamp).toLocaleString();
                 
@@ -1100,6 +1147,7 @@
                 editServiceType.value = submission.serviceType;
                 editVehicleNo.value = submission.vehicleNo || '';
                 editContactNo.value = submission.contactNo || '';
+                editBookingType.value = submission.bookingType || 'Walk-in';
                 
                 editCustomerForm.classList.remove('hidden');
             }
@@ -1206,6 +1254,16 @@
                 const currentDisplayNumber = 'E' + queue.current.toString().padStart(6, '0');
                 currentQueueNumber.textContent = currentDisplayNumber;
                 
+                // Update booking type badge for current customer
+                const currentSubmission = queue.submissions.find(sub => sub.queueNumber === currentDisplayNumber);
+                if (currentSubmission && currentSubmission.bookingType) {
+                    bookingTypeBadge.textContent = currentSubmission.bookingType;
+                    bookingTypeBadge.className = `booking-type-badge ${getBookingTypeClass(currentSubmission.bookingType)}`;
+                    bookingTypeBadge.style.display = 'inline-block';
+                } else {
+                    bookingTypeBadge.style.display = 'none';
+                }
+                
                 const waitingCount = queue.submissions.filter(sub => sub.status === 'waiting').length;
                 const servingCount = queue.submissions.filter(sub => sub.status === 'serving').length;
                 const completedCount = queue.submissions.filter(sub => sub.status === 'completed').length;
@@ -1223,6 +1281,16 @@
                 
             } catch (error) {
                 console.error('Error updating queue display:', error);
+            }
+        }
+        
+        // Helper function to get booking type CSS class
+        function getBookingTypeClass(bookingType) {
+            switch(bookingType) {
+                case 'Walk-in': return 'walkin-badge';
+                case 'Appointment': return 'appointment-badge';
+                case 'Online': return 'online-badge';
+                default: return 'walkin-badge';
             }
         }
         
@@ -1274,9 +1342,12 @@
                 `;
             }
             
+            const bookingTypeBadgeHTML = submission.bookingType ? 
+                `<span class="booking-type-badge ${getBookingTypeClass(submission.bookingType)}" style="margin-left: 5px;">${submission.bookingType}</span>` : '';
+            
             queueItem.innerHTML = `
                 <div onclick="showCustomerDetails('${submission.queueNumber}')" style="cursor: pointer;">
-                    <strong>${submission.queueNumber}</strong> - ${submission.serviceType}
+                    <strong>${submission.queueNumber}</strong> ${bookingTypeBadgeHTML} - ${submission.serviceType}
                     <div style="font-size: 0.9em; color: #666;">
                         <strong>${submission.customerName}</strong>
                         ${submission.vehicleNo ? '| Vehicle: ' + submission.vehicleNo : ''}
