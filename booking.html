@@ -231,6 +231,20 @@ input:focus, select:focus {
   margin-bottom: 5px;
 }
 
+/* Booking field styles */
+.booking-field {
+  margin: 15px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  border-left: 4px solid #005bbb;
+}
+
+.booking-field h4 {
+  margin-bottom: 10px;
+  color: #003d82;
+}
+
 /* Button styles */
 .btn {
   padding: 12px 25px;
@@ -368,6 +382,11 @@ input:focus, select:focus {
     <div class="card" role="main" id="mainFormCard">
       <form id="jobForm" autocomplete="off" novalidate>
         <div class="grid">
+                      <!-- Booking Field -->
+            <div class="booking-field">
+              <h4>Booked</h4>
+              <div class="muted">This service request is confirmed as booked.</div>
+            </div>
           <div class="full">
             <label id="serviceTypeLabel" data-i18n="serviceType">Service Type</label>
             <select id="serviceType" required>
@@ -418,6 +437,8 @@ input:focus, select:focus {
                 <li id="defaultExample">Select a service type to see examples</li>
               </ul>
             </div>
+            
+
           </div>
 
           <div>
@@ -633,7 +654,8 @@ input:focus, select:focus {
             vehicleNo: vehicleNoInput.value,
             contactNo: contactInput.value,
             companyName: companyNameInput.value || '',
-            mileage: mileageInput.value
+            mileage: mileageInput.value,
+            status: 'Booked'
           };
           
           // Get vehicle model data

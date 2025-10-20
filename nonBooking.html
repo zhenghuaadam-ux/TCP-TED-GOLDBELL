@@ -165,6 +165,19 @@ input:focus, select:focus {
   display: none;
 }
 
+/* Booking field styles */
+.booking-field {
+  margin: 15px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  border-left: 4px solid #005bbb;
+}
+
+.booking-field h4 {
+  margin-bottom: 10px;
+  color: #003d82;
+}
 /* Vehicle model section */
 .vehicle-model-section {
   margin: 15px 0;
@@ -368,7 +381,12 @@ input:focus, select:focus {
     <div class="card" role="main" id="mainFormCard">
       <form id="jobForm" autocomplete="off" novalidate>
         <div class="grid">
+              <div class="booking-field">
+              <h4>Walk In</h4>
+              <div class="muted">This service request is confirmed as Walk In.</div>
+            </div>
           <div class="full">
+            
             <label id="serviceTypeLabel" data-i18n="serviceType">Service Type</label>
             <select id="serviceType" required>
               <option value="" data-i18n="selectOption">-- Select --</option>
