@@ -382,11 +382,13 @@ input:focus, select:focus {
     <div class="card" role="main" id="mainFormCard">
       <form id="jobForm" autocomplete="off" novalidate>
         <div class="grid">
-                      <!-- Booking Field -->
-            <div class="booking-field">
-              <h4>Booked</h4>
-              <div class="muted">This service request is confirmed as booked.</div>
-            </div>
+          <!-- Booking Field -->
+          <div class="booking-field">
+            <h4>Booked</h4>
+            <div class="muted">This service request is confirmed as booked.</div>
+            <input type="hidden" id="bookingType" value="Booked">
+          </div>
+          
           <div class="full">
             <label id="serviceTypeLabel" data-i18n="serviceType">Service Type</label>
             <select id="serviceType" required>
@@ -437,8 +439,6 @@ input:focus, select:focus {
                 <li id="defaultExample">Select a service type to see examples</li>
               </ul>
             </div>
-            
-
           </div>
 
           <div>
@@ -501,6 +501,7 @@ input:focus, select:focus {
       const customerNameInput = document.getElementById('customerName');
       const vehicleNoInput = document.getElementById('vehicleNo');
       const companyNameInput = document.getElementById('companyName');
+      const bookingTypeInput = document.getElementById('bookingType');
       
       // Initially hide vehicle model section
       vehicleModelSection.style.display = 'none';
@@ -651,11 +652,12 @@ input:focus, select:focus {
           const formData = {
             customerName: customerNameInput.value,
             serviceType: serviceType.value,
+            bookingType: bookingTypeInput.value, // This captures "Booked"
             vehicleNo: vehicleNoInput.value,
             contactNo: contactInput.value,
             companyName: companyNameInput.value || '',
             mileage: mileageInput.value,
-            status: 'Booked'
+            status: 'Waiting'
           };
           
           // Get vehicle model data
@@ -668,21 +670,26 @@ input:focus, select:focus {
             }
           }
           
+          // Generate queue number
+          const queueNumber = generateQueueNumber();
+          formData.queueNumber = queueNumber;
+          formData.timestamp = new Date().toISOString();
+          
           // Save form data to localStorage
-          localStorage.setItem('latestFormData', JSON.stringify(formData));
+          saveToQueue(formData);
           
           console.log('Form data saved:', formData);
           
           // Show success message
           const message = document.getElementById('formMessage');
-          message.textContent = 'Service request submitted successfully! Redirecting...';
+          message.textContent = 'Service request submitted successfully! Your queue number is ' + queueNumber + '. Redirecting...';
           message.className = 'message success';
           message.style.display = 'block';
           
-          // Redirect to thank you page after 2 seconds
+          // Redirect to thank you page after 3 seconds
           setTimeout(() => {
-            window.location.href = 'thankyou.html';
-          }, 2000);
+            window.location.href = 'thankyou.html?queue=' + queueNumber;
+          }, 3000);
         } else {
           const message = document.getElementById('formMessage');
           message.textContent = 'Please correct the errors above.';
@@ -690,6 +697,26 @@ input:focus, select:focus {
           message.style.display = 'block';
         }
       });
+      
+      // Generate queue number
+      function generateQueueNumber() {
+        // Get existing queue data
+        let queueData = JSON.parse(localStorage.getItem('goldbellQueue') || '{"submissions": [], "total": 0, "current": 0}');
+        const nextNumber = queueData.total + 1;
+        return 'E' + nextNumber.toString().padStart(6, '0');
+      }
+      
+      // Save to queue system
+      function saveToQueue(formData) {
+        let queueData = JSON.parse(localStorage.getItem('goldbellQueue') || '{"submissions": [], "total": 0, "current": 0}');
+        
+        // Add the new submission
+        queueData.submissions.push(formData);
+        queueData.total += 1;
+        
+        // Save back to localStorage
+        localStorage.setItem('goldbellQueue', JSON.stringify(queueData));
+      }
       
       // Reset button handler
       document.getElementById('resetBtn').addEventListener('click', function() {

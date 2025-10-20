@@ -286,6 +286,11 @@
             color: white;
         }
         
+        .booked-badge {
+            background: #005bbb;
+            color: white;
+        }
+        
         .action-buttons {
             display: flex;
             gap: 10px;
@@ -695,6 +700,7 @@
                             <select id="editBookingType" name="editBookingType" required>
                                 <option value="">-- Select Booking Type --</option>
                                 <option value="Walk-in">Walk-in</option>
+                                <option value="Booked">Booked</option>
                                 <option value="Appointment">Appointment</option>
                                 <option value="Online">Online</option>
                             </select>
@@ -842,7 +848,8 @@
             if (queue.submissions.length > previousCount) {
                 updateQueueDisplay();
                 const newSubmission = queue.submissions[queue.submissions.length - 1];
-                showNotification(`New customer added to queue! ${newSubmission.queueNumber} - ${newSubmission.customerName}`, 'info');
+                const bookingTypeText = newSubmission.bookingType ? ` (${newSubmission.bookingType})` : '';
+                showNotification(`New customer added to queue! ${newSubmission.queueNumber} - ${newSubmission.customerName}${bookingTypeText}`, 'info');
             }
         }
         
@@ -853,6 +860,13 @@
                 if (savedQueue) {
                     const parsed = JSON.parse(savedQueue);
                     queue = { ...queue, ...parsed };
+                    
+                    // Ensure all submissions have bookingType
+                    queue.submissions.forEach(sub => {
+                        if (!sub.bookingType) {
+                            sub.bookingType = 'Walk-in'; // Default to Walk-in if not specified
+                        }
+                    });
                 }
             } catch (error) {
                 console.error('Error loading queue data:', error);
@@ -880,9 +894,19 @@
                         serviceType: "Speed Limiter Installation",
                         vehicleNo: "SBB5678B",
                         contactNo: "98765432",
-                        bookingType: "Appointment",
+                        bookingType: "Booked",
                         status: "waiting",
                         timestamp: new Date(Date.now() - 15 * 60000).toISOString()
+                    },
+                    {
+                        queueNumber: "E100003",
+                        customerName: "Michael Wong",
+                        serviceType: "Other Services",
+                        vehicleNo: "SBC9012C",
+                        contactNo: "81234567",
+                        bookingType: "Booked",
+                        status: "waiting",
+                        timestamp: new Date(Date.now() - 5 * 60000).toISOString()
                     }
                 ];
                 
@@ -982,7 +1006,7 @@
             counterBoxHeader.addEventListener('click', toggleCounterBox);
         }
         
-        // Handle logout - FIXED FUNCTION
+        // Handle logout
         function handleLogout() {
             const confirmLogout = confirm('Are you sure you want to log out?');
             
@@ -1057,8 +1081,9 @@
                 updateQueueDisplay();
                 generateCounters();
                 
+                const bookingTypeText = nextSubmission.bookingType ? ` (${nextSubmission.bookingType})` : '';
                 speak(`Counter ${currentCounter} now serving ${nextSubmission.queueNumber} - ${nextSubmission.customerName}`);
-                showNotification(`Counter ${currentCounter} now serving ${nextSubmission.queueNumber} - ${nextSubmission.customerName}`, 'success');
+                showNotification(`Counter ${currentCounter} now serving ${nextSubmission.queueNumber} - ${nextSubmission.customerName}${bookingTypeText}`, 'success');
             } else {
                 showMessage(specificMessage, 'No more customers in queue', 'info');
             }
@@ -1111,9 +1136,10 @@
             updateQueueDisplay();
             generateCounters();
             
+            const bookingTypeText = submission.bookingType ? ` (${submission.bookingType})` : '';
             speak(`Counter ${currentCounter} now serving ${numberToCall} - ${submission.customerName}`);
-            showMessage(specificMessage, `Counter ${currentCounter} now serving ${numberToCall} - ${submission.customerName}`, 'success');
-            showNotification(`Counter ${currentCounter} now serving ${numberToCall} - ${submission.customerName}`, 'success');
+            showMessage(specificMessage, `Counter ${currentCounter} now serving ${numberToCall} - ${submission.customerName}${bookingTypeText}`, 'success');
+            showNotification(`Counter ${currentCounter} now serving ${numberToCall} - ${submission.customerName}${bookingTypeText}`, 'success');
             callSpecificForm.classList.add('hidden');
             specificNumber.value = '';
         }
@@ -1127,7 +1153,7 @@
                 detailServiceType.textContent = submission.serviceType;
                 detailVehicleNo.textContent = submission.vehicleNo || '-';
                 detailContactNo.textContent = submission.contactNo || '-';
-                detailBookingType.textContent = submission.bookingType || '-';
+                detailBookingType.textContent = submission.bookingType || 'Walk-in';
                 detailStatus.textContent = submission.status;
                 detailAddedTime.textContent = new Date(submission.timestamp).toLocaleString();
                 
@@ -1211,8 +1237,9 @@
                 updateQueueDisplay();
                 generateCounters();
                 
+                const bookingTypeText = submission.bookingType ? ` (${submission.bookingType})` : '';
                 speak(`Counter ${currentCounter} now serving recalled customer ${queueNumber} - ${submission.customerName}`);
-                showNotification(`Counter ${currentCounter} now serving recalled customer ${queueNumber} - ${submission.customerName}`, 'success');
+                showNotification(`Counter ${currentCounter} now serving recalled customer ${queueNumber} - ${submission.customerName}${bookingTypeText}`, 'success');
             }
         }
         
@@ -1220,14 +1247,15 @@
         function deleteMissedCustomer(queueNumber) {
             const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
             const customerName = submission ? submission.customerName : 'Unknown';
+            const bookingType = submission && submission.bookingType ? ` (${submission.bookingType})` : '';
             
-            if (confirm(`Are you sure you want to permanently delete customer ${queueNumber} - ${customerName} from the missed queue?`)) {
+            if (confirm(`Are you sure you want to permanently delete customer ${queueNumber} - ${customerName}${bookingType} from the missed queue?`)) {
                 const index = queue.submissions.findIndex(sub => sub.queueNumber === queueNumber);
                 if (index !== -1) {
                     queue.submissions.splice(index, 1);
                     saveQueueData();
                     updateQueueDisplay();
-                    showNotification(`Customer ${queueNumber} - ${customerName} deleted from missed queue`, 'success');
+                    showNotification(`Customer ${queueNumber} - ${customerName}${bookingType} deleted from missed queue`, 'success');
                 }
             }
         }
@@ -1288,6 +1316,7 @@
         function getBookingTypeClass(bookingType) {
             switch(bookingType) {
                 case 'Walk-in': return 'walkin-badge';
+                case 'Booked': return 'booked-badge';
                 case 'Appointment': return 'appointment-badge';
                 case 'Online': return 'online-badge';
                 default: return 'walkin-badge';
