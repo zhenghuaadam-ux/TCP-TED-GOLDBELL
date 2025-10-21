@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>GOLDBELL SERVICE REQUEST - Thank You</title>
 <style>
 /* Base styles */
@@ -306,7 +306,7 @@ h2 {
       
       <div class="queue-number">
         <h3 id="queueNumberLabel" data-i18n="queueNumberLabel">Your Queue Number:</h3>
-        <div class="number" id="queueNumber">E123456</div>
+        <div class="number" id="queueNumber">E000000</div>
       </div>
       
       <div class="instructions">
@@ -354,7 +354,11 @@ h2 {
           customerName: formData.customerName || 'Customer',
           serviceType: formData.serviceType || 'General Service',
           vehicleNo: formData.vehicleNo || '',
-          contactNo: formData.contactNo || ''
+          contactNo: formData.contactNo || '',
+          companyName: formData.companyName || '',
+          mileage: formData.mileage || '',
+          vehicleModel: formData.vehicleModel || '',
+          bookingType: formData.bookingType || 'Walk-in'
         };
       }
       
@@ -384,6 +388,10 @@ h2 {
           serviceType: customerData.serviceType,
           vehicleNo: customerData.vehicleNo,
           contactNo: customerData.contactNo,
+          companyName: customerData.companyName || '',
+          mileage: customerData.mileage || '',
+          vehicleModel: customerData.vehicleModel || '',
+          bookingType: customerData.bookingType || 'Walk-in',
           status: "waiting",
           timestamp: new Date().toISOString()
         };

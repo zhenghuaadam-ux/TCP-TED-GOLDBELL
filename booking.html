@@ -384,7 +384,7 @@ input:focus, select:focus {
       <form id="jobForm" autocomplete="off" novalidate>
         <div class="grid">
           <!-- Booking Field -->
-          <div class="booking-field">
+          <div class="booking-field full">
             <h4>Booked</h4>
             <div class="muted">This service request is confirmed as booked.</div>
             <input type="hidden" id="bookingType" value="Booked">
@@ -638,8 +638,8 @@ input:focus, select:focus {
             vehicleNo: vehicleNoInput.value,
             contactNo: contactInput.value,
             mileage: mileageInput.value,
-            status: 'waiting',
-            customerName: 'Customer' // Default for booked forms
+            customerName: 'Customer', // Default for booked forms
+            status: 'waiting'
           };
           
           // Get vehicle model data
@@ -652,10 +652,8 @@ input:focus, select:focus {
             }
           }
           
-          // Generate random queue number and save to queue
-          const queueNumber = saveToQueue(formData);
-          
-          console.log('Form data saved:', formData);
+          // Save form data to localStorage for thank you page
+          localStorage.setItem('latestFormData', JSON.stringify(formData));
           
           // Show success message
           const message = document.getElementById('formMessage');
@@ -665,7 +663,7 @@ input:focus, select:focus {
           
           // Redirect to thank you page after 3 seconds
           setTimeout(() => {
-            window.location.href = 'thankyou.html?queue=' + queueNumber;
+            window.location.href = 'thankyou.html';
           }, 3000);
         } else {
           const message = document.getElementById('formMessage');
@@ -674,45 +672,6 @@ input:focus, select:focus {
           message.style.display = 'block';
         }
       });
-      
-      // Generate random queue number (E + 6 random digits)
-      function generateRandomQueueNumber() {
-        const usedNumbers = getUsedQueueNumbers();
-        let queueNumber;
-        
-        // Generate unique random number
-        do {
-          const randomNum = Math.floor(100000 + Math.random() * 900000); // 6-digit number
-          queueNumber = 'E' + randomNum;
-        } while (usedNumbers.includes(queueNumber));
-        
-        return queueNumber;
-      }
-      
-      // Get all used queue numbers from localStorage
-      function getUsedQueueNumbers() {
-        const queueData = JSON.parse(localStorage.getItem('goldbellQueue') || '{"submissions": []}');
-        return queueData.submissions.map(sub => sub.queueNumber);
-      }
-      
-      // Save to queue system and return queue number
-      function saveToQueue(formData) {
-        let queueData = JSON.parse(localStorage.getItem('goldbellQueue') || '{"submissions": [], "total": 0}');
-        
-        // Generate random queue number
-        const queueNumber = generateRandomQueueNumber();
-        formData.queueNumber = queueNumber;
-        formData.timestamp = new Date().toISOString();
-        
-        // Add the new submission
-        queueData.submissions.push(formData);
-        queueData.total += 1;
-        
-        // Save back to localStorage
-        localStorage.setItem('goldbellQueue', JSON.stringify(queueData));
-        
-        return queueNumber;
-      }
       
       // Reset button handler
       document.getElementById('resetBtn').addEventListener('click', function() {
