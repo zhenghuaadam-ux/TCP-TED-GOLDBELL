@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Goldbell Queue Management System - Dashboard</title>
     <style>
+        /* All the same CSS styles as before - they remain unchanged */
         :root {
             --blue: #005bbb;
             --light: #f4f8fb;
@@ -291,6 +292,18 @@
             color: white;
         }
         
+        .priority-badge {
+            background: #dc3545;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
         .action-buttons {
             display: flex;
             gap: 10px;
@@ -517,6 +530,24 @@
             background: #c9302c;
         }
         
+        .sms-notification {
+            background: #e8f5e8;
+            border-left: 4px solid var(--success);
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .sms-link {
+            color: var(--success);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .sms-link:hover {
+            text-decoration: underline;
+        }
+        
         @media (max-width: 768px) {
             .action-buttons {
                 flex-direction: column;
@@ -592,6 +623,14 @@
                 </div>
             </div>
 
+            <!-- SMS Notification Section -->
+            <div id="smsNotification" class="sms-notification hidden">
+                <h4>SMS Notification Sent</h4>
+                <p id="smsMessage">SMS has been sent to the customer with their queue information.</p>
+                <p><strong>Message:</strong> <span id="smsContent"></span></p>
+                <p><a id="smsLink" href="#" class="sms-link">Click here to open SMS app</a></p>
+            </div>
+
             <!-- Current Queue Display -->
             <div class="queue-number">
                 <h3>Now Serving</h3>
@@ -645,6 +684,18 @@
                         <div class="detail-value" id="detailContactNo">-</div>
                     </div>
                     <div class="detail-row">
+                        <div class="detail-label">Company Name:</div>
+                        <div class="detail-value" id="detailCompanyName">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Mileage:</div>
+                        <div class="detail-value" id="detailMileage">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Vehicle Model:</div>
+                        <div class="detail-value" id="detailVehicleModel">-</div>
+                    </div>
+                    <div class="detail-row">
                         <div class="detail-label">Booking Type:</div>
                         <div class="detail-value" id="detailBookingType">-</div>
                     </div>
@@ -659,6 +710,7 @@
                     <div class="action-buttons">
                         <button id="closeDetailsBtn" class="btn btn-secondary">Close Details</button>
                         <button id="editCustomerBtn" class="btn">Edit Customer</button>
+                        <button id="sendSMSBtn" class="btn btn-success">Send SMS Notification</button>
                     </div>
                 </div>
             </div>
@@ -677,8 +729,7 @@
                             <label for="editServiceType">Service Type *</label>
                             <select id="editServiceType" name="editServiceType" required>
                                 <option value="">-- Select Service --</option>
-                                <option value="Vehicle Repair">Vehicle Repair</option>
-                                <option value="Repair Service">Repair Service</option>
+                                <option value="Repair / Service">Repair / Service</option>
                                 <option value="Speed Limiter Installation">Speed Limiter Installation</option>
                                 <option value="Other Services">Other Services</option>
                             </select>
@@ -694,7 +745,21 @@
                             <input type="text" id="editContactNo" name="editContactNo">
                         </div>
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label for="editCompanyName">Company Name</label>
+                            <input type="text" id="editCompanyName" name="editCompanyName">
+                        </div>
+                        <div>
+                            <label for="editMileage">Mileage</label>
+                            <input type="text" id="editMileage" name="editMileage">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label for="editVehicleModel">Vehicle Model</label>
+                            <input type="text" id="editVehicleModel" name="editVehicleModel">
+                        </div>
                         <div>
                             <label for="editBookingType">Booking Type *</label>
                             <select id="editBookingType" name="editBookingType" required>
@@ -811,6 +876,11 @@
         const counterBoxHeader = document.getElementById('counterBoxHeader');
         const counterBoxContent = document.getElementById('counterBoxContent');
         const toggleIcon = document.querySelector('.toggle-icon');
+        const smsNotification = document.getElementById('smsNotification');
+        const smsMessage = document.getElementById('smsMessage');
+        const smsContent = document.getElementById('smsContent');
+        const smsLink = document.getElementById('smsLink');
+        const sendSMSBtn = document.getElementById('sendSMSBtn');
         
         // Detail elements
         const detailQueueNumber = document.getElementById('detailQueueNumber');
@@ -818,6 +888,9 @@
         const detailServiceType = document.getElementById('detailServiceType');
         const detailVehicleNo = document.getElementById('detailVehicleNo');
         const detailContactNo = document.getElementById('detailContactNo');
+        const detailCompanyName = document.getElementById('detailCompanyName');
+        const detailMileage = document.getElementById('detailMileage');
+        const detailVehicleModel = document.getElementById('detailVehicleModel');
         const detailBookingType = document.getElementById('detailBookingType');
         const detailStatus = document.getElementById('detailStatus');
         const detailAddedTime = document.getElementById('detailAddedTime');
@@ -828,6 +901,9 @@
         const editServiceType = document.getElementById('editServiceType');
         const editVehicleNo = document.getElementById('editVehicleNo');
         const editContactNo = document.getElementById('editContactNo');
+        const editCompanyName = document.getElementById('editCompanyName');
+        const editMileage = document.getElementById('editMileage');
+        const editVehicleModel = document.getElementById('editVehicleModel');
         const editBookingType = document.getElementById('editBookingType');
         
         // Initialize the application
@@ -837,20 +913,6 @@
             generateCounters();
             setupEventListeners();
             updateQueueDisplay();
-            setInterval(checkForNewSubmissions, 2000);
-        }
-        
-        // Check for new submissions and update display
-        function checkForNewSubmissions() {
-            const previousCount = queue.submissions.length;
-            loadQueueData();
-            
-            if (queue.submissions.length > previousCount) {
-                updateQueueDisplay();
-                const newSubmission = queue.submissions[queue.submissions.length - 1];
-                const bookingTypeText = newSubmission.bookingType ? ` (${newSubmission.bookingType})` : '';
-                showNotification(`New customer added to queue! ${newSubmission.queueNumber} - ${newSubmission.customerName}${bookingTypeText}`, 'info');
-            }
         }
         
         // Load queue data from localStorage
@@ -861,10 +923,16 @@
                     const parsed = JSON.parse(savedQueue);
                     queue = { ...queue, ...parsed };
                     
-                    // Ensure all submissions have bookingType
+                    // Ensure all submissions have required fields
                     queue.submissions.forEach(sub => {
                         if (!sub.bookingType) {
                             sub.bookingType = 'Walk-in'; // Default to Walk-in if not specified
+                        }
+                        if (!sub.status) {
+                            sub.status = 'waiting'; // Default status
+                        }
+                        if (!sub.customerName) {
+                            sub.customerName = 'Customer'; // Default for Booked forms
                         }
                     });
                 }
@@ -881,9 +949,12 @@
                     {
                         queueNumber: "E100001",
                         customerName: "John Lee",
-                        serviceType: "Vehicle Repair",
+                        serviceType: "Repair / Service",
                         vehicleNo: "SBA1234A",
                         contactNo: "91234567",
+                        companyName: "Goldbell Group",
+                        mileage: "12345",
+                        vehicleModel: "TOYOTA",
                         bookingType: "Walk-in",
                         status: "waiting",
                         timestamp: new Date(Date.now() - 30 * 60000).toISOString()
@@ -894,19 +965,25 @@
                         serviceType: "Speed Limiter Installation",
                         vehicleNo: "SBB5678B",
                         contactNo: "98765432",
+                        companyName: "Tan Transport",
+                        mileage: "67890",
+                        vehicleModel: "HINO",
                         bookingType: "Booked",
                         status: "waiting",
                         timestamp: new Date(Date.now() - 15 * 60000).toISOString()
                     },
                     {
-                        queueNumber: "E100003",
+                        queueNumber: "E100003", 
                         customerName: "Michael Wong",
                         serviceType: "Other Services",
                         vehicleNo: "SBC9012C",
-                        contactNo: "81234567",
+                        contactNo: "87654321",
+                        companyName: "Wong Logistics",
+                        mileage: "54321",
+                        vehicleModel: "NISSAN",
                         bookingType: "Booked",
                         status: "waiting",
-                        timestamp: new Date(Date.now() - 5 * 60000).toISOString()
+                        timestamp: new Date(Date.now() - 10 * 60000).toISOString()
                     }
                 ];
                 
@@ -1004,6 +1081,7 @@
             editCustomerBtn.addEventListener('click', showEditForm);
             cancelEditBtn.addEventListener('click', () => editCustomerForm.classList.add('hidden'));
             counterBoxHeader.addEventListener('click', toggleCounterBox);
+            sendSMSBtn.addEventListener('click', sendSMSNotification);
         }
         
         // Handle logout
@@ -1047,6 +1125,9 @@
                 submission.serviceType = editServiceType.value;
                 submission.vehicleNo = editVehicleNo.value;
                 submission.contactNo = editContactNo.value;
+                submission.companyName = editCompanyName.value;
+                submission.mileage = editMileage.value;
+                submission.vehicleModel = editVehicleModel.value;
                 submission.bookingType = editBookingType.value;
                 
                 saveQueueData();
@@ -1066,7 +1147,10 @@
                 return;
             }
             
-            const nextSubmission = queue.submissions.find(sub => sub.status === 'waiting');
+            // Get all waiting customers, with Booked customers first
+            const waitingCustomers = getPrioritizedWaitingCustomers();
+            
+            const nextSubmission = waitingCustomers.length > 0 ? waitingCustomers[0] : null;
             
             if (nextSubmission) {
                 nextSubmission.status = 'serving';
@@ -1083,10 +1167,35 @@
                 
                 const bookingTypeText = nextSubmission.bookingType ? ` (${nextSubmission.bookingType})` : '';
                 speak(`Counter ${currentCounter} now serving ${nextSubmission.queueNumber} - ${nextSubmission.customerName}`);
+                
+                // Send SMS notification
+                sendSMS(nextSubmission);
+                
                 showNotification(`Counter ${currentCounter} now serving ${nextSubmission.queueNumber} - ${nextSubmission.customerName}${bookingTypeText}`, 'success');
             } else {
                 showMessage(specificMessage, 'No more customers in queue', 'info');
             }
+        }
+        
+        // Get waiting customers with Booked customers prioritized
+        function getPrioritizedWaitingCustomers() {
+            // Filter out general service customers
+            const waitingCustomers = queue.submissions.filter(sub => 
+                sub.status === 'waiting' && sub.serviceType !== 'General Service'
+            );
+            
+            // Separate Booked customers from others
+            const bookedCustomers = waitingCustomers.filter(sub => sub.bookingType === 'Booked');
+            const otherCustomers = waitingCustomers.filter(sub => sub.bookingType !== 'Booked');
+            
+            // Sort Booked customers by timestamp (oldest first)
+            bookedCustomers.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            
+            // Sort other customers by timestamp (oldest first)
+            otherCustomers.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            
+            // Return Booked customers first, then others
+            return [...bookedCustomers, ...otherCustomers];
         }
         
         // Call specific number
@@ -1138,10 +1247,74 @@
             
             const bookingTypeText = submission.bookingType ? ` (${submission.bookingType})` : '';
             speak(`Counter ${currentCounter} now serving ${numberToCall} - ${submission.customerName}`);
+            
+            // Send SMS notification
+            sendSMS(submission);
+            
             showMessage(specificMessage, `Counter ${currentCounter} now serving ${numberToCall} - ${submission.customerName}${bookingTypeText}`, 'success');
             showNotification(`Counter ${currentCounter} now serving ${numberToCall} - ${submission.customerName}${bookingTypeText}`, 'success');
             callSpecificForm.classList.add('hidden');
             specificNumber.value = '';
+        }
+        
+        // Send SMS notification to customer
+        function sendSMS(submission) {
+            if (!submission.contactNo) {
+                console.log('No contact number available for SMS notification');
+                return;
+            }
+            
+            const message = `Goldbell Service: Your queue number ${submission.queueNumber} has been called. Please proceed to Counter ${submission.counter}. Thank you.`;
+            const smsUrl = `sms:${submission.contactNo}?body=${encodeURIComponent(message)}`;
+            
+            // Update SMS notification display
+            smsMessage.textContent = `SMS sent to ${submission.customerName} (${submission.contactNo})`;
+            smsContent.textContent = message;
+            smsLink.href = smsUrl;
+            smsNotification.classList.remove('hidden');
+            
+            // Auto-hide SMS notification after 10 seconds
+            setTimeout(() => {
+                smsNotification.classList.add('hidden');
+            }, 10000);
+            
+            // Log the SMS action
+            console.log(`SMS sent to ${submission.contactNo}: ${message}`);
+        }
+        
+        // Send SMS notification manually from customer details
+        function sendSMSNotification() {
+            const queueNumber = detailQueueNumber.textContent;
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            
+            if (submission) {
+                if (!submission.contactNo) {
+                    showNotification('No contact number available for this customer', 'error');
+                    return;
+                }
+                
+                let message;
+                if (submission.status === 'serving') {
+                    message = `Goldbell Service: Your queue number ${submission.queueNumber} has been called. Please proceed to Counter ${submission.counter || 'the assigned counter'}. Thank you.`;
+                } else {
+                    message = `Goldbell Service: Your queue number is ${submission.queueNumber}. Current status: ${submission.status}. We will notify you when it's your turn. Thank you.`;
+                }
+                
+                const smsUrl = `sms:${submission.contactNo}?body=${encodeURIComponent(message)}`;
+                
+                // Update SMS notification display
+                smsMessage.textContent = `SMS sent to ${submission.customerName} (${submission.contactNo})`;
+                smsContent.textContent = message;
+                smsLink.href = smsUrl;
+                smsNotification.classList.remove('hidden');
+                
+                // Auto-hide SMS notification after 10 seconds
+                setTimeout(() => {
+                    smsNotification.classList.add('hidden');
+                }, 10000);
+                
+                showNotification(`SMS notification sent to ${submission.customerName}`, 'success');
+            }
         }
         
         // Show customer details
@@ -1149,15 +1322,19 @@
             const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
             if (submission) {
                 detailQueueNumber.textContent = submission.queueNumber;
-                detailCustomerName.textContent = submission.customerName;
-                detailServiceType.textContent = submission.serviceType;
+                detailCustomerName.textContent = submission.customerName || '-';
+                detailServiceType.textContent = submission.serviceType || '-';
                 detailVehicleNo.textContent = submission.vehicleNo || '-';
                 detailContactNo.textContent = submission.contactNo || '-';
+                detailCompanyName.textContent = submission.companyName || '-';
+                detailMileage.textContent = submission.mileage || '-';
+                detailVehicleModel.textContent = submission.vehicleModel || '-';
                 detailBookingType.textContent = submission.bookingType || 'Walk-in';
-                detailStatus.textContent = submission.status;
-                detailAddedTime.textContent = new Date(submission.timestamp).toLocaleString();
+                detailStatus.textContent = submission.status || '-';
+                detailAddedTime.textContent = submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '-';
                 
                 editCustomerBtn.classList.remove('hidden');
+                sendSMSBtn.classList.remove('hidden');
                 customerDetailsView.classList.remove('hidden');
             }
         }
@@ -1169,10 +1346,13 @@
             
             if (submission) {
                 editQueueNumber.value = submission.queueNumber;
-                editCustomerName.value = submission.customerName;
-                editServiceType.value = submission.serviceType;
+                editCustomerName.value = submission.customerName || '';
+                editServiceType.value = submission.serviceType || '';
                 editVehicleNo.value = submission.vehicleNo || '';
                 editContactNo.value = submission.contactNo || '';
+                editCompanyName.value = submission.companyName || '';
+                editMileage.value = submission.mileage || '';
+                editVehicleModel.value = submission.vehicleModel || '';
                 editBookingType.value = submission.bookingType || 'Walk-in';
                 
                 editCustomerForm.classList.remove('hidden');
@@ -1239,6 +1419,10 @@
                 
                 const bookingTypeText = submission.bookingType ? ` (${submission.bookingType})` : '';
                 speak(`Counter ${currentCounter} now serving recalled customer ${queueNumber} - ${submission.customerName}`);
+                
+                // Send SMS notification for recalled customer
+                sendSMS(submission);
+                
                 showNotification(`Counter ${currentCounter} now serving recalled customer ${queueNumber} - ${submission.customerName}${bookingTypeText}`, 'success');
             }
         }
@@ -1292,7 +1476,11 @@
                     bookingTypeBadge.style.display = 'none';
                 }
                 
-                const waitingCount = queue.submissions.filter(sub => sub.status === 'waiting').length;
+                // Filter out general service customers from waiting queue count
+                const waitingCount = queue.submissions.filter(sub => 
+                    sub.status === 'waiting' && sub.serviceType !== 'General Service'
+                ).length;
+                
                 const servingCount = queue.submissions.filter(sub => sub.status === 'serving').length;
                 const completedCount = queue.submissions.filter(sub => sub.status === 'completed').length;
                 const missedCount = queue.submissions.filter(sub => sub.status === 'missed').length;
@@ -1325,7 +1513,15 @@
         
         // Helper function to update individual queue lists
         function updateQueueList(status, listElement, count) {
-            const submissions = queue.submissions.filter(sub => sub.status === status);
+            let submissions;
+            
+            // For waiting queue, filter out general service customers and prioritize Booked
+            if (status === 'waiting') {
+                submissions = getPrioritizedWaitingCustomers();
+            } else {
+                submissions = queue.submissions.filter(sub => sub.status === status);
+            }
+            
             listElement.innerHTML = '';
             
             if (submissions.length === 0) {
@@ -1335,7 +1531,7 @@
             
             const sortedSubmissions = status === 'completed' ? 
                 submissions.slice(-20).reverse() :
-                submissions.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                submissions;
             
             sortedSubmissions.forEach(submission => {
                 const queueItem = createQueueItem(submission, status);
@@ -1371,14 +1567,18 @@
                 `;
             }
             
+            // Add priority badge for Booked customers
+            const priorityBadgeHTML = submission.bookingType === 'Booked' ? 
+                `<span class="booking-type-badge priority-badge" style="margin-left: 5px;">PRIORITY</span>` : '';
+            
             const bookingTypeBadgeHTML = submission.bookingType ? 
                 `<span class="booking-type-badge ${getBookingTypeClass(submission.bookingType)}" style="margin-left: 5px;">${submission.bookingType}</span>` : '';
             
             queueItem.innerHTML = `
                 <div onclick="showCustomerDetails('${submission.queueNumber}')" style="cursor: pointer;">
-                    <strong>${submission.queueNumber}</strong> ${bookingTypeBadgeHTML} - ${submission.serviceType}
+                    <strong>${submission.queueNumber}</strong> ${bookingTypeBadgeHTML} ${priorityBadgeHTML} - ${submission.serviceType}
                     <div style="font-size: 0.9em; color: #666;">
-                        <strong>${submission.customerName}</strong>
+                        <strong>${submission.customerName || 'Customer'}</strong>
                         ${submission.vehicleNo ? '| Vehicle: ' + submission.vehicleNo : ''}
                         ${submission.contactNo ? '| Contact: ' + submission.contactNo : ''}
                     </div>
@@ -1396,7 +1596,7 @@
         function getQueueItemTimeText(submission, status) {
             switch(status) {
                 case 'waiting':
-                    return `Added: ${new Date(submission.timestamp).toLocaleTimeString()}`;
+                    return `Added: ${submission.timestamp ? new Date(submission.timestamp).toLocaleTimeString() : 'N/A'}`;
                 case 'serving':
                     return `Serving at: Counter ${submission.counter || 'N/A'} | Called: ${submission.calledAt ? new Date(submission.calledAt).toLocaleTimeString() : 'N/A'}`;
                 case 'completed':
@@ -1404,7 +1604,7 @@
                 case 'missed':
                     return `Missed: ${submission.missedAt ? new Date(submission.missedAt).toLocaleTimeString() : 'N/A'} ${submission.missedBy ? '| By: ' + submission.missedBy : ''}`;
                 default:
-                    return `Added: ${new Date(submission.timestamp).toLocaleTimeString()}`;
+                    return `Added: ${submission.timestamp ? new Date(submission.timestamp).toLocaleTimeString() : 'N/A'}`;
             }
         }
         
@@ -1418,7 +1618,17 @@
             updateCounterAssignmentDisplay();
             updateQueueDisplay();
             
-            setInterval(updateQueueDisplay, 3000);
+            // Check for new submissions every 3 seconds
+            setInterval(() => {
+                const previousCount = queue.submissions.length;
+                loadQueueData();
+                if (queue.submissions.length > previousCount) {
+                    updateQueueDisplay();
+                    const newSubmission = queue.submissions[queue.submissions.length - 1];
+                    const bookingTypeText = newSubmission.bookingType ? ` (${newSubmission.bookingType})` : '';
+                    showNotification(`New customer added to queue! ${newSubmission.queueNumber} - ${newSubmission.customerName || 'Customer'}${bookingTypeText}`, 'info');
+                }
+            }, 3000);
         }
         
         // Show message

@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GOLDBELL SERVICE REQUEST</title>
+<title>GOLDBELL SERVICE REQUEST - WALK IN</title>
 <style>
+/* All CSS remains the same as before */
 /* Base styles */
 * {
   box-sizing: border-box;
@@ -384,6 +385,7 @@ input:focus, select:focus {
               <div class="booking-field">
               <h4>Walk In</h4>
               <div class="muted">This service request is confirmed as Walk In.</div>
+              <input type="hidden" id="bookingType" value="Walk-in">
             </div>
           <div class="full">
             
@@ -498,6 +500,7 @@ input:focus, select:focus {
       const customerNameInput = document.getElementById('customerName');
       const vehicleNoInput = document.getElementById('vehicleNo');
       const companyNameInput = document.getElementById('companyName');
+      const bookingTypeInput = document.getElementById('bookingType');
       
       // Initially hide vehicle model section
       vehicleModelSection.style.display = 'none';
@@ -648,10 +651,12 @@ input:focus, select:focus {
           const formData = {
             customerName: customerNameInput.value,
             serviceType: serviceType.value,
+            bookingType: bookingTypeInput.value, // This captures "Walk-in"
             vehicleNo: vehicleNoInput.value,
             contactNo: contactInput.value,
             companyName: companyNameInput.value || '',
-            mileage: mileageInput.value
+            mileage: mileageInput.value,
+            status: 'waiting'
           };
           
           // Get vehicle model data
@@ -664,8 +669,8 @@ input:focus, select:focus {
             }
           }
           
-          // Save form data to localStorage
-          localStorage.setItem('latestFormData', JSON.stringify(formData));
+          // Generate random queue number and save to queue
+          const queueNumber = saveToQueue(formData);
           
           console.log('Form data saved:', formData);
           
@@ -675,10 +680,10 @@ input:focus, select:focus {
           message.className = 'message success';
           message.style.display = 'block';
           
-          // Redirect to thank you page after 2 seconds
+          // Redirect to thank you page after 3 seconds
           setTimeout(() => {
-            window.location.href = 'thankyou.html';
-          }, 2000);
+            window.location.href = 'thankyou.html?queue=' + queueNumber;
+          }, 3000);
         } else {
           const message = document.getElementById('formMessage');
           message.textContent = 'Please correct the errors above.';
@@ -686,6 +691,45 @@ input:focus, select:focus {
           message.style.display = 'block';
         }
       });
+      
+      // Generate random queue number (E + 6 random digits)
+      function generateRandomQueueNumber() {
+        const usedNumbers = getUsedQueueNumbers();
+        let queueNumber;
+        
+        // Generate unique random number
+        do {
+          const randomNum = Math.floor(100000 + Math.random() * 900000); // 6-digit number
+          queueNumber = 'E' + randomNum;
+        } while (usedNumbers.includes(queueNumber));
+        
+        return queueNumber;
+      }
+      
+      // Get all used queue numbers from localStorage
+      function getUsedQueueNumbers() {
+        const queueData = JSON.parse(localStorage.getItem('goldbellQueue') || '{"submissions": []}');
+        return queueData.submissions.map(sub => sub.queueNumber);
+      }
+      
+      // Save to queue system and return queue number
+      function saveToQueue(formData) {
+        let queueData = JSON.parse(localStorage.getItem('goldbellQueue') || '{"submissions": [], "total": 0}');
+        
+        // Generate random queue number
+        const queueNumber = generateRandomQueueNumber();
+        formData.queueNumber = queueNumber;
+        formData.timestamp = new Date().toISOString();
+        
+        // Add the new submission
+        queueData.submissions.push(formData);
+        queueData.total += 1;
+        
+        // Save back to localStorage
+        localStorage.setItem('goldbellQueue', JSON.stringify(queueData));
+        
+        return queueNumber;
+      }
       
       // Reset button handler
       document.getElementById('resetBtn').addEventListener('click', function() {

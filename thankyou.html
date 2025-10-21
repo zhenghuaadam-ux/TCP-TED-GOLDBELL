@@ -194,6 +194,27 @@ h2 {
   transform: translateY(0);
 }
 
+/* Countdown styles */
+.countdown {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #f0f8ff;
+  border-radius: 8px;
+  border: 1px solid #cce7ff;
+}
+
+.countdown-text {
+  font-size: 16px;
+  color: #005bbb;
+  margin-bottom: 10px;
+}
+
+.countdown-timer {
+  font-size: 24px;
+  font-weight: 700;
+  color: #003d82;
+}
+
 /* Responsive styles */
 @media (max-width: 600px) {
   .logo-container {
@@ -297,6 +318,12 @@ h2 {
         </ul>
       </div>
       
+      <!-- Countdown Timer -->
+      <div class="countdown">
+        <div class="countdown-text">Automatically redirected back to homepage in:</div>
+        <div class="countdown-timer" id="countdownTimer">10 seconds</div>
+      </div>
+      
       <div style="margin-top: 30px;">
         <a href="option.html" class="btn" id="newRequestBtn" data-i18n="newRequestBtn">Submit Another Request</a>
       </div>
@@ -378,6 +405,28 @@ h2 {
       }
     }
 
+    // Start countdown timer for auto-redirect
+    function startCountdownTimer() {
+      let countdown = 10; // Changed from 30 to 10 seconds
+      const countdownElement = document.getElementById('countdownTimer');
+      const newRequestBtn = document.getElementById('newRequestBtn');
+      
+      // Update countdown every second
+      const countdownInterval = setInterval(() => {
+        countdown--;
+        
+        // Update the countdown display
+        countdownElement.textContent = `${countdown} second${countdown !== 1 ? 's' : ''}`;
+        
+        // When countdown reaches 0, redirect automatically
+        if (countdown <= 0) {
+          clearInterval(countdownInterval);
+          console.log('Auto-redirecting to option.html');
+          window.location.href = newRequestBtn.href;
+        }
+      }, 1000);
+    }
+
     // Update the queue number when the page loads
     document.addEventListener('DOMContentLoaded', function() {
       const queueNumberElement = document.getElementById('queueNumber');
@@ -387,6 +436,9 @@ h2 {
       // Get customer data and save the queue submission
       const customerData = getCustomerData();
       saveQueueSubmission(queueNumber, customerData);
+      
+      // Start the countdown timer for auto-redirect
+      startCountdownTimer();
       
       console.log('Customer data:', customerData);
       console.log('Queue number generated:', queueNumber);

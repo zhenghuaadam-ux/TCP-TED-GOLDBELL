@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>GOLDBELL SERVICE REQUEST</title>
+<title>GOLDBELL SERVICE REQUEST - BOOKED</title>
 <style>
+/* All CSS remains the same as before */
 /* Base styles */
 * {
   box-sizing: border-box;
@@ -456,16 +457,6 @@ input:focus, select:focus {
           </div>
 
           <div>
-            <label id="companyNameLabel" data-i18n="companyName">Company Name</label>
-            <input id="companyName" type="text" placeholder="e.g. Goldbell Group (Optional)" />
-          </div>
-
-          <div>
-            <label id="customerNameLabel" data-i18n="customerName">Customer Name</label>
-            <input id="customerName" type="text" placeholder="e.g. Tan Ah Kow" required />
-          </div>
-
-          <div>
             <label id="contactNoLabel" data-i18n="contactNo">Contact No.</label>
             <input id="contactNo" type="text" placeholder="e.g. 91234567" maxlength="8" required aria-describedby="contactHelp" />
             <div id="contactHelp" class="muted" data-i18n="contactHelp">8 digits only — must start with 8, 9, or 6.</div>
@@ -498,9 +489,7 @@ input:focus, select:focus {
       const otherModelInput = document.getElementById('otherModelInput');
       const otherVehicleModel = document.getElementById('otherVehicleModel');
       const vehicleModelRadios = document.querySelectorAll('input[name="vehicleModel"]');
-      const customerNameInput = document.getElementById('customerName');
       const vehicleNoInput = document.getElementById('vehicleNo');
-      const companyNameInput = document.getElementById('companyName');
       const bookingTypeInput = document.getElementById('bookingType');
       
       // Initially hide vehicle model section
@@ -630,12 +619,6 @@ input:focus, select:focus {
           isValid = false;
         }
         
-        // Customer name validation
-        const customerName = customerNameInput.value;
-        if (!customerName.trim()) {
-          isValid = false;
-        }
-        
         // If "Others" is selected for vehicle model, validate the input
         const selectedVehicleModel = document.querySelector('input[name="vehicleModel"]:checked');
         if (selectedVehicleModel && selectedVehicleModel.value === 'OTHERS' && !otherVehicleModel.value.trim()) {
@@ -650,14 +633,13 @@ input:focus, select:focus {
         if (isValid) {
           // Get all form data
           const formData = {
-            customerName: customerNameInput.value,
             serviceType: serviceType.value,
             bookingType: bookingTypeInput.value, // This captures "Booked"
             vehicleNo: vehicleNoInput.value,
             contactNo: contactInput.value,
-            companyName: companyNameInput.value || '',
             mileage: mileageInput.value,
-            status: 'Waiting'
+            status: 'waiting',
+            customerName: 'Customer' // Default for booked forms
           };
           
           // Get vehicle model data
@@ -670,19 +652,14 @@ input:focus, select:focus {
             }
           }
           
-          // Generate queue number
-          const queueNumber = generateQueueNumber();
-          formData.queueNumber = queueNumber;
-          formData.timestamp = new Date().toISOString();
-          
-          // Save form data to localStorage
-          saveToQueue(formData);
+          // Generate random queue number and save to queue
+          const queueNumber = saveToQueue(formData);
           
           console.log('Form data saved:', formData);
           
           // Show success message
           const message = document.getElementById('formMessage');
-          message.textContent = 'Service request submitted successfully! Your queue number is ' + queueNumber + '. Redirecting...';
+          message.textContent = 'Service request submitted successfully! Redirecting...';
           message.className = 'message success';
           message.style.display = 'block';
           
@@ -698,17 +675,34 @@ input:focus, select:focus {
         }
       });
       
-      // Generate queue number
-      function generateQueueNumber() {
-        // Get existing queue data
-        let queueData = JSON.parse(localStorage.getItem('goldbellQueue') || '{"submissions": [], "total": 0, "current": 0}');
-        const nextNumber = queueData.total + 1;
-        return 'E' + nextNumber.toString().padStart(6, '0');
+      // Generate random queue number (E + 6 random digits)
+      function generateRandomQueueNumber() {
+        const usedNumbers = getUsedQueueNumbers();
+        let queueNumber;
+        
+        // Generate unique random number
+        do {
+          const randomNum = Math.floor(100000 + Math.random() * 900000); // 6-digit number
+          queueNumber = 'E' + randomNum;
+        } while (usedNumbers.includes(queueNumber));
+        
+        return queueNumber;
       }
       
-      // Save to queue system
+      // Get all used queue numbers from localStorage
+      function getUsedQueueNumbers() {
+        const queueData = JSON.parse(localStorage.getItem('goldbellQueue') || '{"submissions": []}');
+        return queueData.submissions.map(sub => sub.queueNumber);
+      }
+      
+      // Save to queue system and return queue number
       function saveToQueue(formData) {
-        let queueData = JSON.parse(localStorage.getItem('goldbellQueue') || '{"submissions": [], "total": 0, "current": 0}');
+        let queueData = JSON.parse(localStorage.getItem('goldbellQueue') || '{"submissions": [], "total": 0}');
+        
+        // Generate random queue number
+        const queueNumber = generateRandomQueueNumber();
+        formData.queueNumber = queueNumber;
+        formData.timestamp = new Date().toISOString();
         
         // Add the new submission
         queueData.submissions.push(formData);
@@ -716,6 +710,8 @@ input:focus, select:focus {
         
         // Save back to localStorage
         localStorage.setItem('goldbellQueue', JSON.stringify(queueData));
+        
+        return queueNumber;
       }
       
       // Reset button handler
