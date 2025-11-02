@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Goldbell Queue Management System - Dashboard</title>
     <style>
-        /* All CSS styles remain exactly the same as before */
+        /* All the same CSS styles as before - they remain unchanged */
         :root {
-            --blue: #005bbb;
+            --blue: hsl(211, 100%, 37%);
             --light: #f4f8fb;
             --card: #ffffff;
             --muted: #6b7b8f;
@@ -152,6 +152,15 @@
         
         .btn-warning:hover {
             background: #e0a800;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background: #138496;
         }
         
         .hidden {
@@ -548,6 +557,110 @@
             text-decoration: underline;
         }
         
+        /* History Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 1000px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        
+        .modal-title {
+            color: var(--blue);
+            margin: 0;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--muted);
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: var(--error);
+        }
+        
+        .history-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .history-table th,
+        .history-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        
+        .history-table th {
+            background-color: var(--accent);
+            color: var(--blue);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        .history-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .history-table .completed {
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        .history-table .missed {
+            color: var(--error);
+            font-weight: 600;
+        }
+        
+        .history-table .serving {
+            color: var(--warning);
+            font-weight: 600;
+        }
+        
+        .history-table .waiting {
+            color: var(--blue);
+            font-weight: 600;
+        }
+        
         @media (max-width: 768px) {
             .action-buttons {
                 flex-direction: column;
@@ -581,6 +694,19 @@
             .counter-card {
                 min-width: 130px;
                 padding: 15px;
+            }
+            
+            .history-filters {
+                flex-direction: column;
+            }
+            
+            .history-table {
+                font-size: 0.8rem;
+            }
+            
+            .history-table th,
+            .history-table td {
+                padding: 8px 10px;
             }
         }
     </style>
@@ -639,6 +765,7 @@
                 <div class="action-buttons">
                     <button id="nextCustomerBtn" class="btn btn-success">Call Next Customer</button>
                     <button id="callSpecificBtn" class="btn btn-warning">Call Specific Number</button>
+                    <button id="checkHistoryBtn" class="btn btn-info">Check History</button>
                     <button id="resetQueueBtn" class="btn btn-danger">Reset Queue</button>
                 </div>
             </div>
@@ -816,6 +943,73 @@
         </section>
     </div>
 
+    <!-- History Modal -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Queue History</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="history-filters">
+                <div>
+                    <label for="historyDateFilter">Date:</label>
+                    <input type="date" id="historyDateFilter">
+                </div>
+                <div>
+                    <label for="historyStatusFilter">Status:</label>
+                    <select id="historyStatusFilter">
+                        <option value="all">All Statuses</option>
+                        <option value="completed">Completed</option>
+                        <option value="missed">Missed</option>
+                        <option value="serving">Serving</option>
+                        <option value="waiting">Waiting</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="historyServiceFilter">Service Type:</label>
+                    <select id="historyServiceFilter">
+                        <option value="all">All Services</option>
+                        <option value="Repair / Service">Repair / Service</option>
+                        <option value="Speed Limiter Installation">Speed Limiter Installation</option>
+                        <option value="Other Services">Other Services</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="historyBookingFilter">Booking Type:</label>
+                    <select id="historyBookingFilter">
+                        <option value="all">All Types</option>
+                        <option value="Walk-in">Walk-in</option>
+                        <option value="Booked">Booked</option>
+                        <option value="Appointment">Appointment</option>
+                        <option value="Online">Online</option>
+                    </select>
+                </div>
+                <button id="applyHistoryFilters" class="btn btn-info">Apply Filters</button>
+                <button id="exportHistory" class="btn btn-success">Export to CSV</button>
+            </div>
+            <div class="history-table-container">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Queue No.</th>
+                            <th>Customer Name</th>
+                            <th>Service Type</th>
+                            <th>Booking Type</th>
+                            <th>Status</th>
+                            <th>Counter</th>
+                            <th>Added Time</th>
+                            <th>Called Time</th>
+                            <th>Completed Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <!-- History data will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Queue Management System
         let currentUser = {
@@ -881,6 +1075,16 @@
         const smsContent = document.getElementById('smsContent');
         const smsLink = document.getElementById('smsLink');
         const sendSMSBtn = document.getElementById('sendSMSBtn');
+        const checkHistoryBtn = document.getElementById('checkHistoryBtn');
+        const historyModal = document.getElementById('historyModal');
+        const closeModal = document.querySelector('.close-modal');
+        const historyTableBody = document.getElementById('historyTableBody');
+        const historyDateFilter = document.getElementById('historyDateFilter');
+        const historyStatusFilter = document.getElementById('historyStatusFilter');
+        const historyServiceFilter = document.getElementById('historyServiceFilter');
+        const historyBookingFilter = document.getElementById('historyBookingFilter');
+        const applyHistoryFilters = document.getElementById('applyHistoryFilters');
+        const exportHistory = document.getElementById('exportHistory');
         
         // Detail elements
         const detailQueueNumber = document.getElementById('detailQueueNumber');
@@ -913,6 +1117,10 @@
             generateCounters();
             setupEventListeners();
             updateQueueDisplay();
+            
+            // Set today's date as default for history filter
+            const today = new Date().toISOString().split('T')[0];
+            historyDateFilter.value = today;
         }
         
         // Load queue data from localStorage
@@ -923,56 +1131,82 @@
                     const parsed = JSON.parse(savedQueue);
                     queue = { ...queue, ...parsed };
                     
-                    // Clean up any corrupted data
-                    cleanQueueData();
-                    
-                    console.log('Loaded queue data:', queue);
-                } else {
-                    console.log('No saved queue data found, initializing with empty queue');
+                    // Ensure all submissions have required fields
+                    queue.submissions.forEach(sub => {
+                        if (!sub.bookingType) {
+                            sub.bookingType = 'Walk-in'; // Default to Walk-in if not specified
+                        }
+                        if (!sub.status) {
+                            sub.status = 'waiting'; // Default status
+                        }
+                        if (!sub.customerName) {
+                            sub.customerName = 'Customer'; // Default for Booked forms
+                        }
+                    });
                 }
             } catch (error) {
                 console.error('Error loading queue data:', error);
-                showNotification('Error loading queue data. Starting with empty queue.', 'error');
+                initializeSampleData();
             }
         }
         
-        // Clean up queue data - remove corrupted entries and fix data structure
-        function cleanQueueData() {
-            // Remove any submissions where queueNumber is incorrectly set to vehicle number or other fields
-            queue.submissions = queue.submissions.filter(sub => {
-                // Keep only valid submissions with proper queue numbers
-                return sub.queueNumber && 
-                       sub.queueNumber.match(/^E\d{6}$/) && 
-                       sub.queueNumber !== sub.vehicleNo;
-            });
-            
-            // Ensure all submissions have required fields
-            queue.submissions.forEach(sub => {
-                if (!sub.bookingType) {
-                    sub.bookingType = 'Walk-in';
-                }
-                if (!sub.status) {
-                    sub.status = 'waiting';
-                }
-                if (!sub.customerName) {
-                    sub.customerName = 'Customer';
-                }
-                if (!sub.serviceType) {
-                    sub.serviceType = 'General Service';
-                }
-            });
-            
-            queue.total = queue.submissions.length;
+        // Initialize with sample data
+        function initializeSampleData() {
+            if (queue.submissions.length === 0) {
+                const sampleSubmissions = [
+                    {
+                        queueNumber: "E100001",
+                        customerName: "John Lee",
+                        serviceType: "Repair / Service",
+                        vehicleNo: "SBA1234A",
+                        contactNo: "91234567",
+                        companyName: "Goldbell Group",
+                        mileage: "12345",
+                        vehicleModel: "TOYOTA",
+                        bookingType: "Walk-in",
+                        status: "waiting",
+                        timestamp: new Date(Date.now() - 30 * 60000).toISOString()
+                    },
+                    {
+                        queueNumber: "E100002", 
+                        customerName: "Sarah Tan",
+                        serviceType: "Speed Limiter Installation",
+                        vehicleNo: "SBB5678B",
+                        contactNo: "98765432",
+                        companyName: "Tan Transport",
+                        mileage: "67890",
+                        vehicleModel: "HINO",
+                        bookingType: "Booked",
+                        status: "waiting",
+                        timestamp: new Date(Date.now() - 15 * 60000).toISOString()
+                    },
+                    {
+                        queueNumber: "E100003", 
+                        customerName: "Michael Wong",
+                        serviceType: "Other Services",
+                        vehicleNo: "SBC9012C",
+                        contactNo: "87654321",
+                        companyName: "Wong Logistics",
+                        mileage: "54321",
+                        vehicleModel: "NISSAN",
+                        bookingType: "Booked",
+                        status: "waiting",
+                        timestamp: new Date(Date.now() - 10 * 60000).toISOString()
+                    }
+                ];
+                
+                queue.submissions = sampleSubmissions;
+                queue.total = sampleSubmissions.length;
+                saveQueueData();
+            }
         }
         
         // Save queue data to localStorage
         function saveQueueData() {
             try {
                 localStorage.setItem('goldbellQueue', JSON.stringify(queue));
-                console.log('Queue data saved:', queue);
             } catch (error) {
                 console.error('Error saving queue data:', error);
-                showNotification('Error saving queue data', 'error');
             }
         }
         
@@ -1056,6 +1290,17 @@
             cancelEditBtn.addEventListener('click', () => editCustomerForm.classList.add('hidden'));
             counterBoxHeader.addEventListener('click', toggleCounterBox);
             sendSMSBtn.addEventListener('click', sendSMSNotification);
+            checkHistoryBtn.addEventListener('click', showHistoryModal);
+            closeModal.addEventListener('click', () => historyModal.style.display = 'none');
+            applyHistoryFilters.addEventListener('click', applyFilters);
+            exportHistory.addEventListener('click', exportToCSV);
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === historyModal) {
+                    historyModal.style.display = 'none';
+                }
+            });
         }
         
         // Handle logout
@@ -1434,25 +1679,191 @@
             }
         }
         
+        // Show history modal
+        function showHistoryModal() {
+            historyModal.style.display = 'flex';
+            applyFilters(); // Load data with current filters
+        }
+        
+        // Apply history filters
+        function applyFilters() {
+            const dateFilter = historyDateFilter.value;
+            const statusFilter = historyStatusFilter.value;
+            const serviceFilter = historyServiceFilter.value;
+            const bookingFilter = historyBookingFilter.value;
+            
+            let filteredData = [...queue.submissions];
+            
+            // Filter by date if selected
+            if (dateFilter) {
+                filteredData = filteredData.filter(sub => {
+                    const subDate = new Date(sub.timestamp).toISOString().split('T')[0];
+                    return subDate === dateFilter;
+                });
+            }
+            
+            // Filter by status if not "all"
+            if (statusFilter !== 'all') {
+                filteredData = filteredData.filter(sub => sub.status === statusFilter);
+            }
+            
+            // Filter by service type if not "all"
+            if (serviceFilter !== 'all') {
+                filteredData = filteredData.filter(sub => sub.serviceType === serviceFilter);
+            }
+            
+            // Filter by booking type if not "all"
+            if (bookingFilter !== 'all') {
+                filteredData = filteredData.filter(sub => sub.bookingType === bookingFilter);
+            }
+            
+            // Sort by timestamp (newest first)
+            filteredData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            populateHistoryTable(filteredData);
+        }
+        
+        // Populate history table with data
+        function populateHistoryTable(data) {
+            historyTableBody.innerHTML = '';
+            
+            if (data.length === 0) {
+                historyTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 20px;">
+                            No queue history found for the selected filters.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            data.forEach(submission => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td><strong>${submission.queueNumber}</strong></td>
+                    <td>${submission.customerName || 'Customer'}</td>
+                    <td>${submission.serviceType || '-'}</td>
+                    <td>${submission.bookingType || 'Walk-in'}</td>
+                    <td class="${submission.status}">${submission.status || 'waiting'}</td>
+                    <td>${submission.counter || '-'}</td>
+                    <td>${submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '-'}</td>
+                    <td>${submission.calledAt ? new Date(submission.calledAt).toLocaleString() : '-'}</td>
+                    <td>${submission.completedAt ? new Date(submission.completedAt).toLocaleString() : '-'}</td>
+                `;
+                
+                historyTableBody.appendChild(row);
+            });
+        }
+        
+        // Export history to CSV
+        function exportToCSV() {
+            const dateFilter = historyDateFilter.value;
+            const statusFilter = historyStatusFilter.value;
+            const serviceFilter = historyServiceFilter.value;
+            const bookingFilter = historyBookingFilter.value;
+            
+            let filteredData = [...queue.submissions];
+            
+            // Apply the same filters as the table
+            if (dateFilter) {
+                filteredData = filteredData.filter(sub => {
+                    const subDate = new Date(sub.timestamp).toISOString().split('T')[0];
+                    return subDate === dateFilter;
+                });
+            }
+            
+            if (statusFilter !== 'all') {
+                filteredData = filteredData.filter(sub => sub.status === statusFilter);
+            }
+            
+            if (serviceFilter !== 'all') {
+                filteredData = filteredData.filter(sub => sub.serviceType === serviceFilter);
+            }
+            
+            if (bookingFilter !== 'all') {
+                filteredData = filteredData.filter(sub => sub.bookingType === bookingFilter);
+            }
+            
+            // Sort by timestamp (newest first)
+            filteredData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            // Create CSV content
+            const headers = [
+                'Queue Number',
+                'Customer Name',
+                'Service Type',
+                'Booking Type',
+                'Status',
+                'Counter',
+                'Added Time',
+                'Called Time',
+                'Completed Time',
+                'Vehicle No',
+                'Contact No',
+                'Company Name',
+                'Mileage',
+                'Vehicle Model'
+            ];
+            
+            let csvContent = headers.join(',') + '\n';
+            
+            filteredData.forEach(submission => {
+                const row = [
+                    submission.queueNumber,
+                    `"${(submission.customerName || 'Customer').replace(/"/g, '""')}"`,
+                    submission.serviceType || '',
+                    submission.bookingType || 'Walk-in',
+                    submission.status || 'waiting',
+                    submission.counter || '',
+                    submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '',
+                    submission.calledAt ? new Date(submission.calledAt).toLocaleString() : '',
+                    submission.completedAt ? new Date(submission.completedAt).toLocaleString() : '',
+                    submission.vehicleNo || '',
+                    submission.contactNo || '',
+                    submission.companyName || '',
+                    submission.mileage || '',
+                    submission.vehicleModel || ''
+                ];
+                
+                csvContent += row.join(',') + '\n';
+            });
+            
+            // Create and download the CSV file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            // Create filename with current date and filter info
+            let filename = `queue_history_${new Date().toISOString().split('T')[0]}`;
+            if (dateFilter) filename += `_${dateFilter}`;
+            if (statusFilter !== 'all') filename += `_${statusFilter}`;
+            filename += '.csv';
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification(`History exported to ${filename}`, 'success');
+        }
+        
         // Update queue display
         function updateQueueDisplay() {
             try {
-                // Find the currently serving customer
-                const servingCustomer = queue.submissions.find(sub => sub.status === 'serving');
+                const currentDisplayNumber = 'E' + queue.current.toString().padStart(6, '0');
+                currentQueueNumber.textContent = currentDisplayNumber;
                 
-                if (servingCustomer) {
-                    currentQueueNumber.textContent = servingCustomer.queueNumber;
-                    
-                    // Update booking type badge for current customer
-                    if (servingCustomer.bookingType) {
-                        bookingTypeBadge.textContent = servingCustomer.bookingType;
-                        bookingTypeBadge.className = `booking-type-badge ${getBookingTypeClass(servingCustomer.bookingType)}`;
-                        bookingTypeBadge.style.display = 'inline-block';
-                    } else {
-                        bookingTypeBadge.style.display = 'none';
-                    }
+                // Update booking type badge for current customer
+                const currentSubmission = queue.submissions.find(sub => sub.queueNumber === currentDisplayNumber);
+                if (currentSubmission && currentSubmission.bookingType) {
+                    bookingTypeBadge.textContent = currentSubmission.bookingType;
+                    bookingTypeBadge.className = `booking-type-badge ${getBookingTypeClass(currentSubmission.bookingType)}`;
+                    bookingTypeBadge.style.display = 'inline-block';
                 } else {
-                    currentQueueNumber.textContent = 'E000000';
                     bookingTypeBadge.style.display = 'none';
                 }
                 
