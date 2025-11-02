@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Goldbell Queue Management System - Dashboard</title>
     <style>
+        /* All CSS styles remain exactly the same as before */
         :root {
             --blue: #005bbb;
             --light: #f4f8fb;
@@ -109,8 +110,6 @@
             font-weight: 600;
             transition: all 0.3s;
             margin: 5px;
-            text-decoration: none;
-            display: inline-block;
         }
         
         .btn:hover {
@@ -153,15 +152,6 @@
         
         .btn-warning:hover {
             background: #e0a800;
-        }
-        
-        .btn-info {
-            background: #17a2b8;
-            color: white;
-        }
-        
-        .btn-info:hover {
-            background: #138496;
         }
         
         .hidden {
@@ -608,7 +598,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h3 style="margin: 0;">Queue Management Dashboard</h3>
-                    <p style="margin: 5px 0;">Logged in as: <strong id="loggedInUser">Staff Member</strong> <span id="roleBadge" class="role-badge staff-badge">Staff</span></p>
+                    <p style="margin: 5px 0;">Logged in as: <strong id="loggedInUser">Admin</strong> <span id="roleBadge" class="role-badge admin-badge">Admin</span></p>
                     <p style="margin: 0; font-size: 0.9em;" id="counterAssignment">Not assigned to any counter</p>
                 </div>
                 <button id="logoutBtn" class="btn btn-secondary">Logout</button>
@@ -644,12 +634,11 @@
             <!-- Current Queue Display -->
             <div class="queue-number">
                 <h3>Now Serving</h3>
-                <div class="number" id="currentQueueNumber">E100001</div>
+                <div class="number" id="currentQueueNumber">E000000</div>
                 <div id="bookingTypeBadge" class="booking-type-badge walkin-badge">Walk-in</div>
                 <div class="action-buttons">
                     <button id="nextCustomerBtn" class="btn btn-success">Call Next Customer</button>
                     <button id="callSpecificBtn" class="btn btn-warning">Call Specific Number</button>
-                    <button id="checkHistoryBtn" class="btn btn-info">Check History</button>
                     <button id="resetQueueBtn" class="btn btn-danger">Reset Queue</button>
                 </div>
             </div>
@@ -794,7 +783,7 @@
             <div id="queuesView" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;">
                 <!-- Waiting Queue -->
                 <div class="form-group">
-                    <h3>Waiting Queue (<span id="queueCount">3</span> customers)</h3>
+                    <h3>Waiting Queue (<span id="queueCount">0</span> customers)</h3>
                     <div id="queueList" class="queue-scroll">
                         <!-- Queue items will be populated here -->
                     </div>
@@ -802,7 +791,7 @@
                 
                 <!-- Serving Queue -->
                 <div class="form-group">
-                    <h3>Serving Queue (<span id="servingQueueCount">1</span> customers)</h3>
+                    <h3>Serving Queue (<span id="servingQueueCount">0</span> customers)</h3>
                     <div id="servingQueueList" class="queue-scroll">
                         <!-- Serving queue items will be populated here -->
                     </div>
@@ -830,8 +819,8 @@
     <script>
         // Queue Management System
         let currentUser = {
-            username: "Staff Member",
-            role: "Staff"
+            username: "Admin",
+            role: "Admin"
         };
         let currentCounter = localStorage.getItem('currentCounter') || null;
         
@@ -892,7 +881,6 @@
         const smsContent = document.getElementById('smsContent');
         const smsLink = document.getElementById('smsLink');
         const sendSMSBtn = document.getElementById('sendSMSBtn');
-        const checkHistoryBtn = document.getElementById('checkHistoryBtn');
         
         // Detail elements
         const detailQueueNumber = document.getElementById('detailQueueNumber');
@@ -935,85 +923,56 @@
                     const parsed = JSON.parse(savedQueue);
                     queue = { ...queue, ...parsed };
                     
-                    // Ensure all submissions have required fields
-                    queue.submissions.forEach(sub => {
-                        if (!sub.bookingType) {
-                            sub.bookingType = 'Walk-in';
-                        }
-                        if (!sub.status) {
-                            sub.status = 'waiting';
-                        }
-                        if (!sub.customerName) {
-                            sub.customerName = 'Customer';
-                        }
-                    });
+                    // Clean up any corrupted data
+                    cleanQueueData();
+                    
+                    console.log('Loaded queue data:', queue);
                 } else {
-                    initializeSampleData();
+                    console.log('No saved queue data found, initializing with empty queue');
                 }
             } catch (error) {
                 console.error('Error loading queue data:', error);
-                initializeSampleData();
+                showNotification('Error loading queue data. Starting with empty queue.', 'error');
             }
         }
         
-        // Initialize with sample data
-        function initializeSampleData() {
-            const sampleSubmissions = [
-                {
-                    queueNumber: "E100001",
-                    customerName: "John Lee",
-                    serviceType: "Repair / Service",
-                    vehicleNo: "SBA1234A",
-                    contactNo: "91234567",
-                    companyName: "Goldbell Group",
-                    mileage: "12345",
-                    vehicleModel: "TOYOTA",
-                    bookingType: "Walk-in",
-                    status: "serving",
-                    timestamp: new Date(Date.now() - 30 * 60000).toISOString(),
-                    counter: "1"
-                },
-                {
-                    queueNumber: "E100002", 
-                    customerName: "Sarah Tan",
-                    serviceType: "Speed Limiter Installation",
-                    vehicleNo: "SBB5678B",
-                    contactNo: "98765432",
-                    companyName: "Tan Transport",
-                    mileage: "67890",
-                    vehicleModel: "HINO",
-                    bookingType: "Booked",
-                    status: "waiting",
-                    timestamp: new Date(Date.now() - 15 * 60000).toISOString()
-                },
-                {
-                    queueNumber: "E100003", 
-                    customerName: "Michael Wong",
-                    serviceType: "Other Services",
-                    vehicleNo: "SBC9012C",
-                    contactNo: "87654321",
-                    companyName: "Wong Logistics",
-                    mileage: "54321",
-                    vehicleModel: "NISSAN",
-                    bookingType: "Booked",
-                    status: "waiting",
-                    timestamp: new Date(Date.now() - 10 * 60000).toISOString()
-                }
-            ];
+        // Clean up queue data - remove corrupted entries and fix data structure
+        function cleanQueueData() {
+            // Remove any submissions where queueNumber is incorrectly set to vehicle number or other fields
+            queue.submissions = queue.submissions.filter(sub => {
+                // Keep only valid submissions with proper queue numbers
+                return sub.queueNumber && 
+                       sub.queueNumber.match(/^E\d{6}$/) && 
+                       sub.queueNumber !== sub.vehicleNo;
+            });
             
-            queue.submissions = sampleSubmissions;
-            queue.total = sampleSubmissions.length;
-            queue.current = 100001;
-            queue.counters[1].currentCustomer = "E100001";
-            saveQueueData();
+            // Ensure all submissions have required fields
+            queue.submissions.forEach(sub => {
+                if (!sub.bookingType) {
+                    sub.bookingType = 'Walk-in';
+                }
+                if (!sub.status) {
+                    sub.status = 'waiting';
+                }
+                if (!sub.customerName) {
+                    sub.customerName = 'Customer';
+                }
+                if (!sub.serviceType) {
+                    sub.serviceType = 'General Service';
+                }
+            });
+            
+            queue.total = queue.submissions.length;
         }
         
         // Save queue data to localStorage
         function saveQueueData() {
             try {
                 localStorage.setItem('goldbellQueue', JSON.stringify(queue));
+                console.log('Queue data saved:', queue);
             } catch (error) {
                 console.error('Error saving queue data:', error);
+                showNotification('Error saving queue data', 'error');
             }
         }
         
@@ -1097,9 +1056,6 @@
             cancelEditBtn.addEventListener('click', () => editCustomerForm.classList.add('hidden'));
             counterBoxHeader.addEventListener('click', toggleCounterBox);
             sendSMSBtn.addEventListener('click', sendSMSNotification);
-            checkHistoryBtn.addEventListener('click', () => {
-                window.location.href = 'history.html';
-            });
         }
         
         // Handle logout
@@ -1480,129 +1436,189 @@
         
         // Update queue display
         function updateQueueDisplay() {
-            // Update current queue number
-            const servingSubmission = queue.submissions.find(sub => sub.status === 'serving');
-            if (servingSubmission) {
-                currentQueueNumber.textContent = servingSubmission.queueNumber;
-                bookingTypeBadge.textContent = servingSubmission.bookingType || 'Walk-in';
-                bookingTypeBadge.className = 'booking-type-badge ' + 
-                    (servingSubmission.bookingType === 'Walk-in' ? 'walkin-badge' : 
-                     servingSubmission.bookingType === 'Booked' ? 'booked-badge' :
-                     servingSubmission.bookingType === 'Appointment' ? 'appointment-badge' : 'online-badge');
-            } else {
-                currentQueueNumber.textContent = 'E100001';
-                bookingTypeBadge.textContent = 'Walk-in';
-                bookingTypeBadge.className = 'booking-type-badge walkin-badge';
+            try {
+                // Find the currently serving customer
+                const servingCustomer = queue.submissions.find(sub => sub.status === 'serving');
+                
+                if (servingCustomer) {
+                    currentQueueNumber.textContent = servingCustomer.queueNumber;
+                    
+                    // Update booking type badge for current customer
+                    if (servingCustomer.bookingType) {
+                        bookingTypeBadge.textContent = servingCustomer.bookingType;
+                        bookingTypeBadge.className = `booking-type-badge ${getBookingTypeClass(servingCustomer.bookingType)}`;
+                        bookingTypeBadge.style.display = 'inline-block';
+                    } else {
+                        bookingTypeBadge.style.display = 'none';
+                    }
+                } else {
+                    currentQueueNumber.textContent = 'E000000';
+                    bookingTypeBadge.style.display = 'none';
+                }
+                
+                // Filter out general service customers from waiting queue count
+                const waitingCount = queue.submissions.filter(sub => 
+                    sub.status === 'waiting' && sub.serviceType !== 'General Service'
+                ).length;
+                
+                const servingCount = queue.submissions.filter(sub => sub.status === 'serving').length;
+                const completedCount = queue.submissions.filter(sub => sub.status === 'completed').length;
+                const missedCount = queue.submissions.filter(sub => sub.status === 'missed').length;
+                
+                queueCount.textContent = waitingCount;
+                servingQueueCount.textContent = servingCount;
+                completedQueueCount.textContent = completedCount;
+                missedQueueCount.textContent = missedCount;
+                
+                updateQueueList('waiting', queueList, waitingCount);
+                updateQueueList('serving', servingQueueList, servingCount);
+                updateQueueList('completed', completedQueueList, completedCount);
+                updateQueueList('missed', missedQueueList, missedCount);
+                
+            } catch (error) {
+                console.error('Error updating queue display:', error);
             }
-            
-            // Update queue counts
-            const waitingCount = queue.submissions.filter(sub => sub.status === 'waiting').length;
-            const servingCount = queue.submissions.filter(sub => sub.status === 'serving').length;
-            const completedCount = queue.submissions.filter(sub => sub.status === 'completed').length;
-            const missedCount = queue.submissions.filter(sub => sub.status === 'missed').length;
-            
-            queueCount.textContent = waitingCount;
-            servingQueueCount.textContent = servingCount;
-            completedQueueCount.textContent = completedCount;
-            missedQueueCount.textContent = missedCount;
-            
-            // Update queue lists
-            updateQueueList('waiting', queueList);
-            updateQueueList('serving', servingQueueList);
-            updateQueueList('completed', completedQueueList);
-            updateQueueList('missed', missedQueueList);
         }
         
-        // Update individual queue list
-        function updateQueueList(status, container) {
-            container.innerHTML = '';
+        // Helper function to get booking type CSS class
+        function getBookingTypeClass(bookingType) {
+            switch(bookingType) {
+                case 'Walk-in': return 'walkin-badge';
+                case 'Booked': return 'booked-badge';
+                case 'Appointment': return 'appointment-badge';
+                case 'Online': return 'online-badge';
+                default: return 'walkin-badge';
+            }
+        }
+        
+        // Helper function to update individual queue lists
+        function updateQueueList(status, listElement, count) {
+            let submissions;
             
-            const filteredSubmissions = queue.submissions.filter(sub => sub.status === status);
+            // For waiting queue, filter out general service customers and prioritize Booked
+            if (status === 'waiting') {
+                submissions = getPrioritizedWaitingCustomers();
+            } else {
+                submissions = queue.submissions.filter(sub => sub.status === status);
+            }
             
-            if (filteredSubmissions.length === 0) {
-                container.innerHTML = '<div class="queue-item">No customers</div>';
+            listElement.innerHTML = '';
+            
+            if (submissions.length === 0) {
+                listElement.innerHTML = `<div class="queue-item">No customers ${status}</div>`;
                 return;
             }
             
-            filteredSubmissions.forEach(submission => {
-                const queueItem = document.createElement('div');
-                queueItem.className = `queue-item ${status}`;
-                
-                const bookingTypeClass = submission.bookingType === 'Walk-in' ? 'walkin-badge' : 
-                                       submission.bookingType === 'Booked' ? 'booked-badge' :
-                                       submission.bookingType === 'Appointment' ? 'appointment-badge' : 'online-badge';
-                
-                queueItem.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <strong>${submission.queueNumber}</strong>
-                            <span class="booking-type-badge ${bookingTypeClass}">${submission.bookingType || 'Walk-in'}</span>
-                        </div>
-                        <div style="font-size: 0.9em; color: var(--muted);">
-                            ${submission.customerName || 'Customer'}
-                        </div>
-                    </div>
-                    <div style="margin-top: 8px; font-size: 0.85em;">
-                        ${submission.serviceType || 'General Service'}
-                    </div>
-                    ${status === 'serving' ? `
-                        <div class="action-buttons" style="margin-top: 10px;">
-                            <button class="btn btn-success complete-btn" style="padding: 6px 12px; font-size: 0.8em;">Complete</button>
-                            <button class="btn btn-warning miss-btn" style="padding: 6px 12px; font-size: 0.8em;">Mark as Missed</button>
-                        </div>
-                    ` : ''}
-                    ${status === 'missed' ? `
-                        <div class="missed-actions">
-                            <button class="missed-btn recall-btn">Recall</button>
-                            <button class="missed-btn delete-btn">Delete</button>
-                        </div>
-                    ` : ''}
-                `;
-                
-                // Add event listeners
-                if (status === 'serving') {
-                    const completeBtn = queueItem.querySelector('.complete-btn');
-                    const missBtn = queueItem.querySelector('.miss-btn');
-                    
-                    completeBtn.addEventListener('click', () => completeCustomer(submission.queueNumber));
-                    missBtn.addEventListener('click', () => markAsMissed(submission.queueNumber));
-                }
-                
-                if (status === 'missed') {
-                    const recallBtn = queueItem.querySelector('.recall-btn');
-                    const deleteBtn = queueItem.querySelector('.delete-btn');
-                    
-                    recallBtn.addEventListener('click', () => recallMissedCustomer(submission.queueNumber));
-                    deleteBtn.addEventListener('click', () => deleteMissedCustomer(submission.queueNumber));
-                }
-                
-                // Add click event to show customer details
-                queueItem.addEventListener('click', (e) => {
-                    if (!e.target.classList.contains('btn') && !e.target.classList.contains('missed-btn')) {
-                        showCustomerDetails(submission.queueNumber);
-                    }
-                });
-                
-                container.appendChild(queueItem);
+            const sortedSubmissions = status === 'completed' ? 
+                submissions.slice(-20).reverse() :
+                submissions;
+            
+            sortedSubmissions.forEach(submission => {
+                const queueItem = createQueueItem(submission, status);
+                listElement.appendChild(queueItem);
             });
+        }
+        
+        // Create queue item element
+        function createQueueItem(submission, status) {
+            const queueItem = document.createElement('div');
+            queueItem.className = `queue-item ${status}`;
+            
+            let actionsHTML = '';
+            if (status === 'waiting') {
+                actionsHTML = `
+                    <div class="missed-actions">
+                        <button onclick="markAsMissed('${submission.queueNumber}')" class="missed-btn delete-btn">Mark as Missed</button>
+                    </div>
+                `;
+            } else if (status === 'serving') {
+                actionsHTML = `
+                    <div class="action-buttons" style="margin-top: 10px;">
+                        <button onclick="completeCustomer('${submission.queueNumber}')" class="btn btn-success" style="padding: 5px 10px; font-size: 0.8em;">Complete</button>
+                        <button onclick="markAsMissed('${submission.queueNumber}')" class="btn btn-warning" style="padding: 5px 10px; font-size: 0.8em;">Mark Missed</button>
+                    </div>
+                `;
+            } else if (status === 'missed') {
+                actionsHTML = `
+                    <div class="missed-actions">
+                        <button onclick="recallMissedCustomer('${submission.queueNumber}')" class="missed-btn recall-btn">Recall Customer</button>
+                        <button onclick="deleteMissedCustomer('${submission.queueNumber}')" class="missed-btn delete-btn">Delete</button>
+                    </div>
+                `;
+            }
+            
+            // Add priority badge for Booked customers
+            const priorityBadgeHTML = submission.bookingType === 'Booked' ? 
+                `<span class="booking-type-badge priority-badge" style="margin-left: 5px;">PRIORITY</span>` : '';
+            
+            const bookingTypeBadgeHTML = submission.bookingType ? 
+                `<span class="booking-type-badge ${getBookingTypeClass(submission.bookingType)}" style="margin-left: 5px;">${submission.bookingType}</span>` : '';
+            
+            queueItem.innerHTML = `
+                <div onclick="showCustomerDetails('${submission.queueNumber}')" style="cursor: pointer;">
+                    <strong>${submission.queueNumber}</strong> ${bookingTypeBadgeHTML} ${priorityBadgeHTML} - ${submission.serviceType}
+                    <div style="font-size: 0.9em; color: #666;">
+                        <strong>${submission.customerName || 'Customer'}</strong>
+                        ${submission.vehicleNo ? '| Vehicle: ' + submission.vehicleNo : ''}
+                        ${submission.contactNo ? '| Contact: ' + submission.contactNo : ''}
+                    </div>
+                    <div style="font-size: 0.8em; color: #888;">
+                        ${getQueueItemTimeText(submission, status)}
+                    </div>
+                </div>
+                ${actionsHTML}
+            `;
+            
+            return queueItem;
+        }
+        
+        // Helper function to get time text for queue items
+        function getQueueItemTimeText(submission, status) {
+            switch(status) {
+                case 'waiting':
+                    return `Added: ${submission.timestamp ? new Date(submission.timestamp).toLocaleTimeString() : 'N/A'}`;
+                case 'serving':
+                    return `Serving at: Counter ${submission.counter || 'N/A'} | Called: ${submission.calledAt ? new Date(submission.calledAt).toLocaleTimeString() : 'N/A'}`;
+                case 'completed':
+                    return `Completed: ${submission.completedAt ? new Date(submission.completedAt).toLocaleTimeString() : 'N/A'} ${submission.servedBy ? '| By: ' + submission.servedBy : ''}`;
+                case 'missed':
+                    return `Missed: ${submission.missedAt ? new Date(submission.missedAt).toLocaleTimeString() : 'N/A'} ${submission.missedBy ? '| By: ' + submission.missedBy : ''}`;
+                default:
+                    return `Added: ${submission.timestamp ? new Date(submission.timestamp).toLocaleTimeString() : 'N/A'}`;
+            }
         }
         
         // Show authenticated UI
         function showAuthenticatedUI() {
             loggedInUser.textContent = currentUser.username;
             roleBadge.textContent = currentUser.role;
-            roleBadge.className = `role-badge ${currentUser.role.toLowerCase()}-badge`;
+            roleBadge.className = `role-badge ${currentUser.role === 'Admin' ? 'admin-badge' : 'staff-badge'}`;
+            
+            resetQueueBtn.classList.remove('hidden');
             updateCounterAssignmentDisplay();
+            updateQueueDisplay();
+            
+            // Check for new submissions every 3 seconds
+            setInterval(() => {
+                const previousCount = queue.submissions.length;
+                loadQueueData();
+                if (queue.submissions.length > previousCount) {
+                    updateQueueDisplay();
+                    const newSubmission = queue.submissions[queue.submissions.length - 1];
+                    const bookingTypeText = newSubmission.bookingType ? ` (${newSubmission.bookingType})` : '';
+                    showNotification(`New customer added to queue! ${newSubmission.queueNumber} - ${newSubmission.customerName || 'Customer'}${bookingTypeText}`, 'info');
+                }
+            }, 3000);
         }
         
-        // Show message in a message container
-        function showMessage(container, message, type) {
-            container.textContent = message;
-            container.className = `message ${type}`;
-            container.classList.remove('hidden');
+        // Show message
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = 'message ' + type;
+            element.classList.remove('hidden');
             
             setTimeout(() => {
-                container.classList.add('hidden');
+                element.classList.add('hidden');
             }, 5000);
         }
         
@@ -1619,7 +1635,7 @@
             }, 5000);
         }
         
-        // Text-to-speech function
+        // Text-to-speech for announcements
         function speak(text) {
             if ('speechSynthesis' in window) {
                 const utterance = new SpeechSynthesisUtterance(text);
