@@ -3,37 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goldbell - Login</title>
+    <title>Goldbell Queue Management System - Dashboard</title>
     <style>
+        /* All the same CSS styles as before - they remain unchanged */
+        :root {
+            --blue: hsl(211, 100%, 37%);
+            --light: #f4f8fb;
+            --card: #ffffff;
+            --muted: #6b7b8f;
+            --accent: #e9f2ff;
+            --error: #d9534f;
+            --success: #2e8b57;
+            --warning: #ffc107;
+            --radius: 10px;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background: linear-gradient(135deg, #005bbb 0%, #003d82 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            color: #0b2540;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
             padding: 20px;
         }
         
-        .login-container {
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 420px;
-            overflow: hidden;
-        }
-        
-        .login-header {
-            background-color: #005bbb;
+        header {
+            background: var(--blue);
             color: white;
-            padding: 30px 20px;
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
             text-align: center;
         }
         
@@ -41,16 +50,24 @@
             font-size: 2.5rem;
             font-weight: bold;
             margin-bottom: 10px;
-            letter-spacing: 1px;
         }
         
-        .tagline {
-            font-size: 1.1rem;
+        .website-url {
+            font-size: 1.2rem;
             opacity: 0.9;
         }
         
-        .login-form {
-            padding: 30px;
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1, h2, h3 {
+            color: var(--blue);
+            margin-bottom: 15px;
         }
         
         .form-group {
@@ -61,54 +78,42 @@
             display: block;
             margin-bottom: 8px;
             font-weight: 600;
-            color: #333;
+            color: var(--blue);
         }
         
-        input {
+        input[type="text"],
+        input[type="password"],
+        input[type="number"],
+        select {
             width: 100%;
-            padding: 14px;
-            border: 2px solid #e1e8ed;
-            border-radius: 8px;
+            padding: 12px;
+            border: 1px solid #d6e9fb;
+            border-radius: var(--radius);
             font-size: 16px;
-            transition: all 0.3s;
+            transition: border-color 0.3s;
         }
         
-        input:focus {
+        input:focus, select:focus {
             outline: none;
-            border-color: #005bbb;
-            box-shadow: 0 0 0 3px rgba(0, 91, 187, 0.2);
-        }
-        
-        .input-error {
-            border-color: #dc3545;
-        }
-        
-        .error-text {
-            color: #dc3545;
-            font-size: 0.85rem;
-            margin-top: 5px;
-            display: none;
+            border-color: var(--blue);
+            box-shadow: 0 0 0 2px rgba(0, 91, 187, 0.2);
         }
         
         .btn {
-            background-color: #005bbb;
+            background: var(--blue);
             color: white;
             border: none;
-            padding: 14px;
-            border-radius: 12px;
+            padding: 12px 25px;
+            border-radius: var(--radius);
             cursor: pointer;
             font-size: 16px;
             font-weight: 600;
-            width: 100%;
             transition: all 0.3s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
+            margin: 5px;
         }
         
         .btn:hover {
-            background-color: #004a9e;
+            background: #004a9e;
             transform: translateY(-2px);
         }
         
@@ -116,218 +121,2010 @@
             transform: translateY(0);
         }
         
-        .btn:disabled {
-            background-color: #6c757d;
-            cursor: not-allowed;
-            transform: none;
+        .btn-secondary {
+            background: #7f8fa6;
         }
         
-        .btn-loading {
-            background-color: #004a9e;
+        .btn-secondary:hover {
+            background: #6a7a8f;
         }
         
-        .spinner {
-            width: 18px;
-            height: 18px;
-            border: 2px solid transparent;
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
+        .btn-success {
+            background: var(--success);
+        }
+        
+        .btn-success:hover {
+            background: #26734d;
+        }
+        
+        .btn-danger {
+            background: var(--error);
+        }
+        
+        .btn-danger:hover {
+            background: #c9302c;
+        }
+        
+        .btn-warning {
+            background: var(--warning);
+            color: #000;
+        }
+        
+        .btn-warning:hover {
+            background: #e0a800;
+        }
+        
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .btn-info:hover {
+            background: #138496;
+        }
+        
+        .hidden {
             display: none;
         }
         
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .user-info {
+            background: var(--accent);
+            padding: 15px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+        }
+        
+        .queue-number {
+            background: var(--accent);
+            padding: 30px;
+            border-radius: var(--radius);
+            margin: 20px 0;
+            text-align: center;
+            border: 3px solid var(--blue);
+        }
+        
+        .number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--blue);
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         .message {
-            padding: 12px;
-            border-radius: 8px;
-            margin: 15px 0;
-            text-align: center;
-            font-weight: 500;
-            display: none;
-        }
-        
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: var(--radius);
+            margin: 10px 0;
         }
         
         .success {
-            background-color: #d4edda;
-            color: #155724;
+            background: #d4edda;
+            color: var(--success);
             border: 1px solid #c3e6cb;
         }
         
-        .demo-info {
-            background-color: #f8f9fa;
+        .error {
+            background: #f8d7da;
+            color: var(--error);
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #e9f2ff;
+            color: var(--blue);
+            border: 1px solid #cfe6ff;
+        }
+        
+        .queue-item {
             padding: 15px;
-            border-radius: 8px;
-            margin-top: 20px;
-            font-size: 0.9rem;
+            border: 1px solid #e1e8ed;
+            border-radius: var(--radius);
+            margin-bottom: 10px;
+            background: #f9f9f9;
+            transition: all 0.2s;
+        }
+        
+        .queue-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .serving {
+            background: #d4edda;
+            border-color: #c3e6cb;
+            border-left: 4px solid var(--success);
+        }
+        
+        .waiting {
+            background: #fff3cd;
+            border-color: #ffeaa7;
+            border-left: 4px solid var(--warning);
+        }
+        
+        .completed {
+            background: #e2e3e5;
+            border-color: #d6d8db;
+            border-left: 4px solid #6c757d;
+        }
+        
+        .missed {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+            border-left: 4px solid var(--error);
+        }
+        
+        .role-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .admin-badge {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .staff-badge {
+            background: #17a2b8;
+            color: white;
+        }
+        
+        .booking-type-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .walkin-badge {
+            background: #28a745;
+            color: white;
+        }
+        
+        .appointment-badge {
+            background: #6f42c1;
+            color: white;
+        }
+        
+        .online-badge {
+            background: #fd7e14;
+            color: white;
+        }
+        
+        .booked-badge {
+            background: #005bbb;
+            color: white;
+        }
+        
+        .priority-badge {
+            background: #dc3545;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        .counter-assignment-box {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid #e1e8ed;
+            margin-bottom: 20px;
+            overflow: hidden;
+            max-width: 100%;
+            margin-left: auto;
+        }
+        
+        .counter-box-header {
+            background: var(--accent);
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        
+        .counter-box-header h3 {
+            margin: 0;
+            font-size: 1rem;
+            color: var(--blue);
+        }
+        
+        .counter-box-content {
+            padding: 15px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out;
+        }
+        
+        .counter-box-content.expanded {
+            max-height: 400px;
+            padding: 15px;
+            overflow-x: auto;
+        }
+        
+        .counters-grid {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+            padding-bottom: 10px;
+            overflow-x: auto;
+            min-width: min-content;
+        }
+        
+        .counter-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
             text-align: center;
-            border: 1px solid #e9ecef;
+            border: 2px solid #e1e8ed;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 150px;
+            flex-shrink: 0;
         }
         
-        .demo-info strong {
-            color: #005bbb;
+        .counter-card:hover {
+            border-color: var(--blue);
+            transform: translateY(-2px);
         }
         
-        .footer {
-            text-align: center;
-            margin-top: 20px;
-            color: #6c757d;
+        .counter-card.active {
+            border-color: var(--success);
+            background: #f8fff9;
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.2);
+        }
+        
+        .counter-card.assigned {
+            border-color: var(--blue);
+            background: var(--accent);
+        }
+        
+        .counter-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--blue);
+            margin-bottom: 10px;
+        }
+        
+        .counter-status {
             font-size: 0.9rem;
+            color: var(--muted);
         }
         
-        @media (max-width: 480px) {
-            .login-container {
-                max-width: 100%;
+        .toggle-icon {
+            transition: transform 0.3s;
+        }
+        
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+        
+        .customer-details {
+            background: var(--accent);
+            padding: 20px;
+            border-radius: var(--radius);
+            margin: 15px 0;
+            border-left: 4px solid var(--blue);
+        }
+        
+        .detail-row {
+            display: grid;
+            grid-template-columns: 150px 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: var(--blue);
+        }
+        
+        .detail-value {
+            padding: 8px 12px;
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid #d6e9fb;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            max-width: 400px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification.success {
+            background: var(--success);
+            color: white;
+        }
+        
+        .notification.error {
+            background: var(--error);
+            color: white;
+        }
+        
+        .notification.info {
+            background: var(--blue);
+            color: white;
+        }
+        
+        .notification.warning {
+            background: var(--warning);
+            color: black;
+        }
+        
+        .queue-scroll {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        
+        .queue-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .queue-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .queue-scroll::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+        
+        .queue-scroll::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+        
+        .missed-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .missed-btn {
+            padding: 6px 12px;
+            font-size: 0.8em;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .recall-btn {
+            background: var(--warning);
+            color: black;
+        }
+        
+        .recall-btn:hover {
+            background: #e0a800;
+        }
+        
+        .delete-btn {
+            background: var(--error);
+            color: white;
+        }
+        
+        .delete-btn:hover {
+            background: #c9302c;
+        }
+        
+        .sms-notification {
+            background: #e8f5e8;
+            border-left: 4px solid var(--success);
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .sms-link {
+            color: var(--success);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .sms-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* History Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 1000px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        
+        .modal-title {
+            color: var(--blue);
+            margin: 0;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--muted);
+            transition: color 0.3s;
+        }
+        
+        .close-modal:hover {
+            color: var(--error);
+        }
+        
+        .history-filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        
+        .history-table th,
+        .history-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e1e8ed;
+        }
+        
+        .history-table th {
+            background-color: var(--accent);
+            color: var(--blue);
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+        
+        .history-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .history-table .completed {
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        .history-table .missed {
+            color: var(--error);
+            font-weight: 600;
+        }
+        
+        .history-table .serving {
+            color: var(--warning);
+            font-weight: 600;
+        }
+        
+        .history-table .waiting {
+            color: var(--blue);
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .action-buttons {
+                flex-direction: column;
             }
             
-            .login-form {
-                padding: 20px;
+            .number {
+                font-size: 3rem;
+            }
+            
+            .detail-row {
+                grid-template-columns: 1fr;
+            }
+            
+            #queuesView {
+                grid-template-columns: 1fr;
+            }
+            
+            .missed-actions {
+                flex-direction: column;
+            }
+            
+            .counter-assignment-box {
+                max-width: 100%;
+                margin-left: 0;
+            }
+            
+            .counters-grid {
+                gap: 10px;
+            }
+            
+            .counter-card {
+                min-width: 130px;
+                padding: 15px;
+            }
+            
+            .history-filters {
+                flex-direction: column;
+            }
+            
+            .history-table {
+                font-size: 0.8rem;
+            }
+            
+            .history-table th,
+            .history-table td {
+                padding: 8px 10px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-header">
+    <div class="container">
+        <header>
             <div class="logo">GOLDBELL</div>
-            <div class="tagline">Queue Management System</div>
-        </div>
-        
-        <div class="login-form">
-            <form id="loginForm">
-                <div class="form-group">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username" placeholder="Enter your username">
-                    <div class="error-text" id="usernameError">Username is required</div>
+            <h1>Queue Management System</h1>
+            <div class="website-url">www.goldbellservices.com.sg</div>
+        </header>
+
+        <!-- User Info Section -->
+        <section id="userInfo" class="user-info">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0;">Queue Management Dashboard</h3>
+                    <p style="margin: 5px 0;">Logged in as: <strong id="loggedInUser">Admin</strong> <span id="roleBadge" class="role-badge admin-badge">Admin</span></p>
+                    <p style="margin: 0; font-size: 0.9em;" id="counterAssignment">Not assigned to any counter</p>
                 </div>
-                
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" name="password" placeholder="Enter your password">
-                    <div class="error-text" id="passwordError">Password is required</div>
-                </div>
-                
-                <button type="submit" class="btn" id="loginBtn">
-                    <span id="btnText">Login</span>
-                    <div class="spinner" id="btnSpinner"></div>
-                </button>
-            </form>
-            
-            <div id="loginMessage" class="message"></div>
-            
-            <div class="demo-info">
-                <strong>Demo Credentials:</strong><br>
-                Username: admin<br>
-                Password: 123
+                <button id="logoutBtn" class="btn btn-secondary">Logout</button>
             </div>
-            
-            <div class="footer">
-                &copy; 2025 Goldbell Services. All rights reserved.
+        </section>
+
+        <!-- Main Dashboard -->
+        <section id="mainDashboard" class="card">
+            <!-- Counter Assignment Box -->
+            <div class="counter-assignment-box">
+                <div class="counter-box-header" id="counterBoxHeader">
+                    <h3>Counter Assignment</h3>
+                    <svg class="toggle-icon" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4 6L8 10L12 6" stroke="var(--blue)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="counter-box-content" id="counterBoxContent">
+                    <div class="counters-grid" id="countersGrid">
+                        <!-- Counters 1-8 will be generated here -->
+                    </div>
+                    <div id="counterMessage" class="message"></div>
+                </div>
+            </div>
+
+            <!-- SMS Notification Section -->
+            <div id="smsNotification" class="sms-notification hidden">
+                <h4>SMS Notification Sent</h4>
+                <p id="smsMessage">SMS has been sent to the customer with their queue information.</p>
+                <p><strong>Message:</strong> <span id="smsContent"></span></p>
+                <p><a id="smsLink" href="#" class="sms-link">Click here to open SMS app</a></p>
+            </div>
+
+            <!-- Current Queue Display -->
+            <div class="queue-number">
+                <h3>Now Serving</h3>
+                <div class="number" id="currentQueueNumber">E000000</div>
+                <div id="bookingTypeBadge" class="booking-type-badge walkin-badge">Walk-in</div>
+                <div class="action-buttons">
+                    <button id="nextCustomerBtn" class="btn btn-success">Call Next Customer</button>
+                    <button id="callSpecificBtn" class="btn btn-warning">Call Specific Number</button>
+                    <button id="checkHistoryBtn" class="btn btn-info">Check History</button>
+                    <button id="resetQueueBtn" class="btn btn-danger">Reset Queue</button>
+                </div>
+            </div>
+
+            <!-- Call Specific Number Form -->
+            <div id="callSpecificForm" class="form-group hidden" style="background: #fff3cd; padding: 20px; border-radius: var(--radius); border: 2px solid #ffc107;">
+                <h3>Call Specific Queue Number</h3>
+                <div style="display: grid; grid-template-columns: 1fr auto; gap: 15px; align-items: end;">
+                    <div>
+                        <label for="specificNumber">Enter Queue Number</label>
+                        <input type="text" id="specificNumber" placeholder="e.g. E000123" style="text-transform: uppercase;">
+                    </div>
+                    <div class="action-buttons">
+                        <button id="callThisNumberBtn" class="btn btn-warning">Call This Number</button>
+                        <button id="cancelSpecificBtn" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </div>
+                <div id="specificMessage" class="message"></div>
+            </div>
+
+            <!-- Customer Details View -->
+            <div id="customerDetailsView" class="hidden">
+                <h3>Customer Details</h3>
+                <div class="customer-details">
+                    <div class="detail-row">
+                        <div class="detail-label">Queue Number:</div>
+                        <div class="detail-value" id="detailQueueNumber">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Customer Name:</div>
+                        <div class="detail-value" id="detailCustomerName">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Service Type:</div>
+                        <div class="detail-value" id="detailServiceType">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Vehicle No:</div>
+                        <div class="detail-value" id="detailVehicleNo">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Contact No:</div>
+                        <div class="detail-value" id="detailContactNo">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Company Name:</div>
+                        <div class="detail-value" id="detailCompanyName">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Mileage:</div>
+                        <div class="detail-value" id="detailMileage">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Vehicle Model:</div>
+                        <div class="detail-value" id="detailVehicleModel">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Booking Type:</div>
+                        <div class="detail-value" id="detailBookingType">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Status:</div>
+                        <div class="detail-value" id="detailStatus">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Added Time:</div>
+                        <div class="detail-value" id="detailAddedTime">-</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button id="closeDetailsBtn" class="btn btn-secondary">Close Details</button>
+                        <button id="editCustomerBtn" class="btn">Edit Customer</button>
+                        <button id="sendSMSBtn" class="btn btn-success">Send SMS Notification</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Customer Form -->
+            <div id="editCustomerForm" class="form-group hidden" style="background: #e9f2ff; padding: 20px; border-radius: var(--radius); border: 2px solid var(--blue);">
+                <h3>Edit Customer Details</h3>
+                <form id="editForm">
+                    <input type="hidden" id="editQueueNumber">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label for="editCustomerName">Customer Name *</label>
+                            <input type="text" id="editCustomerName" name="editCustomerName" required>
+                        </div>
+                        <div>
+                            <label for="editServiceType">Service Type *</label>
+                            <select id="editServiceType" name="editServiceType" required>
+                                <option value="">-- Select Service --</option>
+                                <option value="Repair / Service">Repair / Service</option>
+                                <option value="Speed Limiter Installation">Speed Limiter Installation</option>
+                                <option value="Other Services">Other Services</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label for="editVehicleNo">Vehicle No.</label>
+                            <input type="text" id="editVehicleNo" name="editVehicleNo">
+                        </div>
+                        <div>
+                            <label for="editContactNo">Contact No.</label>
+                            <input type="text" id="editContactNo" name="editContactNo">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label for="editCompanyName">Company Name</label>
+                            <input type="text" id="editCompanyName" name="editCompanyName">
+                        </div>
+                        <div>
+                            <label for="editMileage">Mileage</label>
+                            <input type="text" id="editMileage" name="editMileage">
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label for="editVehicleModel">Vehicle Model</label>
+                            <input type="text" id="editVehicleModel" name="editVehicleModel">
+                        </div>
+                        <div>
+                            <label for="editBookingType">Booking Type *</label>
+                            <select id="editBookingType" name="editBookingType" required>
+                                <option value="">-- Select Booking Type --</option>
+                                <option value="Walk-in">Walk-in</option>
+                                <option value="Booked">Booked</option>
+                                <option value="Appointment">Appointment</option>
+                                <option value="Online">Online</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-success">Save Changes</button>
+                        <button type="button" id="cancelEditBtn" class="btn btn-secondary">Cancel</button>
+                    </div>
+                </form>
+                <div id="editMessage" class="message"></div>
+            </div>
+
+            <!-- Queue Lists - Four Column Layout -->
+            <div id="queuesView" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;">
+                <!-- Waiting Queue -->
+                <div class="form-group">
+                    <h3>Waiting Queue (<span id="queueCount">0</span> customers)</h3>
+                    <div id="queueList" class="queue-scroll">
+                        <!-- Queue items will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Serving Queue -->
+                <div class="form-group">
+                    <h3>Serving Queue (<span id="servingQueueCount">0</span> customers)</h3>
+                    <div id="servingQueueList" class="queue-scroll">
+                        <!-- Serving queue items will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Completed Queue -->
+                <div class="form-group">
+                    <h3>Completed Queue (<span id="completedQueueCount">0</span> customers)</h3>
+                    <div id="completedQueueList" class="queue-scroll">
+                        <!-- Completed queue items will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Missed Queue -->
+                <div class="form-group">
+                    <h3>Missed Queue (<span id="missedQueueCount">0</span> customers)</h3>
+                    <div id="missedQueueList" class="queue-scroll">
+                        <!-- Missed queue items will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- History Modal -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Queue History</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="history-filters">
+                <div>
+                    <label for="historyDateFilter">Date:</label>
+                    <input type="date" id="historyDateFilter">
+                </div>
+                <div>
+                    <label for="historyStatusFilter">Status:</label>
+                    <select id="historyStatusFilter">
+                        <option value="all">All Statuses</option>
+                        <option value="completed">Completed</option>
+                        <option value="missed">Missed</option>
+                        <option value="serving">Serving</option>
+                        <option value="waiting">Waiting</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="historyServiceFilter">Service Type:</label>
+                    <select id="historyServiceFilter">
+                        <option value="all">All Services</option>
+                        <option value="Repair / Service">Repair / Service</option>
+                        <option value="Speed Limiter Installation">Speed Limiter Installation</option>
+                        <option value="Other Services">Other Services</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="historyBookingFilter">Booking Type:</label>
+                    <select id="historyBookingFilter">
+                        <option value="all">All Types</option>
+                        <option value="Walk-in">Walk-in</option>
+                        <option value="Booked">Booked</option>
+                        <option value="Appointment">Appointment</option>
+                        <option value="Online">Online</option>
+                    </select>
+                </div>
+                <button id="applyHistoryFilters" class="btn btn-info">Apply Filters</button>
+                <button id="exportHistory" class="btn btn-success">Export to CSV</button>
+            </div>
+            <div class="history-table-container">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th>Queue No.</th>
+                            <th>Customer Name</th>
+                            <th>Service Type</th>
+                            <th>Booking Type</th>
+                            <th>Status</th>
+                            <th>Counter</th>
+                            <th>Added Time</th>
+                            <th>Called Time</th>
+                            <th>Completed Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <!-- History data will be populated here -->
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
 
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
-            const messageElement = document.getElementById('loginMessage');
-            const usernameError = document.getElementById('usernameError');
-            const passwordError = document.getElementById('passwordError');
-            const loginBtn = document.getElementById('loginBtn');
-            const btnText = document.getElementById('btnText');
-            const btnSpinner = document.getElementById('btnSpinner');
-            
-            // Reset previous error states
-            messageElement.style.display = 'none';
-            usernameError.style.display = 'none';
-            passwordError.style.display = 'none';
-            document.getElementById('username').classList.remove('input-error');
-            document.getElementById('password').classList.remove('input-error');
-            
-            // Validate form fields
-            let isValid = true;
-            
-            if (!username) {
-                usernameError.style.display = 'block';
-                document.getElementById('username').classList.add('input-error');
-                isValid = false;
+        // Queue Management System
+        let currentUser = {
+            username: "Admin",
+            role: "Admin"
+        };
+        let currentCounter = localStorage.getItem('currentCounter') || null;
+        
+        // Queue data
+        let queue = {
+            total: 0,
+            current: 0,
+            submissions: [],
+            counters: {
+                1: { assignedTo: null, currentCustomer: null },
+                2: { assignedTo: null, currentCustomer: null },
+                3: { assignedTo: null, currentCustomer: null },
+                4: { assignedTo: null, currentCustomer: null },
+                5: { assignedTo: null, currentCustomer: null },
+                6: { assignedTo: null, currentCustomer: null },
+                7: { assignedTo: null, currentCustomer: null },
+                8: { assignedTo: null, currentCustomer: null }
             }
+        };
+        
+        // History data - NEW: Store reset queue history
+        let queueHistory = [];
+        
+        // DOM elements
+        const countersGrid = document.getElementById('countersGrid');
+        const editForm = document.getElementById('editForm');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const nextCustomerBtn = document.getElementById('nextCustomerBtn');
+        const resetQueueBtn = document.getElementById('resetQueueBtn');
+        const callSpecificBtn = document.getElementById('callSpecificBtn');
+        const callSpecificForm = document.getElementById('callSpecificForm');
+        const callThisNumberBtn = document.getElementById('callThisNumberBtn');
+        const cancelSpecificBtn = document.getElementById('cancelSpecificBtn');
+        const specificNumber = document.getElementById('specificNumber');
+        const customerDetailsView = document.getElementById('customerDetailsView');
+        const closeDetailsBtn = document.getElementById('closeDetailsBtn');
+        const editCustomerBtn = document.getElementById('editCustomerBtn');
+        const editCustomerForm = document.getElementById('editCustomerForm');
+        const cancelEditBtn = document.getElementById('cancelEditBtn');
+        const specificMessage = document.getElementById('specificMessage');
+        const counterMessage = document.getElementById('counterMessage');
+        const editMessage = document.getElementById('editMessage');
+        const loggedInUser = document.getElementById('loggedInUser');
+        const roleBadge = document.getElementById('roleBadge');
+        const counterAssignment = document.getElementById('counterAssignment');
+        const currentQueueNumber = document.getElementById('currentQueueNumber');
+        const bookingTypeBadge = document.getElementById('bookingTypeBadge');
+        const queueCount = document.getElementById('queueCount');
+        const servingQueueCount = document.getElementById('servingQueueCount');
+        const completedQueueCount = document.getElementById('completedQueueCount');
+        const missedQueueCount = document.getElementById('missedQueueCount');
+        const queueList = document.getElementById('queueList');
+        const servingQueueList = document.getElementById('servingQueueList');
+        const completedQueueList = document.getElementById('completedQueueList');
+        const missedQueueList = document.getElementById('missedQueueList');
+        const counterBoxHeader = document.getElementById('counterBoxHeader');
+        const counterBoxContent = document.getElementById('counterBoxContent');
+        const toggleIcon = document.querySelector('.toggle-icon');
+        const smsNotification = document.getElementById('smsNotification');
+        const smsMessage = document.getElementById('smsMessage');
+        const smsContent = document.getElementById('smsContent');
+        const smsLink = document.getElementById('smsLink');
+        const sendSMSBtn = document.getElementById('sendSMSBtn');
+        const checkHistoryBtn = document.getElementById('checkHistoryBtn');
+        const historyModal = document.getElementById('historyModal');
+        const closeModal = document.querySelector('.close-modal');
+        const historyTableBody = document.getElementById('historyTableBody');
+        const historyDateFilter = document.getElementById('historyDateFilter');
+        const historyStatusFilter = document.getElementById('historyStatusFilter');
+        const historyServiceFilter = document.getElementById('historyServiceFilter');
+        const historyBookingFilter = document.getElementById('historyBookingFilter');
+        const applyHistoryFilters = document.getElementById('applyHistoryFilters');
+        const exportHistory = document.getElementById('exportHistory');
+        
+        // Detail elements
+        const detailQueueNumber = document.getElementById('detailQueueNumber');
+        const detailCustomerName = document.getElementById('detailCustomerName');
+        const detailServiceType = document.getElementById('detailServiceType');
+        const detailVehicleNo = document.getElementById('detailVehicleNo');
+        const detailContactNo = document.getElementById('detailContactNo');
+        const detailCompanyName = document.getElementById('detailCompanyName');
+        const detailMileage = document.getElementById('detailMileage');
+        const detailVehicleModel = document.getElementById('detailVehicleModel');
+        const detailBookingType = document.getElementById('detailBookingType');
+        const detailStatus = document.getElementById('detailStatus');
+        const detailAddedTime = document.getElementById('detailAddedTime');
+        
+        // Edit form elements
+        const editQueueNumber = document.getElementById('editQueueNumber');
+        const editCustomerName = document.getElementById('editCustomerName');
+        const editServiceType = document.getElementById('editServiceType');
+        const editVehicleNo = document.getElementById('editVehicleNo');
+        const editContactNo = document.getElementById('editContactNo');
+        const editCompanyName = document.getElementById('editCompanyName');
+        const editMileage = document.getElementById('editMileage');
+        const editVehicleModel = document.getElementById('editVehicleModel');
+        const editBookingType = document.getElementById('editBookingType');
+        
+        // Initialize the application
+        function init() {
+            showAuthenticatedUI();
+            loadQueueData();
+            loadHistoryData(); // NEW: Load history data
+            generateCounters();
+            setupEventListeners();
+            updateQueueDisplay();
             
-            if (!password) {
-                passwordError.style.display = 'block';
-                document.getElementById('password').classList.add('input-error');
-                isValid = false;
+            // Set today's date as default for history filter
+            const today = new Date().toISOString().split('T')[0];
+            historyDateFilter.value = today;
+        }
+        
+        // Load queue data from localStorage
+        function loadQueueData() {
+            try {
+                const savedQueue = localStorage.getItem('goldbellQueue');
+                if (savedQueue) {
+                    const parsed = JSON.parse(savedQueue);
+                    queue = { ...queue, ...parsed };
+                    
+                    // Ensure all submissions have required fields
+                    queue.submissions.forEach(sub => {
+                        if (!sub.bookingType) {
+                            sub.bookingType = 'Walk-in'; // Default to Walk-in if not specified
+                        }
+                        if (!sub.status) {
+                            sub.status = 'waiting'; // Default status
+                        }
+                        if (!sub.customerName) {
+                            sub.customerName = 'Customer'; // Default for Booked forms
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading queue data:', error);
+                initializeSampleData();
             }
+        }
+        
+        // NEW: Load history data from localStorage
+        function loadHistoryData() {
+            try {
+                const savedHistory = localStorage.getItem('goldbellQueueHistory');
+                if (savedHistory) {
+                    queueHistory = JSON.parse(savedHistory);
+                }
+            } catch (error) {
+                console.error('Error loading history data:', error);
+                queueHistory = [];
+            }
+        }
+        
+        // NEW: Save history data to localStorage
+        function saveHistoryData() {
+            try {
+                localStorage.setItem('goldbellQueueHistory', JSON.stringify(queueHistory));
+            } catch (error) {
+                console.error('Error saving history data:', error);
+            }
+        }
+        
+        // Initialize with sample data
+        function initializeSampleData() {
+            if (queue.submissions.length === 0) {
+                const sampleSubmissions = [
+                    {
+                        queueNumber: "E100001",
+                        customerName: "John Lee",
+                        serviceType: "Repair / Service",
+                        vehicleNo: "SBA1234A",
+                        contactNo: "91234567",
+                        companyName: "Goldbell Group",
+                        mileage: "12345",
+                        vehicleModel: "TOYOTA",
+                        bookingType: "Walk-in",
+                        status: "waiting",
+                        timestamp: new Date(Date.now() - 30 * 60000).toISOString()
+                    },
+                    {
+                        queueNumber: "E100002", 
+                        customerName: "Sarah Tan",
+                        serviceType: "Speed Limiter Installation",
+                        vehicleNo: "SBB5678B",
+                        contactNo: "98765432",
+                        companyName: "Tan Transport",
+                        mileage: "67890",
+                        vehicleModel: "HINO",
+                        bookingType: "Booked",
+                        status: "waiting",
+                        timestamp: new Date(Date.now() - 15 * 60000).toISOString()
+                    },
+                    {
+                        queueNumber: "E100003", 
+                        customerName: "Michael Wong",
+                        serviceType: "Other Services",
+                        vehicleNo: "SBC9012C",
+                        contactNo: "87654321",
+                        companyName: "Wong Logistics",
+                        mileage: "54321",
+                        vehicleModel: "NISSAN",
+                        bookingType: "Booked",
+                        status: "waiting",
+                        timestamp: new Date(Date.now() - 10 * 60000).toISOString()
+                    }
+                ];
+                
+                queue.submissions = sampleSubmissions;
+                queue.total = sampleSubmissions.length;
+                saveQueueData();
+            }
+        }
+        
+        // Save queue data to localStorage
+        function saveQueueData() {
+            try {
+                localStorage.setItem('goldbellQueue', JSON.stringify(queue));
+            } catch (error) {
+                console.error('Error saving queue data:', error);
+            }
+        }
+        
+        // Generate counters 1-8
+        function generateCounters() {
+            countersGrid.innerHTML = '';
+            for (let i = 1; i <= 8; i++) {
+                const counter = queue.counters[i];
+                const counterCard = document.createElement('div');
+                counterCard.className = `counter-card ${currentCounter === i.toString() ? 'active' : ''} ${counter.assignedTo ? 'assigned' : ''}`;
+                counterCard.innerHTML = `
+                    <div class="counter-number">Counter ${i}</div>
+                    <div class="counter-status">
+                        ${counter.assignedTo ? `Assigned to: ${counter.assignedTo}` : 'Available'}
+                        ${counter.currentCustomer ? `<br>Serving: ${counter.currentCustomer}` : ''}
+                    </div>
+                `;
+                counterCard.onclick = () => assignToCounter(i);
+                countersGrid.appendChild(counterCard);
+            }
+        }
+        
+        // Assign user to counter
+        function assignToCounter(counterNumber) {
+            const counter = queue.counters[counterNumber];
             
-            if (!isValid) {
-                messageElement.textContent = 'Please fill in all required fields.';
-                messageElement.className = 'message error';
-                messageElement.style.display = 'block';
+            if (counter.assignedTo && counter.assignedTo !== currentUser.username) {
+                showMessage(counterMessage, `Counter ${counterNumber} is already assigned to ${counter.assignedTo}`, 'error');
                 return;
             }
             
-            // Show loading state
-            loginBtn.disabled = true;
-            loginBtn.classList.add('btn-loading');
-            btnText.textContent = 'Logging in...';
-            btnSpinner.style.display = 'block';
+            if (currentCounter) {
+                queue.counters[currentCounter].assignedTo = null;
+            }
             
-            // Simulate API call
+            currentCounter = counterNumber.toString();
+            queue.counters[counterNumber].assignedTo = currentUser.username;
+            
+            saveQueueData();
+            localStorage.setItem('currentCounter', currentCounter);
+            
+            generateCounters();
+            updateCounterAssignmentDisplay();
+            showMessage(counterMessage, `Assigned to Counter ${counterNumber}`, 'success');
+            
             setTimeout(() => {
-                // Check credentials
-                if (username === 'admin' && password === '123') {
-                    // Success
-                    messageElement.textContent = 'Login successful! Redirecting...';
-                    messageElement.className = 'message success';
-                    messageElement.style.display = 'block';
-                    
-                    // Redirect to dashboard
-                    setTimeout(() => {
-                        window.location.href = 'StaffHomepage.html';
-                    }, 1500);
-                } else {
-                    // Error
-                    messageElement.textContent = 'Invalid username or password. Please try again.';
-                    messageElement.className = 'message error';
-                    messageElement.style.display = 'block';
-                    
-                    // Clear password field
-                    document.getElementById('password').value = '';
-                    
-                    // Reset button state
-                    loginBtn.disabled = false;
-                    loginBtn.classList.remove('btn-loading');
-                    btnText.textContent = 'Login';
-                    btnSpinner.style.display = 'none';
-                }
+                counterBoxContent.classList.remove('expanded');
+                toggleIcon.classList.remove('rotated');
             }, 1500);
-        });
+        }
         
-        // Real-time validation
-        document.getElementById('username').addEventListener('input', function() {
-            if (this.value.trim()) {
-                this.classList.remove('input-error');
-                document.getElementById('usernameError').style.display = 'none';
+        // Update counter assignment display
+        function updateCounterAssignmentDisplay() {
+            if (currentCounter) {
+                counterAssignment.textContent = `Assigned to: Counter ${currentCounter}`;
+                counterAssignment.style.color = 'var(--success)';
+                counterAssignment.style.fontWeight = 'bold';
+            } else {
+                counterAssignment.textContent = 'Not assigned to any counter';
+                counterAssignment.style.color = 'var(--muted)';
             }
-        });
+        }
         
-        document.getElementById('password').addEventListener('input', function() {
-            if (this.value.trim()) {
-                this.classList.remove('input-error');
-                document.getElementById('passwordError').style.display = 'none';
+        // Toggle counter assignment box
+        function toggleCounterBox() {
+            counterBoxContent.classList.toggle('expanded');
+            toggleIcon.classList.toggle('rotated');
+        }
+        
+        // Set up all event listeners
+        function setupEventListeners() {
+            logoutBtn.addEventListener('click', handleLogout);
+            editForm.addEventListener('submit', handleCustomerEdit);
+            nextCustomerBtn.addEventListener('click', callNextCustomer);
+            resetQueueBtn.addEventListener('click', resetQueue);
+            callSpecificBtn.addEventListener('click', () => callSpecificForm.classList.remove('hidden'));
+            cancelSpecificBtn.addEventListener('click', () => callSpecificForm.classList.add('hidden'));
+            callThisNumberBtn.addEventListener('click', callSpecificNumber);
+            closeDetailsBtn.addEventListener('click', () => customerDetailsView.classList.add('hidden'));
+            editCustomerBtn.addEventListener('click', showEditForm);
+            cancelEditBtn.addEventListener('click', () => editCustomerForm.classList.add('hidden'));
+            counterBoxHeader.addEventListener('click', toggleCounterBox);
+            sendSMSBtn.addEventListener('click', sendSMSNotification);
+            checkHistoryBtn.addEventListener('click', showHistoryModal);
+            closeModal.addEventListener('click', () => historyModal.style.display = 'none');
+            applyHistoryFilters.addEventListener('click', applyFilters);
+            exportHistory.addEventListener('click', exportToCSV);
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', (e) => {
+                if (e.target === historyModal) {
+                    historyModal.style.display = 'none';
+                }
+            });
+        }
+        
+        // Handle logout
+        function handleLogout() {
+            const confirmLogout = confirm('Are you sure you want to log out?');
+            
+            if (confirmLogout) {
+                if (currentCounter) {
+                    queue.counters[currentCounter].assignedTo = null;
+                    saveQueueData();
+                }
+                
+                localStorage.removeItem('currentCounter');
+                currentCounter = null;
+                
+                // Clear user data
+                currentUser = {
+                    username: "",
+                    role: ""
+                };
+                
+                // Show logout notification
+                showNotification('Logged out successfully', 'info');
+                
+                // Redirect to login page after a short delay
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1500);
             }
-        });
+        }
+        
+        // Handle customer edit form submission
+        function handleCustomerEdit(e) {
+            e.preventDefault();
+            
+            const queueNumber = editQueueNumber.value;
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            
+            if (submission) {
+                submission.customerName = editCustomerName.value;
+                submission.serviceType = editServiceType.value;
+                submission.vehicleNo = editVehicleNo.value;
+                submission.contactNo = editContactNo.value;
+                submission.companyName = editCompanyName.value;
+                submission.mileage = editMileage.value;
+                submission.vehicleModel = editVehicleModel.value;
+                submission.bookingType = editBookingType.value;
+                
+                saveQueueData();
+                updateQueueDisplay();
+                
+                showMessage(editMessage, `Customer ${queueNumber} details updated`, 'success');
+                showNotification(`Customer ${queueNumber} details updated`, 'success');
+                editCustomerForm.classList.add('hidden');
+                customerDetailsView.classList.add('hidden');
+            }
+        }
+        
+        // Call next customer
+        function callNextCustomer() {
+            if (!currentCounter) {
+                showMessage(specificMessage, 'Please assign yourself to a counter first', 'error');
+                return;
+            }
+            
+            // Get all waiting customers, with Booked customers first
+            const waitingCustomers = getPrioritizedWaitingCustomers();
+            
+            const nextSubmission = waitingCustomers.length > 0 ? waitingCustomers[0] : null;
+            
+            if (nextSubmission) {
+                nextSubmission.status = 'serving';
+                nextSubmission.calledAt = new Date();
+                nextSubmission.servedBy = currentUser.username;
+                nextSubmission.counter = currentCounter;
+                
+                queue.current = parseInt(nextSubmission.queueNumber.substring(1));
+                queue.counters[currentCounter].currentCustomer = nextSubmission.queueNumber;
+                
+                saveQueueData();
+                updateQueueDisplay();
+                generateCounters();
+                
+                const bookingTypeText = nextSubmission.bookingType ? ` (${nextSubmission.bookingType})` : '';
+                speak(`Counter ${currentCounter} now serving ${nextSubmission.queueNumber} - ${nextSubmission.customerName}`);
+                
+                // Send SMS notification
+                sendSMS(nextSubmission);
+                
+                showNotification(`Counter ${currentCounter} now serving ${nextSubmission.queueNumber} - ${nextSubmission.customerName}${bookingTypeText}`, 'success');
+            } else {
+                showMessage(specificMessage, 'No more customers in queue', 'info');
+            }
+        }
+        
+        // Get waiting customers with Booked customers prioritized
+        function getPrioritizedWaitingCustomers() {
+            // Filter out general service customers
+            const waitingCustomers = queue.submissions.filter(sub => 
+                sub.status === 'waiting' && sub.serviceType !== 'General Service'
+            );
+            
+            // Separate Booked customers from others
+            const bookedCustomers = waitingCustomers.filter(sub => sub.bookingType === 'Booked');
+            const otherCustomers = waitingCustomers.filter(sub => sub.bookingType !== 'Booked');
+            
+            // Sort Booked customers by timestamp (oldest first)
+            bookedCustomers.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            
+            // Sort other customers by timestamp (oldest first)
+            otherCustomers.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            
+            // Return Booked customers first, then others
+            return [...bookedCustomers, ...otherCustomers];
+        }
+        
+        // Call specific number
+        function callSpecificNumber() {
+            if (!currentCounter) {
+                showMessage(specificMessage, 'Please assign yourself to a counter first', 'error');
+                return;
+            }
+            
+            const numberToCall = specificNumber.value.trim().toUpperCase();
+            
+            if (!numberToCall.match(/^E\d{6}$/)) {
+                showMessage(specificMessage, 'Please enter a valid queue number (e.g., E000123)', 'error');
+                return;
+            }
+            
+            const submission = queue.submissions.find(sub => sub.queueNumber === numberToCall);
+            
+            if (!submission) {
+                showMessage(specificMessage, `Queue number ${numberToCall} not found`, 'error');
+                return;
+            }
+            
+            if (submission.status === 'serving') {
+                showMessage(specificMessage, `Customer ${numberToCall} is already being served`, 'info');
+                return;
+            }
+            
+            if (submission.status === 'completed') {
+                showMessage(specificMessage, `Customer ${numberToCall} has already been completed`, 'info');
+                return;
+            }
+            
+            submission.status = 'serving';
+            submission.calledAt = new Date();
+            submission.servedBy = currentUser.username;
+            submission.counter = currentCounter;
+            
+            queue.counters[currentCounter].currentCustomer = numberToCall;
+            
+            const numberValue = parseInt(numberToCall.substring(1));
+            if (numberValue > queue.current) {
+                queue.current = numberValue;
+            }
+            
+            saveQueueData();
+            updateQueueDisplay();
+            generateCounters();
+            
+            const bookingTypeText = submission.bookingType ? ` (${submission.bookingType})` : '';
+            speak(`Counter ${currentCounter} now serving ${numberToCall} - ${submission.customerName}`);
+            
+            // Send SMS notification
+            sendSMS(submission);
+            
+            showMessage(specificMessage, `Counter ${currentCounter} now serving ${numberToCall} - ${submission.customerName}${bookingTypeText}`, 'success');
+            showNotification(`Counter ${currentCounter} now serving ${numberToCall} - ${submission.customerName}${bookingTypeText}`, 'success');
+            callSpecificForm.classList.add('hidden');
+            specificNumber.value = '';
+        }
+        
+        // Send SMS notification to customer
+        function sendSMS(submission) {
+            if (!submission.contactNo) {
+                console.log('No contact number available for SMS notification');
+                return;
+            }
+            
+            const message = `Goldbell Service: Your queue number ${submission.queueNumber} has been called. Please proceed to Counter ${submission.counter}. Thank you.`;
+            const smsUrl = `sms:${submission.contactNo}?body=${encodeURIComponent(message)}`;
+            
+            // Update SMS notification display
+            smsMessage.textContent = `SMS sent to ${submission.customerName} (${submission.contactNo})`;
+            smsContent.textContent = message;
+            smsLink.href = smsUrl;
+            smsNotification.classList.remove('hidden');
+            
+            // Auto-hide SMS notification after 10 seconds
+            setTimeout(() => {
+                smsNotification.classList.add('hidden');
+            }, 10000);
+            
+            // Log the SMS action
+            console.log(`SMS sent to ${submission.contactNo}: ${message}`);
+        }
+        
+        // Send SMS notification manually from customer details
+        function sendSMSNotification() {
+            const queueNumber = detailQueueNumber.textContent;
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            
+            if (submission) {
+                if (!submission.contactNo) {
+                    showNotification('No contact number available for this customer', 'error');
+                    return;
+                }
+                
+                let message;
+                if (submission.status === 'serving') {
+                    message = `Goldbell Service: Your queue number ${submission.queueNumber} has been called. Please proceed to Counter ${submission.counter || 'the assigned counter'}. Thank you.`;
+                } else {
+                    message = `Goldbell Service: Your queue number is ${submission.queueNumber}. Current status: ${submission.status}. We will notify you when it's your turn. Thank you.`;
+                }
+                
+                const smsUrl = `sms:${submission.contactNo}?body=${encodeURIComponent(message)}`;
+                
+                // Update SMS notification display
+                smsMessage.textContent = `SMS sent to ${submission.customerName} (${submission.contactNo})`;
+                smsContent.textContent = message;
+                smsLink.href = smsUrl;
+                smsNotification.classList.remove('hidden');
+                
+                // Auto-hide SMS notification after 10 seconds
+                setTimeout(() => {
+                    smsNotification.classList.add('hidden');
+                }, 10000);
+                
+                showNotification(`SMS notification sent to ${submission.customerName}`, 'success');
+            }
+        }
+        
+        // Show customer details
+        function showCustomerDetails(queueNumber) {
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            if (submission) {
+                detailQueueNumber.textContent = submission.queueNumber;
+                detailCustomerName.textContent = submission.customerName || '-';
+                detailServiceType.textContent = submission.serviceType || '-';
+                detailVehicleNo.textContent = submission.vehicleNo || '-';
+                detailContactNo.textContent = submission.contactNo || '-';
+                detailCompanyName.textContent = submission.companyName || '-';
+                detailMileage.textContent = submission.mileage || '-';
+                detailVehicleModel.textContent = submission.vehicleModel || '-';
+                detailBookingType.textContent = submission.bookingType || 'Walk-in';
+                detailStatus.textContent = submission.status || '-';
+                detailAddedTime.textContent = submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '-';
+                
+                editCustomerBtn.classList.remove('hidden');
+                sendSMSBtn.classList.remove('hidden');
+                customerDetailsView.classList.remove('hidden');
+            }
+        }
+        
+        // Show edit form
+        function showEditForm() {
+            const queueNumber = detailQueueNumber.textContent;
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            
+            if (submission) {
+                editQueueNumber.value = submission.queueNumber;
+                editCustomerName.value = submission.customerName || '';
+                editServiceType.value = submission.serviceType || '';
+                editVehicleNo.value = submission.vehicleNo || '';
+                editContactNo.value = submission.contactNo || '';
+                editCompanyName.value = submission.companyName || '';
+                editMileage.value = submission.mileage || '';
+                editVehicleModel.value = submission.vehicleModel || '';
+                editBookingType.value = submission.bookingType || 'Walk-in';
+                
+                editCustomerForm.classList.remove('hidden');
+            }
+        }
+        
+        // Complete a customer
+        function completeCustomer(queueNumber) {
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            if (submission) {
+                submission.status = 'completed';
+                submission.completedAt = new Date();
+                
+                if (submission.counter && queue.counters[submission.counter].currentCustomer === queueNumber) {
+                    queue.counters[submission.counter].currentCustomer = null;
+                }
+                
+                saveQueueData();
+                updateQueueDisplay();
+                generateCounters();
+                showNotification(`Customer ${queueNumber} - ${submission.customerName} marked as completed`, 'success');
+            }
+        }
+        
+        // Mark customer as missed
+        function markAsMissed(queueNumber) {
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            if (submission) {
+                submission.status = 'missed';
+                submission.missedAt = new Date();
+                submission.missedBy = currentUser.username;
+                
+                if (submission.counter && queue.counters[submission.counter].currentCustomer === queueNumber) {
+                    queue.counters[submission.counter].currentCustomer = null;
+                }
+                
+                saveQueueData();
+                updateQueueDisplay();
+                generateCounters();
+                showNotification(`Customer ${queueNumber} - ${submission.customerName} marked as missed`, 'warning');
+            }
+        }
+        
+        // Recall missed customer
+        function recallMissedCustomer(queueNumber) {
+            if (!currentCounter) {
+                showNotification('Please assign yourself to a counter first', 'error');
+                return;
+            }
+            
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            
+            if (submission) {
+                submission.status = 'serving';
+                submission.calledAt = new Date();
+                submission.servedBy = currentUser.username;
+                submission.counter = currentCounter;
+                
+                queue.counters[currentCounter].currentCustomer = queueNumber;
+                
+                saveQueueData();
+                updateQueueDisplay();
+                generateCounters();
+                
+                const bookingTypeText = submission.bookingType ? ` (${submission.bookingType})` : '';
+                speak(`Counter ${currentCounter} now serving recalled customer ${queueNumber} - ${submission.customerName}`);
+                
+                // Send SMS notification for recalled customer
+                sendSMS(submission);
+                
+                showNotification(`Counter ${currentCounter} now serving recalled customer ${queueNumber} - ${submission.customerName}${bookingTypeText}`, 'success');
+            }
+        }
+        
+        // Delete missed customer permanently
+        function deleteMissedCustomer(queueNumber) {
+            const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            const customerName = submission ? submission.customerName : 'Unknown';
+            const bookingType = submission && submission.bookingType ? ` (${submission.bookingType})` : '';
+            
+            if (confirm(`Are you sure you want to permanently delete customer ${queueNumber} - ${customerName}${bookingType} from the missed queue?`)) {
+                const index = queue.submissions.findIndex(sub => sub.queueNumber === queueNumber);
+                if (index !== -1) {
+                    queue.submissions.splice(index, 1);
+                    saveQueueData();
+                    updateQueueDisplay();
+                    showNotification(`Customer ${queueNumber} - ${customerName}${bookingType} deleted from missed queue`, 'success');
+                }
+            }
+        }
+        
+        // NEW: Reset queue with history preservation
+        function resetQueue() {
+            if (confirm('Are you sure you want to reset the entire queue? This will archive current queue data to history.')) {
+                // Create a history entry with the current queue data
+                const historyEntry = {
+                    resetDate: new Date().toISOString(),
+                    resetBy: currentUser.username,
+                    queueData: JSON.parse(JSON.stringify(queue)) // Deep copy of queue data
+                };
+                
+                // Add to history
+                queueHistory.push(historyEntry);
+                saveHistoryData();
+                
+                // Reset the current queue
+                queue = {
+                    total: 0,
+                    current: 0,
+                    submissions: [],
+                    counters: {
+                        1: { assignedTo: null, currentCustomer: null },
+                        2: { assignedTo: null, currentCustomer: null },
+                        3: { assignedTo: null, currentCustomer: null },
+                        4: { assignedTo: null, currentCustomer: null },
+                        5: { assignedTo: null, currentCustomer: null },
+                        6: { assignedTo: null, currentCustomer: null },
+                        7: { assignedTo: null, currentCustomer: null },
+                        8: { assignedTo: null, currentCustomer: null }
+                    }
+                };
+                
+                saveQueueData();
+                updateQueueDisplay();
+                showNotification('Queue has been reset. Previous data saved to history.', 'success');
+            }
+        }
+        
+        // Show history modal
+        function showHistoryModal() {
+            historyModal.style.display = 'flex';
+            applyFilters(); // Load data with current filters
+        }
+        
+        // Apply history filters
+        function applyFilters() {
+            const dateFilter = historyDateFilter.value;
+            const statusFilter = historyStatusFilter.value;
+            const serviceFilter = historyServiceFilter.value;
+            const bookingFilter = historyBookingFilter.value;
+            
+            // NEW: Combine current queue data and history data
+            let allData = [...queue.submissions];
+            
+            // Add data from history entries
+            queueHistory.forEach(historyEntry => {
+                allData = [...allData, ...historyEntry.queueData.submissions];
+            });
+            
+            let filteredData = allData;
+            
+            // Filter by date if selected
+            if (dateFilter) {
+                filteredData = filteredData.filter(sub => {
+                    const subDate = new Date(sub.timestamp).toISOString().split('T')[0];
+                    return subDate === dateFilter;
+                });
+            }
+            
+            // Filter by status if not "all"
+            if (statusFilter !== 'all') {
+                filteredData = filteredData.filter(sub => sub.status === statusFilter);
+            }
+            
+            // Filter by service type if not "all"
+            if (serviceFilter !== 'all') {
+                filteredData = filteredData.filter(sub => sub.serviceType === serviceFilter);
+            }
+            
+            // Filter by booking type if not "all"
+            if (bookingFilter !== 'all') {
+                filteredData = filteredData.filter(sub => sub.bookingType === bookingFilter);
+            }
+            
+            // Sort by timestamp (newest first)
+            filteredData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            populateHistoryTable(filteredData);
+        }
+        
+        // Populate history table with data
+        function populateHistoryTable(data) {
+            historyTableBody.innerHTML = '';
+            
+            if (data.length === 0) {
+                historyTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 20px;">
+                            No queue history found for the selected filters.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            data.forEach(submission => {
+                const row = document.createElement('tr');
+                
+                row.innerHTML = `
+                    <td><strong>${submission.queueNumber}</strong></td>
+                    <td>${submission.customerName || 'Customer'}</td>
+                    <td>${submission.serviceType || '-'}</td>
+                    <td>${submission.bookingType || 'Walk-in'}</td>
+                    <td class="${submission.status}">${submission.status || 'waiting'}</td>
+                    <td>${submission.counter || '-'}</td>
+                    <td>${submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '-'}</td>
+                    <td>${submission.calledAt ? new Date(submission.calledAt).toLocaleString() : '-'}</td>
+                    <td>${submission.completedAt ? new Date(submission.completedAt).toLocaleString() : '-'}</td>
+                `;
+                
+                historyTableBody.appendChild(row);
+            });
+        }
+        
+        // Export history to CSV - FIXED for Excel compatibility
+        function exportToCSV() {
+            const dateFilter = historyDateFilter.value;
+            const statusFilter = historyStatusFilter.value;
+            const serviceFilter = historyServiceFilter.value;
+            const bookingFilter = historyBookingFilter.value;
+            
+            // Combine current queue data and history data
+            let allData = [...queue.submissions];
+            
+            // Add data from history entries
+            queueHistory.forEach(historyEntry => {
+                allData = [...allData, ...historyEntry.queueData.submissions];
+            });
+            
+            let filteredData = allData;
+            
+            // Apply the same filters as the table
+            if (dateFilter) {
+                filteredData = filteredData.filter(sub => {
+                    const subDate = new Date(sub.timestamp).toISOString().split('T')[0];
+                    return subDate === dateFilter;
+                });
+            }
+            
+            if (statusFilter !== 'all') {
+                filteredData = filteredData.filter(sub => sub.status === statusFilter);
+            }
+            
+            if (serviceFilter !== 'all') {
+                filteredData = filteredData.filter(sub => sub.serviceType === serviceFilter);
+            }
+            
+            if (bookingFilter !== 'all') {
+                filteredData = filteredData.filter(sub => sub.bookingType === bookingFilter);
+            }
+            
+            // Sort by timestamp (newest first)
+            filteredData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            // Create CSV content with BOM for Excel compatibility
+            const headers = [
+                'Queue Number',
+                'Customer Name',
+                'Service Type',
+                'Booking Type',
+                'Status',
+                'Counter',
+                'Added Time',
+                'Called Time',
+                'Completed Time',
+                'Vehicle No',
+                'Contact No',
+                'Company Name',
+                'Mileage',
+                'Vehicle Model'
+            ];
+            
+            // Add UTF-8 BOM for Excel compatibility
+            let csvContent = '\uFEFF'; // UTF-8 BOM
+            
+            // Add headers
+            csvContent += headers.join(',') + '\n';
+            
+            filteredData.forEach(submission => {
+                const row = [
+                    submission.queueNumber,
+                    `"${(submission.customerName || 'Customer').replace(/"/g, '""')}"`,
+                    `"${(submission.serviceType || '').replace(/"/g, '""')}"`,
+                    `"${(submission.bookingType || 'Walk-in').replace(/"/g, '""')}"`,
+                    `"${(submission.status || 'waiting').replace(/"/g, '""')}"`,
+                    `"${(submission.counter || '').replace(/"/g, '""')}"`,
+                    `"${(submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '').replace(/"/g, '""')}"`,
+                    `"${(submission.calledAt ? new Date(submission.calledAt).toLocaleString() : '').replace(/"/g, '""')}"`,
+                    `"${(submission.completedAt ? new Date(submission.completedAt).toLocaleString() : '').replace(/"/g, '""')}"`,
+                    `"${(submission.vehicleNo || '').replace(/"/g, '""')}"`,
+                    `"${(submission.contactNo || '').replace(/"/g, '""')}"`,
+                    `"${(submission.companyName || '').replace(/"/g, '""')}"`,
+                    `"${(submission.mileage || '').replace(/"/g, '""')}"`,
+                    `"${(submission.vehicleModel || '').replace(/"/g, '""')}"`
+                ];
+                
+                csvContent += row.join(',') + '\n';
+            });
+            
+            // Create and download the CSV file
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            // Create filename with current date and filter info
+            let filename = `queue_history_${new Date().toISOString().split('T')[0]}`;
+            if (dateFilter) filename += `_${dateFilter}`;
+            if (statusFilter !== 'all') filename += `_${statusFilter}`;
+            filename += '.csv';
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', filename);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification(`History exported to ${filename}`, 'success');
+        }
+        
+        // Update queue display
+        function updateQueueDisplay() {
+            try {
+                const currentDisplayNumber = 'E' + queue.current.toString().padStart(6, '0');
+                currentQueueNumber.textContent = currentDisplayNumber;
+                
+                // Update booking type badge for current customer
+                const currentSubmission = queue.submissions.find(sub => sub.queueNumber === currentDisplayNumber);
+                if (currentSubmission && currentSubmission.bookingType) {
+                    bookingTypeBadge.textContent = currentSubmission.bookingType;
+                    bookingTypeBadge.className = `booking-type-badge ${getBookingTypeClass(currentSubmission.bookingType)}`;
+                    bookingTypeBadge.style.display = 'inline-block';
+                } else {
+                    bookingTypeBadge.style.display = 'none';
+                }
+                
+                // Filter out general service customers from waiting queue count
+                const waitingCount = queue.submissions.filter(sub => 
+                    sub.status === 'waiting' && sub.serviceType !== 'General Service'
+                ).length;
+                
+                const servingCount = queue.submissions.filter(sub => sub.status === 'serving').length;
+                const completedCount = queue.submissions.filter(sub => sub.status === 'completed').length;
+                const missedCount = queue.submissions.filter(sub => sub.status === 'missed').length;
+                
+                queueCount.textContent = waitingCount;
+                servingQueueCount.textContent = servingCount;
+                completedQueueCount.textContent = completedCount;
+                missedQueueCount.textContent = missedCount;
+                
+                updateQueueList('waiting', queueList, waitingCount);
+                updateQueueList('serving', servingQueueList, servingCount);
+                updateQueueList('completed', completedQueueList, completedCount);
+                updateQueueList('missed', missedQueueList, missedCount);
+                
+            } catch (error) {
+                console.error('Error updating queue display:', error);
+            }
+        }
+        
+        // Helper function to get booking type CSS class
+        function getBookingTypeClass(bookingType) {
+            switch(bookingType) {
+                case 'Walk-in': return 'walkin-badge';
+                case 'Booked': return 'booked-badge';
+                case 'Appointment': return 'appointment-badge';
+                case 'Online': return 'online-badge';
+                default: return 'walkin-badge';
+            }
+        }
+        
+        // Helper function to update individual queue lists
+        function updateQueueList(status, listElement, count) {
+            let submissions;
+            
+            // For waiting queue, filter out general service customers and prioritize Booked
+            if (status === 'waiting') {
+                submissions = getPrioritizedWaitingCustomers();
+            } else {
+                submissions = queue.submissions.filter(sub => sub.status === status);
+            }
+            
+            listElement.innerHTML = '';
+            
+            if (submissions.length === 0) {
+                listElement.innerHTML = `<div class="queue-item">No customers ${status}</div>`;
+                return;
+            }
+            
+            const sortedSubmissions = status === 'completed' ? 
+                submissions.slice(-20).reverse() :
+                submissions;
+            
+            sortedSubmissions.forEach(submission => {
+                const queueItem = createQueueItem(submission, status);
+                listElement.appendChild(queueItem);
+            });
+        }
+        
+        // Create queue item element
+        function createQueueItem(submission, status) {
+            const queueItem = document.createElement('div');
+            queueItem.className = `queue-item ${status}`;
+            
+            let actionsHTML = '';
+            if (status === 'waiting') {
+                actionsHTML = `
+                    <div class="missed-actions">
+                        <button onclick="markAsMissed('${submission.queueNumber}')" class="missed-btn delete-btn">Mark as Missed</button>
+                    </div>
+                `;
+            } else if (status === 'serving') {
+                actionsHTML = `
+                    <div class="action-buttons" style="margin-top: 10px;">
+                        <button onclick="completeCustomer('${submission.queueNumber}')" class="btn btn-success" style="padding: 5px 10px; font-size: 0.8em;">Complete</button>
+                        <button onclick="markAsMissed('${submission.queueNumber}')" class="btn btn-warning" style="padding: 5px 10px; font-size: 0.8em;">Mark Missed</button>
+                    </div>
+                `;
+            } else if (status === 'missed') {
+                actionsHTML = `
+                    <div class="missed-actions">
+                        <button onclick="recallMissedCustomer('${submission.queueNumber}')" class="missed-btn recall-btn">Recall Customer</button>
+                        <button onclick="deleteMissedCustomer('${submission.queueNumber}')" class="missed-btn delete-btn">Delete</button>
+                    </div>
+                `;
+            }
+            
+            // Add priority badge for Booked customers
+            const priorityBadgeHTML = submission.bookingType === 'Booked' ? 
+                `<span class="booking-type-badge priority-badge" style="margin-left: 5px;">PRIORITY</span>` : '';
+            
+            const bookingTypeBadgeHTML = submission.bookingType ? 
+                `<span class="booking-type-badge ${getBookingTypeClass(submission.bookingType)}" style="margin-left: 5px;">${submission.bookingType}</span>` : '';
+            
+            queueItem.innerHTML = `
+                <div onclick="showCustomerDetails('${submission.queueNumber}')" style="cursor: pointer;">
+                    <strong>${submission.queueNumber}</strong> ${bookingTypeBadgeHTML} ${priorityBadgeHTML} - ${submission.serviceType}
+                    <div style="font-size: 0.9em; color: #666;">
+                        <strong>${submission.customerName || 'Customer'}</strong>
+                        ${submission.vehicleNo ? '| Vehicle: ' + submission.vehicleNo : ''}
+                        ${submission.contactNo ? '| Contact: ' + submission.contactNo : ''}
+                    </div>
+                    <div style="font-size: 0.8em; color: #888;">
+                        ${getQueueItemTimeText(submission, status)}
+                    </div>
+                </div>
+                ${actionsHTML}
+            `;
+            
+            return queueItem;
+        }
+        
+        // Helper function to get time text for queue items
+        function getQueueItemTimeText(submission, status) {
+            switch(status) {
+                case 'waiting':
+                    return `Added: ${submission.timestamp ? new Date(submission.timestamp).toLocaleTimeString() : 'N/A'}`;
+                case 'serving':
+                    return `Serving at: Counter ${submission.counter || 'N/A'} | Called: ${submission.calledAt ? new Date(submission.calledAt).toLocaleTimeString() : 'N/A'}`;
+                case 'completed':
+                    return `Completed: ${submission.completedAt ? new Date(submission.completedAt).toLocaleTimeString() : 'N/A'} ${submission.servedBy ? '| By: ' + submission.servedBy : ''}`;
+                case 'missed':
+                    return `Missed: ${submission.missedAt ? new Date(submission.missedAt).toLocaleTimeString() : 'N/A'} ${submission.missedBy ? '| By: ' + submission.missedBy : ''}`;
+                default:
+                    return `Added: ${submission.timestamp ? new Date(submission.timestamp).toLocaleTimeString() : 'N/A'}`;
+            }
+        }
+        
+        // Show authenticated UI
+        function showAuthenticatedUI() {
+            loggedInUser.textContent = currentUser.username;
+            roleBadge.textContent = currentUser.role;
+            roleBadge.className = `role-badge ${currentUser.role === 'Admin' ? 'admin-badge' : 'staff-badge'}`;
+            
+            resetQueueBtn.classList.remove('hidden');
+            updateCounterAssignmentDisplay();
+            updateQueueDisplay();
+            
+            // Check for new submissions every 3 seconds
+            setInterval(() => {
+                const previousCount = queue.submissions.length;
+                loadQueueData();
+                if (queue.submissions.length > previousCount) {
+                    updateQueueDisplay();
+                    const newSubmission = queue.submissions[queue.submissions.length - 1];
+                    const bookingTypeText = newSubmission.bookingType ? ` (${newSubmission.bookingType})` : '';
+                    showNotification(`New customer added to queue! ${newSubmission.queueNumber} - ${newSubmission.customerName || 'Customer'}${bookingTypeText}`, 'info');
+                }
+            }, 3000);
+        }
+        
+        // Show message
+        function showMessage(element, message, type) {
+            element.textContent = message;
+            element.className = 'message ' + type;
+            element.classList.remove('hidden');
+            
+            setTimeout(() => {
+                element.classList.add('hidden');
+            }, 5000);
+        }
+        
+        // Show notification
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+        
+        // Text-to-speech for announcements
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.9;
+                utterance.pitch = 1;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+        
+        // Initialize the application when the page loads
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
