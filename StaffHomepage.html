@@ -943,73 +943,7 @@
         </section>
     </div>
 
-    <!-- History Modal -->
-    <div id="historyModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Queue History</h2>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="history-filters">
-                <div>
-                    <label for="historyDateFilter">Date:</label>
-                    <input type="date" id="historyDateFilter">
-                </div>
-                <div>
-                    <label for="historyStatusFilter">Status:</label>
-                    <select id="historyStatusFilter">
-                        <option value="all">All Statuses</option>
-                        <option value="completed">Completed</option>
-                        <option value="missed">Missed</option>
-                        <option value="serving">Serving</option>
-                        <option value="waiting">Waiting</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="historyServiceFilter">Service Type:</label>
-                    <select id="historyServiceFilter">
-                        <option value="all">All Services</option>
-                        <option value="Repair / Service">Repair / Service</option>
-                        <option value="Speed Limiter Installation">Speed Limiter Installation</option>
-                        <option value="Other Services">Other Services</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="historyBookingFilter">Booking Type:</label>
-                    <select id="historyBookingFilter">
-                        <option value="all">All Types</option>
-                        <option value="Walk-in">Walk-in</option>
-                        <option value="Booked">Booked</option>
-                        <option value="Appointment">Appointment</option>
-                        <option value="Online">Online</option>
-                    </select>
-                </div>
-                <button id="applyHistoryFilters" class="btn btn-info">Apply Filters</button>
-                <button id="exportHistory" class="btn btn-success">Export to CSV</button>
-            </div>
-            <div class="history-table-container">
-                <table class="history-table">
-                    <thead>
-                        <tr>
-                            <th>Queue No.</th>
-                            <th>Customer Name</th>
-                            <th>Service Type</th>
-                            <th>Booking Type</th>
-                            <th>Status</th>
-                            <th>Counter</th>
-                            <th>Added Time</th>
-                            <th>Called Time</th>
-                            <th>Completed Time</th>
-                        </tr>
-                    </thead>
-                    <tbody id="historyTableBody">
-                        <!-- History data will be populated here -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
+  
     <script>
         // Queue Management System
         let currentUser = {
