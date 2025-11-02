@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Goldbell Queue Management System - Dashboard</title>
     <style>
-        /* All the same CSS styles as before - they remain unchanged */
         :root {
             --blue: #005bbb;
             --light: #f4f8fb;
@@ -110,6 +109,8 @@
             font-weight: 600;
             transition: all 0.3s;
             margin: 5px;
+            text-decoration: none;
+            display: inline-block;
         }
         
         .btn:hover {
@@ -557,110 +558,6 @@
             text-decoration: underline;
         }
         
-        /* History Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .modal-content {
-            background-color: white;
-            padding: 30px;
-            border-radius: var(--radius);
-            width: 90%;
-            max-width: 1000px;
-            max-height: 80vh;
-            overflow-y: auto;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        }
-        
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e1e8ed;
-        }
-        
-        .modal-title {
-            color: var(--blue);
-            margin: 0;
-        }
-        
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--muted);
-            transition: color 0.3s;
-        }
-        
-        .close-modal:hover {
-            color: var(--error);
-        }
-        
-        .history-filters {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-        }
-        
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-        }
-        
-        .history-table th,
-        .history-table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #e1e8ed;
-        }
-        
-        .history-table th {
-            background-color: var(--accent);
-            color: var(--blue);
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-        }
-        
-        .history-table tr:hover {
-            background-color: #f8f9fa;
-        }
-        
-        .history-table .completed {
-            color: var(--success);
-            font-weight: 600;
-        }
-        
-        .history-table .missed {
-            color: var(--error);
-            font-weight: 600;
-        }
-        
-        .history-table .serving {
-            color: var(--warning);
-            font-weight: 600;
-        }
-        
-        .history-table .waiting {
-            color: var(--blue);
-            font-weight: 600;
-        }
-        
         @media (max-width: 768px) {
             .action-buttons {
                 flex-direction: column;
@@ -695,19 +592,6 @@
                 min-width: 130px;
                 padding: 15px;
             }
-            
-            .history-filters {
-                flex-direction: column;
-            }
-            
-            .history-table {
-                font-size: 0.8rem;
-            }
-            
-            .history-table th,
-            .history-table td {
-                padding: 8px 10px;
-            }
         }
     </style>
 </head>
@@ -724,7 +608,7 @@
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h3 style="margin: 0;">Queue Management Dashboard</h3>
-                    <p style="margin: 5px 0;">Logged in as: <strong id="loggedInUser">Admin</strong> <span id="roleBadge" class="role-badge admin-badge">Admin</span></p>
+                    <p style="margin: 5px 0;">Logged in as: <strong id="loggedInUser">Staff Member</strong> <span id="roleBadge" class="role-badge staff-badge">Staff</span></p>
                     <p style="margin: 0; font-size: 0.9em;" id="counterAssignment">Not assigned to any counter</p>
                 </div>
                 <button id="logoutBtn" class="btn btn-secondary">Logout</button>
@@ -760,7 +644,7 @@
             <!-- Current Queue Display -->
             <div class="queue-number">
                 <h3>Now Serving</h3>
-                <div class="number" id="currentQueueNumber">E000000</div>
+                <div class="number" id="currentQueueNumber">E100001</div>
                 <div id="bookingTypeBadge" class="booking-type-badge walkin-badge">Walk-in</div>
                 <div class="action-buttons">
                     <button id="nextCustomerBtn" class="btn btn-success">Call Next Customer</button>
@@ -910,7 +794,7 @@
             <div id="queuesView" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;">
                 <!-- Waiting Queue -->
                 <div class="form-group">
-                    <h3>Waiting Queue (<span id="queueCount">0</span> customers)</h3>
+                    <h3>Waiting Queue (<span id="queueCount">3</span> customers)</h3>
                     <div id="queueList" class="queue-scroll">
                         <!-- Queue items will be populated here -->
                     </div>
@@ -918,7 +802,7 @@
                 
                 <!-- Serving Queue -->
                 <div class="form-group">
-                    <h3>Serving Queue (<span id="servingQueueCount">0</span> customers)</h3>
+                    <h3>Serving Queue (<span id="servingQueueCount">1</span> customers)</h3>
                     <div id="servingQueueList" class="queue-scroll">
                         <!-- Serving queue items will be populated here -->
                     </div>
@@ -943,12 +827,11 @@
         </section>
     </div>
 
-  
     <script>
         // Queue Management System
         let currentUser = {
-            username: "Admin",
-            role: "Admin"
+            username: "Staff Member",
+            role: "Staff"
         };
         let currentCounter = localStorage.getItem('currentCounter') || null;
         
@@ -1010,15 +893,6 @@
         const smsLink = document.getElementById('smsLink');
         const sendSMSBtn = document.getElementById('sendSMSBtn');
         const checkHistoryBtn = document.getElementById('checkHistoryBtn');
-        const historyModal = document.getElementById('historyModal');
-        const closeModal = document.querySelector('.close-modal');
-        const historyTableBody = document.getElementById('historyTableBody');
-        const historyDateFilter = document.getElementById('historyDateFilter');
-        const historyStatusFilter = document.getElementById('historyStatusFilter');
-        const historyServiceFilter = document.getElementById('historyServiceFilter');
-        const historyBookingFilter = document.getElementById('historyBookingFilter');
-        const applyHistoryFilters = document.getElementById('applyHistoryFilters');
-        const exportHistory = document.getElementById('exportHistory');
         
         // Detail elements
         const detailQueueNumber = document.getElementById('detailQueueNumber');
@@ -1051,10 +925,6 @@
             generateCounters();
             setupEventListeners();
             updateQueueDisplay();
-            
-            // Set today's date as default for history filter
-            const today = new Date().toISOString().split('T')[0];
-            historyDateFilter.value = today;
         }
         
         // Load queue data from localStorage
@@ -1068,15 +938,17 @@
                     // Ensure all submissions have required fields
                     queue.submissions.forEach(sub => {
                         if (!sub.bookingType) {
-                            sub.bookingType = 'Walk-in'; // Default to Walk-in if not specified
+                            sub.bookingType = 'Walk-in';
                         }
                         if (!sub.status) {
-                            sub.status = 'waiting'; // Default status
+                            sub.status = 'waiting';
                         }
                         if (!sub.customerName) {
-                            sub.customerName = 'Customer'; // Default for Booked forms
+                            sub.customerName = 'Customer';
                         }
                     });
+                } else {
+                    initializeSampleData();
                 }
             } catch (error) {
                 console.error('Error loading queue data:', error);
@@ -1086,53 +958,54 @@
         
         // Initialize with sample data
         function initializeSampleData() {
-            if (queue.submissions.length === 0) {
-                const sampleSubmissions = [
-                    {
-                        queueNumber: "E100001",
-                        customerName: "John Lee",
-                        serviceType: "Repair / Service",
-                        vehicleNo: "SBA1234A",
-                        contactNo: "91234567",
-                        companyName: "Goldbell Group",
-                        mileage: "12345",
-                        vehicleModel: "TOYOTA",
-                        bookingType: "Walk-in",
-                        status: "waiting",
-                        timestamp: new Date(Date.now() - 30 * 60000).toISOString()
-                    },
-                    {
-                        queueNumber: "E100002", 
-                        customerName: "Sarah Tan",
-                        serviceType: "Speed Limiter Installation",
-                        vehicleNo: "SBB5678B",
-                        contactNo: "98765432",
-                        companyName: "Tan Transport",
-                        mileage: "67890",
-                        vehicleModel: "HINO",
-                        bookingType: "Booked",
-                        status: "waiting",
-                        timestamp: new Date(Date.now() - 15 * 60000).toISOString()
-                    },
-                    {
-                        queueNumber: "E100003", 
-                        customerName: "Michael Wong",
-                        serviceType: "Other Services",
-                        vehicleNo: "SBC9012C",
-                        contactNo: "87654321",
-                        companyName: "Wong Logistics",
-                        mileage: "54321",
-                        vehicleModel: "NISSAN",
-                        bookingType: "Booked",
-                        status: "waiting",
-                        timestamp: new Date(Date.now() - 10 * 60000).toISOString()
-                    }
-                ];
-                
-                queue.submissions = sampleSubmissions;
-                queue.total = sampleSubmissions.length;
-                saveQueueData();
-            }
+            const sampleSubmissions = [
+                {
+                    queueNumber: "E100001",
+                    customerName: "John Lee",
+                    serviceType: "Repair / Service",
+                    vehicleNo: "SBA1234A",
+                    contactNo: "91234567",
+                    companyName: "Goldbell Group",
+                    mileage: "12345",
+                    vehicleModel: "TOYOTA",
+                    bookingType: "Walk-in",
+                    status: "serving",
+                    timestamp: new Date(Date.now() - 30 * 60000).toISOString(),
+                    counter: "1"
+                },
+                {
+                    queueNumber: "E100002", 
+                    customerName: "Sarah Tan",
+                    serviceType: "Speed Limiter Installation",
+                    vehicleNo: "SBB5678B",
+                    contactNo: "98765432",
+                    companyName: "Tan Transport",
+                    mileage: "67890",
+                    vehicleModel: "HINO",
+                    bookingType: "Booked",
+                    status: "waiting",
+                    timestamp: new Date(Date.now() - 15 * 60000).toISOString()
+                },
+                {
+                    queueNumber: "E100003", 
+                    customerName: "Michael Wong",
+                    serviceType: "Other Services",
+                    vehicleNo: "SBC9012C",
+                    contactNo: "87654321",
+                    companyName: "Wong Logistics",
+                    mileage: "54321",
+                    vehicleModel: "NISSAN",
+                    bookingType: "Booked",
+                    status: "waiting",
+                    timestamp: new Date(Date.now() - 10 * 60000).toISOString()
+                }
+            ];
+            
+            queue.submissions = sampleSubmissions;
+            queue.total = sampleSubmissions.length;
+            queue.current = 100001;
+            queue.counters[1].currentCustomer = "E100001";
+            saveQueueData();
         }
         
         // Save queue data to localStorage
@@ -1224,16 +1097,8 @@
             cancelEditBtn.addEventListener('click', () => editCustomerForm.classList.add('hidden'));
             counterBoxHeader.addEventListener('click', toggleCounterBox);
             sendSMSBtn.addEventListener('click', sendSMSNotification);
-            checkHistoryBtn.addEventListener('click', showHistoryModal);
-            closeModal.addEventListener('click', () => historyModal.style.display = 'none');
-            applyHistoryFilters.addEventListener('click', applyFilters);
-            exportHistory.addEventListener('click', exportToCSV);
-            
-            // Close modal when clicking outside
-            window.addEventListener('click', (e) => {
-                if (e.target === historyModal) {
-                    historyModal.style.display = 'none';
-                }
+            checkHistoryBtn.addEventListener('click', () => {
+                window.location.href = 'history.html';
             });
         }
         
@@ -1613,357 +1478,131 @@
             }
         }
         
-        // Show history modal
-        function showHistoryModal() {
-            historyModal.style.display = 'flex';
-            applyFilters(); // Load data with current filters
-        }
-        
-        // Apply history filters
-        function applyFilters() {
-            const dateFilter = historyDateFilter.value;
-            const statusFilter = historyStatusFilter.value;
-            const serviceFilter = historyServiceFilter.value;
-            const bookingFilter = historyBookingFilter.value;
-            
-            let filteredData = [...queue.submissions];
-            
-            // Filter by date if selected
-            if (dateFilter) {
-                filteredData = filteredData.filter(sub => {
-                    const subDate = new Date(sub.timestamp).toISOString().split('T')[0];
-                    return subDate === dateFilter;
-                });
-            }
-            
-            // Filter by status if not "all"
-            if (statusFilter !== 'all') {
-                filteredData = filteredData.filter(sub => sub.status === statusFilter);
-            }
-            
-            // Filter by service type if not "all"
-            if (serviceFilter !== 'all') {
-                filteredData = filteredData.filter(sub => sub.serviceType === serviceFilter);
-            }
-            
-            // Filter by booking type if not "all"
-            if (bookingFilter !== 'all') {
-                filteredData = filteredData.filter(sub => sub.bookingType === bookingFilter);
-            }
-            
-            // Sort by timestamp (newest first)
-            filteredData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            
-            populateHistoryTable(filteredData);
-        }
-        
-        // Populate history table with data
-        function populateHistoryTable(data) {
-            historyTableBody.innerHTML = '';
-            
-            if (data.length === 0) {
-                historyTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="9" style="text-align: center; padding: 20px;">
-                            No queue history found for the selected filters.
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            data.forEach(submission => {
-                const row = document.createElement('tr');
-                
-                row.innerHTML = `
-                    <td><strong>${submission.queueNumber}</strong></td>
-                    <td>${submission.customerName || 'Customer'}</td>
-                    <td>${submission.serviceType || '-'}</td>
-                    <td>${submission.bookingType || 'Walk-in'}</td>
-                    <td class="${submission.status}">${submission.status || 'waiting'}</td>
-                    <td>${submission.counter || '-'}</td>
-                    <td>${submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '-'}</td>
-                    <td>${submission.calledAt ? new Date(submission.calledAt).toLocaleString() : '-'}</td>
-                    <td>${submission.completedAt ? new Date(submission.completedAt).toLocaleString() : '-'}</td>
-                `;
-                
-                historyTableBody.appendChild(row);
-            });
-        }
-        
-        // Export history to CSV
-        function exportToCSV() {
-            const dateFilter = historyDateFilter.value;
-            const statusFilter = historyStatusFilter.value;
-            const serviceFilter = historyServiceFilter.value;
-            const bookingFilter = historyBookingFilter.value;
-            
-            let filteredData = [...queue.submissions];
-            
-            // Apply the same filters as the table
-            if (dateFilter) {
-                filteredData = filteredData.filter(sub => {
-                    const subDate = new Date(sub.timestamp).toISOString().split('T')[0];
-                    return subDate === dateFilter;
-                });
-            }
-            
-            if (statusFilter !== 'all') {
-                filteredData = filteredData.filter(sub => sub.status === statusFilter);
-            }
-            
-            if (serviceFilter !== 'all') {
-                filteredData = filteredData.filter(sub => sub.serviceType === serviceFilter);
-            }
-            
-            if (bookingFilter !== 'all') {
-                filteredData = filteredData.filter(sub => sub.bookingType === bookingFilter);
-            }
-            
-            // Sort by timestamp (newest first)
-            filteredData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            
-            // Create CSV content
-            const headers = [
-                'Queue Number',
-                'Customer Name',
-                'Service Type',
-                'Booking Type',
-                'Status',
-                'Counter',
-                'Added Time',
-                'Called Time',
-                'Completed Time',
-                'Vehicle No',
-                'Contact No',
-                'Company Name',
-                'Mileage',
-                'Vehicle Model'
-            ];
-            
-            let csvContent = headers.join(',') + '\n';
-            
-            filteredData.forEach(submission => {
-                const row = [
-                    submission.queueNumber,
-                    `"${(submission.customerName || 'Customer').replace(/"/g, '""')}"`,
-                    submission.serviceType || '',
-                    submission.bookingType || 'Walk-in',
-                    submission.status || 'waiting',
-                    submission.counter || '',
-                    submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '',
-                    submission.calledAt ? new Date(submission.calledAt).toLocaleString() : '',
-                    submission.completedAt ? new Date(submission.completedAt).toLocaleString() : '',
-                    submission.vehicleNo || '',
-                    submission.contactNo || '',
-                    submission.companyName || '',
-                    submission.mileage || '',
-                    submission.vehicleModel || ''
-                ];
-                
-                csvContent += row.join(',') + '\n';
-            });
-            
-            // Create and download the CSV file
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            
-            // Create filename with current date and filter info
-            let filename = `queue_history_${new Date().toISOString().split('T')[0]}`;
-            if (dateFilter) filename += `_${dateFilter}`;
-            if (statusFilter !== 'all') filename += `_${statusFilter}`;
-            filename += '.csv';
-            
-            link.setAttribute('href', url);
-            link.setAttribute('download', filename);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showNotification(`History exported to ${filename}`, 'success');
-        }
-        
         // Update queue display
         function updateQueueDisplay() {
-            try {
-                const currentDisplayNumber = 'E' + queue.current.toString().padStart(6, '0');
-                currentQueueNumber.textContent = currentDisplayNumber;
-                
-                // Update booking type badge for current customer
-                const currentSubmission = queue.submissions.find(sub => sub.queueNumber === currentDisplayNumber);
-                if (currentSubmission && currentSubmission.bookingType) {
-                    bookingTypeBadge.textContent = currentSubmission.bookingType;
-                    bookingTypeBadge.className = `booking-type-badge ${getBookingTypeClass(currentSubmission.bookingType)}`;
-                    bookingTypeBadge.style.display = 'inline-block';
-                } else {
-                    bookingTypeBadge.style.display = 'none';
-                }
-                
-                // Filter out general service customers from waiting queue count
-                const waitingCount = queue.submissions.filter(sub => 
-                    sub.status === 'waiting' && sub.serviceType !== 'General Service'
-                ).length;
-                
-                const servingCount = queue.submissions.filter(sub => sub.status === 'serving').length;
-                const completedCount = queue.submissions.filter(sub => sub.status === 'completed').length;
-                const missedCount = queue.submissions.filter(sub => sub.status === 'missed').length;
-                
-                queueCount.textContent = waitingCount;
-                servingQueueCount.textContent = servingCount;
-                completedQueueCount.textContent = completedCount;
-                missedQueueCount.textContent = missedCount;
-                
-                updateQueueList('waiting', queueList, waitingCount);
-                updateQueueList('serving', servingQueueList, servingCount);
-                updateQueueList('completed', completedQueueList, completedCount);
-                updateQueueList('missed', missedQueueList, missedCount);
-                
-            } catch (error) {
-                console.error('Error updating queue display:', error);
-            }
-        }
-        
-        // Helper function to get booking type CSS class
-        function getBookingTypeClass(bookingType) {
-            switch(bookingType) {
-                case 'Walk-in': return 'walkin-badge';
-                case 'Booked': return 'booked-badge';
-                case 'Appointment': return 'appointment-badge';
-                case 'Online': return 'online-badge';
-                default: return 'walkin-badge';
-            }
-        }
-        
-        // Helper function to update individual queue lists
-        function updateQueueList(status, listElement, count) {
-            let submissions;
-            
-            // For waiting queue, filter out general service customers and prioritize Booked
-            if (status === 'waiting') {
-                submissions = getPrioritizedWaitingCustomers();
+            // Update current queue number
+            const servingSubmission = queue.submissions.find(sub => sub.status === 'serving');
+            if (servingSubmission) {
+                currentQueueNumber.textContent = servingSubmission.queueNumber;
+                bookingTypeBadge.textContent = servingSubmission.bookingType || 'Walk-in';
+                bookingTypeBadge.className = 'booking-type-badge ' + 
+                    (servingSubmission.bookingType === 'Walk-in' ? 'walkin-badge' : 
+                     servingSubmission.bookingType === 'Booked' ? 'booked-badge' :
+                     servingSubmission.bookingType === 'Appointment' ? 'appointment-badge' : 'online-badge');
             } else {
-                submissions = queue.submissions.filter(sub => sub.status === status);
+                currentQueueNumber.textContent = 'E100001';
+                bookingTypeBadge.textContent = 'Walk-in';
+                bookingTypeBadge.className = 'booking-type-badge walkin-badge';
             }
             
-            listElement.innerHTML = '';
+            // Update queue counts
+            const waitingCount = queue.submissions.filter(sub => sub.status === 'waiting').length;
+            const servingCount = queue.submissions.filter(sub => sub.status === 'serving').length;
+            const completedCount = queue.submissions.filter(sub => sub.status === 'completed').length;
+            const missedCount = queue.submissions.filter(sub => sub.status === 'missed').length;
             
-            if (submissions.length === 0) {
-                listElement.innerHTML = `<div class="queue-item">No customers ${status}</div>`;
+            queueCount.textContent = waitingCount;
+            servingQueueCount.textContent = servingCount;
+            completedQueueCount.textContent = completedCount;
+            missedQueueCount.textContent = missedCount;
+            
+            // Update queue lists
+            updateQueueList('waiting', queueList);
+            updateQueueList('serving', servingQueueList);
+            updateQueueList('completed', completedQueueList);
+            updateQueueList('missed', missedQueueList);
+        }
+        
+        // Update individual queue list
+        function updateQueueList(status, container) {
+            container.innerHTML = '';
+            
+            const filteredSubmissions = queue.submissions.filter(sub => sub.status === status);
+            
+            if (filteredSubmissions.length === 0) {
+                container.innerHTML = '<div class="queue-item">No customers</div>';
                 return;
             }
             
-            const sortedSubmissions = status === 'completed' ? 
-                submissions.slice(-20).reverse() :
-                submissions;
-            
-            sortedSubmissions.forEach(submission => {
-                const queueItem = createQueueItem(submission, status);
-                listElement.appendChild(queueItem);
+            filteredSubmissions.forEach(submission => {
+                const queueItem = document.createElement('div');
+                queueItem.className = `queue-item ${status}`;
+                
+                const bookingTypeClass = submission.bookingType === 'Walk-in' ? 'walkin-badge' : 
+                                       submission.bookingType === 'Booked' ? 'booked-badge' :
+                                       submission.bookingType === 'Appointment' ? 'appointment-badge' : 'online-badge';
+                
+                queueItem.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <strong>${submission.queueNumber}</strong>
+                            <span class="booking-type-badge ${bookingTypeClass}">${submission.bookingType || 'Walk-in'}</span>
+                        </div>
+                        <div style="font-size: 0.9em; color: var(--muted);">
+                            ${submission.customerName || 'Customer'}
+                        </div>
+                    </div>
+                    <div style="margin-top: 8px; font-size: 0.85em;">
+                        ${submission.serviceType || 'General Service'}
+                    </div>
+                    ${status === 'serving' ? `
+                        <div class="action-buttons" style="margin-top: 10px;">
+                            <button class="btn btn-success complete-btn" style="padding: 6px 12px; font-size: 0.8em;">Complete</button>
+                            <button class="btn btn-warning miss-btn" style="padding: 6px 12px; font-size: 0.8em;">Mark as Missed</button>
+                        </div>
+                    ` : ''}
+                    ${status === 'missed' ? `
+                        <div class="missed-actions">
+                            <button class="missed-btn recall-btn">Recall</button>
+                            <button class="missed-btn delete-btn">Delete</button>
+                        </div>
+                    ` : ''}
+                `;
+                
+                // Add event listeners
+                if (status === 'serving') {
+                    const completeBtn = queueItem.querySelector('.complete-btn');
+                    const missBtn = queueItem.querySelector('.miss-btn');
+                    
+                    completeBtn.addEventListener('click', () => completeCustomer(submission.queueNumber));
+                    missBtn.addEventListener('click', () => markAsMissed(submission.queueNumber));
+                }
+                
+                if (status === 'missed') {
+                    const recallBtn = queueItem.querySelector('.recall-btn');
+                    const deleteBtn = queueItem.querySelector('.delete-btn');
+                    
+                    recallBtn.addEventListener('click', () => recallMissedCustomer(submission.queueNumber));
+                    deleteBtn.addEventListener('click', () => deleteMissedCustomer(submission.queueNumber));
+                }
+                
+                // Add click event to show customer details
+                queueItem.addEventListener('click', (e) => {
+                    if (!e.target.classList.contains('btn') && !e.target.classList.contains('missed-btn')) {
+                        showCustomerDetails(submission.queueNumber);
+                    }
+                });
+                
+                container.appendChild(queueItem);
             });
-        }
-        
-        // Create queue item element
-        function createQueueItem(submission, status) {
-            const queueItem = document.createElement('div');
-            queueItem.className = `queue-item ${status}`;
-            
-            let actionsHTML = '';
-            if (status === 'waiting') {
-                actionsHTML = `
-                    <div class="missed-actions">
-                        <button onclick="markAsMissed('${submission.queueNumber}')" class="missed-btn delete-btn">Mark as Missed</button>
-                    </div>
-                `;
-            } else if (status === 'serving') {
-                actionsHTML = `
-                    <div class="action-buttons" style="margin-top: 10px;">
-                        <button onclick="completeCustomer('${submission.queueNumber}')" class="btn btn-success" style="padding: 5px 10px; font-size: 0.8em;">Complete</button>
-                        <button onclick="markAsMissed('${submission.queueNumber}')" class="btn btn-warning" style="padding: 5px 10px; font-size: 0.8em;">Mark Missed</button>
-                    </div>
-                `;
-            } else if (status === 'missed') {
-                actionsHTML = `
-                    <div class="missed-actions">
-                        <button onclick="recallMissedCustomer('${submission.queueNumber}')" class="missed-btn recall-btn">Recall Customer</button>
-                        <button onclick="deleteMissedCustomer('${submission.queueNumber}')" class="missed-btn delete-btn">Delete</button>
-                    </div>
-                `;
-            }
-            
-            // Add priority badge for Booked customers
-            const priorityBadgeHTML = submission.bookingType === 'Booked' ? 
-                `<span class="booking-type-badge priority-badge" style="margin-left: 5px;">PRIORITY</span>` : '';
-            
-            const bookingTypeBadgeHTML = submission.bookingType ? 
-                `<span class="booking-type-badge ${getBookingTypeClass(submission.bookingType)}" style="margin-left: 5px;">${submission.bookingType}</span>` : '';
-            
-            queueItem.innerHTML = `
-                <div onclick="showCustomerDetails('${submission.queueNumber}')" style="cursor: pointer;">
-                    <strong>${submission.queueNumber}</strong> ${bookingTypeBadgeHTML} ${priorityBadgeHTML} - ${submission.serviceType}
-                    <div style="font-size: 0.9em; color: #666;">
-                        <strong>${submission.customerName || 'Customer'}</strong>
-                        ${submission.vehicleNo ? '| Vehicle: ' + submission.vehicleNo : ''}
-                        ${submission.contactNo ? '| Contact: ' + submission.contactNo : ''}
-                    </div>
-                    <div style="font-size: 0.8em; color: #888;">
-                        ${getQueueItemTimeText(submission, status)}
-                    </div>
-                </div>
-                ${actionsHTML}
-            `;
-            
-            return queueItem;
-        }
-        
-        // Helper function to get time text for queue items
-        function getQueueItemTimeText(submission, status) {
-            switch(status) {
-                case 'waiting':
-                    return `Added: ${submission.timestamp ? new Date(submission.timestamp).toLocaleTimeString() : 'N/A'}`;
-                case 'serving':
-                    return `Serving at: Counter ${submission.counter || 'N/A'} | Called: ${submission.calledAt ? new Date(submission.calledAt).toLocaleTimeString() : 'N/A'}`;
-                case 'completed':
-                    return `Completed: ${submission.completedAt ? new Date(submission.completedAt).toLocaleTimeString() : 'N/A'} ${submission.servedBy ? '| By: ' + submission.servedBy : ''}`;
-                case 'missed':
-                    return `Missed: ${submission.missedAt ? new Date(submission.missedAt).toLocaleTimeString() : 'N/A'} ${submission.missedBy ? '| By: ' + submission.missedBy : ''}`;
-                default:
-                    return `Added: ${submission.timestamp ? new Date(submission.timestamp).toLocaleTimeString() : 'N/A'}`;
-            }
         }
         
         // Show authenticated UI
         function showAuthenticatedUI() {
             loggedInUser.textContent = currentUser.username;
             roleBadge.textContent = currentUser.role;
-            roleBadge.className = `role-badge ${currentUser.role === 'Admin' ? 'admin-badge' : 'staff-badge'}`;
-            
-            resetQueueBtn.classList.remove('hidden');
+            roleBadge.className = `role-badge ${currentUser.role.toLowerCase()}-badge`;
             updateCounterAssignmentDisplay();
-            updateQueueDisplay();
-            
-            // Check for new submissions every 3 seconds
-            setInterval(() => {
-                const previousCount = queue.submissions.length;
-                loadQueueData();
-                if (queue.submissions.length > previousCount) {
-                    updateQueueDisplay();
-                    const newSubmission = queue.submissions[queue.submissions.length - 1];
-                    const bookingTypeText = newSubmission.bookingType ? ` (${newSubmission.bookingType})` : '';
-                    showNotification(`New customer added to queue! ${newSubmission.queueNumber} - ${newSubmission.customerName || 'Customer'}${bookingTypeText}`, 'info');
-                }
-            }, 3000);
         }
         
-        // Show message
-        function showMessage(element, message, type) {
-            element.textContent = message;
-            element.className = 'message ' + type;
-            element.classList.remove('hidden');
+        // Show message in a message container
+        function showMessage(container, message, type) {
+            container.textContent = message;
+            container.className = `message ${type}`;
+            container.classList.remove('hidden');
             
             setTimeout(() => {
-                element.classList.add('hidden');
+                container.classList.add('hidden');
             }, 5000);
         }
         
@@ -1980,7 +1619,7 @@
             }, 5000);
         }
         
-        // Text-to-speech for announcements
+        // Text-to-speech function
         function speak(text) {
             if ('speechSynthesis' in window) {
                 const utterance = new SpeechSynthesisUtterance(text);

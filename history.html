@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goldbell - Job Card History</title>
+    <style>
+        /* All the same CSS styles as before - they remain unchanged */
+        :root {
+            --blue: #005bbb;
+            --light: #f4f8fb;
+            --card: #ffffff;
+            --muted: #6b7b8f;
+            --accent: #e9f2ff;
+            --error: #d9534f;
+            --success: #2e8b57;
+            --warning: #ffc107;
+            --radius: 10px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            color: #0b2540;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: var(--blue);
+            color: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .website-url {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1, h2, h3 {
+            color: var(--blue);
+            margin-bottom: 15px;
+        }
+        
+        .user-info {
+            background: var(--accent);
+            padding: 15px;
+            border-radius: var(--radius);
+            margin-bottom: 20px;
+        }
+        
+        .jobcard {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            padding: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .jobcard:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .jobcard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--accent);
+        }
+        
+        .jobcard-number {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--blue);
+        }
+        
+        .jobcard-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .jobcard-left {
+            padding-right: 20px;
+        }
+        
+        .jobcard-right {
+            padding-left: 20px;
+            border-left: 1px solid #eaeaea;
+        }
+        
+        .created-date {
+            color: var(--muted);
+            font-size: 14px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .time-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            padding: 10px 12px;
+            border-radius: 6px;
+        }
+        
+        .time-label {
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            width: 80px;
+        }
+        
+        .time-value {
+            color: #555;
+            text-align: right;
+            flex: 1;
+            font-size: 13px;
+        }
+        
+        .waiting {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .ongoing {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .complete {
+            background-color: #d4edda;
+            border-left: 4px solid #28a745;
+        }
+        
+        .jobcard-description {
+            color: #555;
+            font-size: 15px;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border-left: 3px solid var(--blue);
+        }
+        
+        .customer-details {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        
+        .detail-row {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: var(--blue);
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            color: #555;
+            font-size: 15px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 25px;
+            padding: 15px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+        
+        .btn {
+            background: var(--blue);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: var(--radius);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #004a9e;
+        }
+        
+        @media (max-width: 768px) {
+            .jobcard-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .jobcard-right {
+                padding-left: 0;
+                border-left: none;
+                border-top: 1px solid #eaeaea;
+                padding-top: 20px;
+            }
+            
+            .created-date {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">GOLDBELL</div>
+            <h1>Job Card History</h1>
+            <div class="website-url">www.goldbellservices.com.sg</div>
+        </header>
+
+        <!-- User Info Section -->
+        <section class="user-info">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h3 style="margin: 0;">Job Card Tracking System</h3>
+                    <p style="margin: 5px 0;">Viewing job card history records</p>
+                </div>
+                <a href="StaffHomepage.html" class="back-btn" id="backBtn">Back</a>
+            </div>
+        </section>
+
+        <!-- Job Card History -->
+        <section class="card">
+            <h2>Job Card History Records</h2>
+            
+            <!-- Job Card 1 -->
+            <div class="jobcard">
+                <div class="jobcard-header">
+                    <div class="jobcard-number">Work Order 1618357</div>
+                </div>
+                
+                <div class="jobcard-description">
+                    Initial system diagnostics and maintenance check. Comprehensive testing of all vehicle systems including engine performance, braking system, electrical systems, and safety features.
+                </div>
+                
+                <div class="jobcard-content">
+                    <div class="jobcard-left">
+                        <div class="customer-details">
+                            <div class="detail-row">
+                                <div class="detail-label">Customer Name:</div>
+                                <div class="detail-value">John Lee</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Vehicle No:</div>
+                                <div class="detail-value">SBA1234A</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Contact No:</div>
+                                <div class="detail-value">91234567</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Company:</div>
+                                <div class="detail-value">Goldbell Group</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="jobcard-right">
+                        <div class="created-date">Created: 2023-10-15</div>
+                        <div class="timeline">
+                            <div class="time-item waiting">
+                                <div class="time-label">Waiting</div>
+                                <div class="time-value">2023-10-15 09:30 AM</div>
+                            </div>
+                            <div class="time-item ongoing">
+                                <div class="time-label">On Going</div>
+                                <div class="time-value">2023-10-15 10:45 AM</div>
+                            </div>
+                            <div class="time-item complete">
+                                <div class="time-label">Complete</div>
+                                <div class="time-value">2023-10-15 03:20 PM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Job Card 2 -->
+            <div class="jobcard">
+                <div class="jobcard-header">
+                    <div class="jobcard-number">Work Order 1627491</div>
+                </div>
+                
+                <div class="jobcard-description">
+                    Replacement of faulty components and system testing. Identified and replaced worn brake pads, tested ABS functionality, and performed full system diagnostics.
+                </div>
+                
+                <div class="jobcard-content">
+                    <div class="jobcard-left">
+                        <div class="customer-details">
+                            <div class="detail-row">
+                                <div class="detail-label">Customer Name:</div>
+                                <div class="detail-value">Sarah Tan</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Vehicle No:</div>
+                                <div class="detail-value">SBB5678B</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Contact No:</div>
+                                <div class="detail-value">98765432</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Company:</div>
+                                <div class="detail-value">Tan Transport</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="jobcard-right">
+                        <div class="created-date">Created: 2023-10-16</div>
+                        <div class="timeline">
+                            <div class="time-item waiting">
+                                <div class="time-label">Waiting</div>
+                                <div class="time-value">2023-10-16 02:15 PM</div>
+                            </div>
+                            <div class="time-item ongoing">
+                                <div class="time-label">On Going</div>
+                                <div class="time-value">2023-10-17 09:30 AM</div>
+                            </div>
+                            <div class="time-item complete">
+                                <div class="time-label">Complete</div>
+                                <div class="time-value">2023-10-17 04:45 PM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Job Card 3 -->
+            <div class="jobcard">
+                <div class="jobcard-header">
+                    <div class="jobcard-number">Work Order 1635824</div>
+                </div>
+                
+                <div class="jobcard-description">
+                    Software update and calibration of system parameters. Updated ECU firmware, calibrated sensor readings, and optimized performance settings for fuel efficiency.
+                </div>
+                
+                <div class="jobcard-content">
+                    <div class="jobcard-left">
+                        <div class="customer-details">
+                            <div class="detail-row">
+                                <div class="detail-label">Customer Name:</div>
+                                <div class="detail-value">Michael Wong</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Vehicle No:</div>
+                                <div class="detail-value">SBC9012C</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Contact No:</div>
+                                <div class="detail-value">87654321</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Company:</div>
+                                <div class="detail-value">Wong Logistics</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="jobcard-right">
+                        <div class="created-date">Created: 2023-10-18</div>
+                        <div class="timeline">
+                            <div class="time-item waiting">
+                                <div class="time-label">Waiting</div>
+                                <div class="time-value">2023-10-18 11:45 AM</div>
+                            </div>
+                            <div class="time-item ongoing">
+                                <div class="time-label">On Going</div>
+                                <div class="time-value">2023-10-19 10:15 AM</div>
+                            </div>
+                            <div class="time-item complete">
+                                <div class="time-label">Complete</div>
+                                <div class="time-value">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Job Card 4 -->
+            <div class="jobcard">
+                <div class="jobcard-header">
+                    <div class="jobcard-number">Work Order 1643962</div>
+                </div>
+                
+                <div class="jobcard-description">
+                    Final inspection and quality assurance testing. Comprehensive safety check, road test verification, and documentation of all maintenance procedures completed.
+                </div>
+                
+                <div class="jobcard-content">
+                    <div class="jobcard-left">
+                        <div class="customer-details">
+                            <div class="detail-row">
+                                <div class="detail-label">Customer Name:</div>
+                                <div class="detail-value">David Chen</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Vehicle No:</div>
+                                <div class="detail-value">SBD3456D</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Contact No:</div>
+                                <div class="detail-value">81234567</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Company:</div>
+                                <div class="detail-value">Chen Holdings</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="jobcard-right">
+                        <div class="created-date">Created: 2023-10-20</div>
+                        <div class="timeline">
+                            <div class="time-item waiting">
+                                <div class="time-label">Waiting</div>
+                                <div class="time-value">2023-10-20 04:20 PM</div>
+                            </div>
+                            <div class="time-item ongoing">
+                                <div class="time-label">On Going</div>
+                                <div class="time-value">-</div>
+                            </div>
+                            <div class="time-item complete">
+                                <div class="time-label">Complete</div>
+                                <div class="time-value">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Job Card 5 -->
+            <div class="jobcard">
+                <div class="jobcard-header">
+                    <div class="jobcard-number">Work Order 1657183</div>
+                </div>
+                
+                <div class="jobcard-description">
+                    Preventive maintenance and cleaning of system components. Oil change, filter replacement, fluid top-up, and thorough cleaning of engine compartment and interior.
+                </div>
+                
+                <div class="jobcard-content">
+                    <div class="jobcard-left">
+                        <div class="customer-details">
+                            <div class="detail-row">
+                                <div class="detail-label">Customer Name:</div>
+                                <div class="detail-value">Lisa Lim</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Vehicle No:</div>
+                                <div class="detail-value">SBE7890E</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Contact No:</div>
+                                <div class="detail-value">92345678</div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-label">Company:</div>
+                                <div class="detail-value">Lim Enterprises</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="jobcard-right">
+                        <div class="created-date">Created: 2023-10-22</div>
+                        <div class="timeline">
+                            <div class="time-item waiting">
+                                <div class="time-label">Waiting</div>
+                                <div class="time-value">2023-10-22 10:00 AM</div>
+                            </div>
+                            <div class="time-item ongoing">
+                                <div class="time-label">On Going</div>
+                                <div class="time-value">2023-10-23 08:30 AM</div>
+                            </div>
+                            <div class="time-item complete">
+                                <div class="time-label">Complete</div>
+                                <div class="time-value">2023-10-23 02:15 PM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer>
+            &copy; 2023 Goldbell Services | Job Card History System
+        </footer>
+    </div>
+</body>
+</html>
