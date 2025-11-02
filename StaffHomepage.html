@@ -803,6 +803,10 @@
                         <div class="detail-value" id="detailServiceType">-</div>
                     </div>
                     <div class="detail-row">
+                        <div class="detail-label">Vehicle Plate No:</div>
+                        <div class="detail-value" id="detailVehiclePlate">-</div>
+                    </div>
+                    <div class="detail-row">
                         <div class="detail-label">Vehicle No:</div>
                         <div class="detail-value" id="detailVehicleNo">-</div>
                     </div>
@@ -864,29 +868,35 @@
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                         <div>
+                            <label for="editVehiclePlate">Vehicle Plate No.</label>
+                            <input type="text" id="editVehiclePlate" name="editVehiclePlate" placeholder="e.g. SBA1234A">
+                        </div>
+                        <div>
                             <label for="editVehicleNo">Vehicle No.</label>
                             <input type="text" id="editVehicleNo" name="editVehicleNo">
                         </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                         <div>
                             <label for="editContactNo">Contact No.</label>
                             <input type="text" id="editContactNo" name="editContactNo">
                         </div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                         <div>
                             <label for="editCompanyName">Company Name</label>
                             <input type="text" id="editCompanyName" name="editCompanyName">
                         </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                         <div>
                             <label for="editMileage">Mileage</label>
                             <input type="text" id="editMileage" name="editMileage">
                         </div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                         <div>
                             <label for="editVehicleModel">Vehicle Model</label>
                             <input type="text" id="editVehicleModel" name="editVehicleModel">
                         </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                         <div>
                             <label for="editBookingType">Booking Type *</label>
                             <select id="editBookingType" name="editBookingType" required>
@@ -995,6 +1005,7 @@
                             <th>Customer Name</th>
                             <th>Service Type</th>
                             <th>Booking Type</th>
+                            <th>Vehicle Plate</th>
                             <th>Status</th>
                             <th>Counter</th>
                             <th>Added Time</th>
@@ -1035,7 +1046,7 @@
             }
         };
         
-        // History data - NEW: Store reset queue history
+        // History data - Store reset queue history
         let queueHistory = [];
         
         // DOM elements
@@ -1093,6 +1104,7 @@
         const detailQueueNumber = document.getElementById('detailQueueNumber');
         const detailCustomerName = document.getElementById('detailCustomerName');
         const detailServiceType = document.getElementById('detailServiceType');
+        const detailVehiclePlate = document.getElementById('detailVehiclePlate');
         const detailVehicleNo = document.getElementById('detailVehicleNo');
         const detailContactNo = document.getElementById('detailContactNo');
         const detailCompanyName = document.getElementById('detailCompanyName');
@@ -1106,6 +1118,7 @@
         const editQueueNumber = document.getElementById('editQueueNumber');
         const editCustomerName = document.getElementById('editCustomerName');
         const editServiceType = document.getElementById('editServiceType');
+        const editVehiclePlate = document.getElementById('editVehiclePlate');
         const editVehicleNo = document.getElementById('editVehicleNo');
         const editContactNo = document.getElementById('editContactNo');
         const editCompanyName = document.getElementById('editCompanyName');
@@ -1117,7 +1130,7 @@
         function init() {
             showAuthenticatedUI();
             loadQueueData();
-            loadHistoryData(); // NEW: Load history data
+            loadHistoryData();
             generateCounters();
             setupEventListeners();
             updateQueueDisplay();
@@ -1154,7 +1167,7 @@
             }
         }
         
-        // NEW: Load history data from localStorage
+        // Load history data from localStorage
         function loadHistoryData() {
             try {
                 const savedHistory = localStorage.getItem('goldbellQueueHistory');
@@ -1167,7 +1180,7 @@
             }
         }
         
-        // NEW: Save history data to localStorage
+        // Save history data to localStorage
         function saveHistoryData() {
             try {
                 localStorage.setItem('goldbellQueueHistory', JSON.stringify(queueHistory));
@@ -1184,7 +1197,8 @@
                         queueNumber: "E100001",
                         customerName: "John Lee",
                         serviceType: "Repair / Service",
-                        vehicleNo: "SBA1234A",
+                        vehiclePlate: "SBA1234A",
+                        vehicleNo: "V001",
                         contactNo: "91234567",
                         companyName: "Goldbell Group",
                         mileage: "12345",
@@ -1197,7 +1211,8 @@
                         queueNumber: "E100002", 
                         customerName: "Sarah Tan",
                         serviceType: "Speed Limiter Installation",
-                        vehicleNo: "SBB5678B",
+                        vehiclePlate: "SBB5678B",
+                        vehicleNo: "V002",
                         contactNo: "98765432",
                         companyName: "Tan Transport",
                         mileage: "67890",
@@ -1210,7 +1225,8 @@
                         queueNumber: "E100003", 
                         customerName: "Michael Wong",
                         serviceType: "Other Services",
-                        vehicleNo: "SBC9012C",
+                        vehiclePlate: "SBC9012C",
+                        vehicleNo: "V003",
                         contactNo: "87654321",
                         companyName: "Wong Logistics",
                         mileage: "54321",
@@ -1368,6 +1384,7 @@
             if (submission) {
                 submission.customerName = editCustomerName.value;
                 submission.serviceType = editServiceType.value;
+                submission.vehiclePlate = editVehiclePlate.value;
                 submission.vehicleNo = editVehicleNo.value;
                 submission.contactNo = editContactNo.value;
                 submission.companyName = editCompanyName.value;
@@ -1569,6 +1586,7 @@
                 detailQueueNumber.textContent = submission.queueNumber;
                 detailCustomerName.textContent = submission.customerName || '-';
                 detailServiceType.textContent = submission.serviceType || '-';
+                detailVehiclePlate.textContent = submission.vehiclePlate || '-';
                 detailVehicleNo.textContent = submission.vehicleNo || '-';
                 detailContactNo.textContent = submission.contactNo || '-';
                 detailCompanyName.textContent = submission.companyName || '-';
@@ -1593,6 +1611,7 @@
                 editQueueNumber.value = submission.queueNumber;
                 editCustomerName.value = submission.customerName || '';
                 editServiceType.value = submission.serviceType || '';
+                editVehiclePlate.value = submission.vehiclePlate || '';
                 editVehicleNo.value = submission.vehicleNo || '';
                 editContactNo.value = submission.contactNo || '';
                 editCompanyName.value = submission.companyName || '';
@@ -1689,7 +1708,7 @@
             }
         }
         
-        // NEW: Reset queue with history preservation
+        // Reset queue with history preservation
         function resetQueue() {
             if (confirm('Are you sure you want to reset the entire queue? This will archive current queue data to history.')) {
                 // Create a history entry with the current queue data
@@ -1739,7 +1758,7 @@
             const serviceFilter = historyServiceFilter.value;
             const bookingFilter = historyBookingFilter.value;
             
-            // NEW: Combine current queue data and history data
+            // Combine current queue data and history data
             let allData = [...queue.submissions];
             
             // Add data from history entries
@@ -1785,7 +1804,7 @@
             if (data.length === 0) {
                 historyTableBody.innerHTML = `
                     <tr>
-                        <td colspan="9" style="text-align: center; padding: 20px;">
+                        <td colspan="10" style="text-align: center; padding: 20px;">
                             No queue history found for the selected filters.
                         </td>
                     </tr>
@@ -1801,6 +1820,7 @@
                     <td>${submission.customerName || 'Customer'}</td>
                     <td>${submission.serviceType || '-'}</td>
                     <td>${submission.bookingType || 'Walk-in'}</td>
+                    <td>${submission.vehiclePlate || '-'}</td>
                     <td class="${submission.status}">${submission.status || 'waiting'}</td>
                     <td>${submission.counter || '-'}</td>
                     <td>${submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '-'}</td>
@@ -1812,14 +1832,14 @@
             });
         }
         
-        // Export history to CSV
+        // Export history to CSV - FIXED for Excel compatibility
         function exportToCSV() {
             const dateFilter = historyDateFilter.value;
             const statusFilter = historyStatusFilter.value;
             const serviceFilter = historyServiceFilter.value;
             const bookingFilter = historyBookingFilter.value;
             
-            // NEW: Combine current queue data and history data
+            // Combine current queue data and history data
             let allData = [...queue.submissions];
             
             // Add data from history entries
@@ -1852,42 +1872,48 @@
             // Sort by timestamp (newest first)
             filteredData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             
-            // Create CSV content
+            // Create CSV content with BOM for Excel compatibility
             const headers = [
                 'Queue Number',
                 'Customer Name',
                 'Service Type',
                 'Booking Type',
+                'Vehicle Plate',
+                'Vehicle No',
                 'Status',
                 'Counter',
                 'Added Time',
                 'Called Time',
                 'Completed Time',
-                'Vehicle No',
                 'Contact No',
                 'Company Name',
                 'Mileage',
                 'Vehicle Model'
             ];
             
-            let csvContent = headers.join(',') + '\n';
+            // Add UTF-8 BOM for Excel compatibility
+            let csvContent = '\uFEFF'; // UTF-8 BOM
+            
+            // Add headers
+            csvContent += headers.join(',') + '\n';
             
             filteredData.forEach(submission => {
                 const row = [
                     submission.queueNumber,
                     `"${(submission.customerName || 'Customer').replace(/"/g, '""')}"`,
-                    submission.serviceType || '',
-                    submission.bookingType || 'Walk-in',
-                    submission.status || 'waiting',
-                    submission.counter || '',
-                    submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '',
-                    submission.calledAt ? new Date(submission.calledAt).toLocaleString() : '',
-                    submission.completedAt ? new Date(submission.completedAt).toLocaleString() : '',
-                    submission.vehicleNo || '',
-                    submission.contactNo || '',
-                    submission.companyName || '',
-                    submission.mileage || '',
-                    submission.vehicleModel || ''
+                    `"${(submission.serviceType || '').replace(/"/g, '""')}"`,
+                    `"${(submission.bookingType || 'Walk-in').replace(/"/g, '""')}"`,
+                    `"${(submission.vehiclePlate || '').replace(/"/g, '""')}"`,
+                    `"${(submission.vehicleNo || '').replace(/"/g, '""')}"`,
+                    `"${(submission.status || 'waiting').replace(/"/g, '""')}"`,
+                    `"${(submission.counter || '').replace(/"/g, '""')}"`,
+                    `"${(submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '').replace(/"/g, '""')}"`,
+                    `"${(submission.calledAt ? new Date(submission.calledAt).toLocaleString() : '').replace(/"/g, '""')}"`,
+                    `"${(submission.completedAt ? new Date(submission.completedAt).toLocaleString() : '').replace(/"/g, '""')}"`,
+                    `"${(submission.contactNo || '').replace(/"/g, '""')}"`,
+                    `"${(submission.companyName || '').replace(/"/g, '""')}"`,
+                    `"${(submission.mileage || '').replace(/"/g, '""')}"`,
+                    `"${(submission.vehicleModel || '').replace(/"/g, '""')}"`
                 ];
                 
                 csvContent += row.join(',') + '\n';
@@ -2028,12 +2054,16 @@
             const bookingTypeBadgeHTML = submission.bookingType ? 
                 `<span class="booking-type-badge ${getBookingTypeClass(submission.bookingType)}" style="margin-left: 5px;">${submission.bookingType}</span>` : '';
             
+            // Show vehicle plate in queue item if available
+            const vehicleInfo = submission.vehiclePlate ? `| Plate: ${submission.vehiclePlate}` : 
+                               submission.vehicleNo ? `| Vehicle: ${submission.vehicleNo}` : '';
+            
             queueItem.innerHTML = `
                 <div onclick="showCustomerDetails('${submission.queueNumber}')" style="cursor: pointer;">
                     <strong>${submission.queueNumber}</strong> ${bookingTypeBadgeHTML} ${priorityBadgeHTML} - ${submission.serviceType}
                     <div style="font-size: 0.9em; color: #666;">
                         <strong>${submission.customerName || 'Customer'}</strong>
-                        ${submission.vehicleNo ? '| Vehicle: ' + submission.vehicleNo : ''}
+                        ${vehicleInfo}
                         ${submission.contactNo ? '| Contact: ' + submission.contactNo : ''}
                     </div>
                     <div style="font-size: 0.8em; color: #888;">
