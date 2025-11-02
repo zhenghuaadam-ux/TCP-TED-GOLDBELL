@@ -1035,6 +1035,9 @@
             }
         };
         
+        // History data - NEW: Store reset queue history
+        let queueHistory = [];
+        
         // DOM elements
         const countersGrid = document.getElementById('countersGrid');
         const editForm = document.getElementById('editForm');
@@ -1114,6 +1117,7 @@
         function init() {
             showAuthenticatedUI();
             loadQueueData();
+            loadHistoryData(); // NEW: Load history data
             generateCounters();
             setupEventListeners();
             updateQueueDisplay();
@@ -1147,6 +1151,28 @@
             } catch (error) {
                 console.error('Error loading queue data:', error);
                 initializeSampleData();
+            }
+        }
+        
+        // NEW: Load history data from localStorage
+        function loadHistoryData() {
+            try {
+                const savedHistory = localStorage.getItem('goldbellQueueHistory');
+                if (savedHistory) {
+                    queueHistory = JSON.parse(savedHistory);
+                }
+            } catch (error) {
+                console.error('Error loading history data:', error);
+                queueHistory = [];
+            }
+        }
+        
+        // NEW: Save history data to localStorage
+        function saveHistoryData() {
+            try {
+                localStorage.setItem('goldbellQueueHistory', JSON.stringify(queueHistory));
+            } catch (error) {
+                console.error('Error saving history data:', error);
             }
         }
         
@@ -1663,19 +1689,40 @@
             }
         }
         
-        // Reset queue
+        // NEW: Reset queue with history preservation
         function resetQueue() {
-            if (confirm('Are you sure you want to reset the entire queue? This cannot be undone.')) {
+            if (confirm('Are you sure you want to reset the entire queue? This will archive current queue data to history.')) {
+                // Create a history entry with the current queue data
+                const historyEntry = {
+                    resetDate: new Date().toISOString(),
+                    resetBy: currentUser.username,
+                    queueData: JSON.parse(JSON.stringify(queue)) // Deep copy of queue data
+                };
+                
+                // Add to history
+                queueHistory.push(historyEntry);
+                saveHistoryData();
+                
+                // Reset the current queue
                 queue = {
                     total: 0,
                     current: 0,
                     submissions: [],
-                    counters: queue.counters
+                    counters: {
+                        1: { assignedTo: null, currentCustomer: null },
+                        2: { assignedTo: null, currentCustomer: null },
+                        3: { assignedTo: null, currentCustomer: null },
+                        4: { assignedTo: null, currentCustomer: null },
+                        5: { assignedTo: null, currentCustomer: null },
+                        6: { assignedTo: null, currentCustomer: null },
+                        7: { assignedTo: null, currentCustomer: null },
+                        8: { assignedTo: null, currentCustomer: null }
+                    }
                 };
                 
                 saveQueueData();
                 updateQueueDisplay();
-                showNotification('Queue has been reset', 'success');
+                showNotification('Queue has been reset. Previous data saved to history.', 'success');
             }
         }
         
@@ -1692,7 +1739,15 @@
             const serviceFilter = historyServiceFilter.value;
             const bookingFilter = historyBookingFilter.value;
             
-            let filteredData = [...queue.submissions];
+            // NEW: Combine current queue data and history data
+            let allData = [...queue.submissions];
+            
+            // Add data from history entries
+            queueHistory.forEach(historyEntry => {
+                allData = [...allData, ...historyEntry.queueData.submissions];
+            });
+            
+            let filteredData = allData;
             
             // Filter by date if selected
             if (dateFilter) {
@@ -1764,7 +1819,15 @@
             const serviceFilter = historyServiceFilter.value;
             const bookingFilter = historyBookingFilter.value;
             
-            let filteredData = [...queue.submissions];
+            // NEW: Combine current queue data and history data
+            let allData = [...queue.submissions];
+            
+            // Add data from history entries
+            queueHistory.forEach(historyEntry => {
+                allData = [...allData, ...historyEntry.queueData.submissions];
+            });
+            
+            let filteredData = allData;
             
             // Apply the same filters as the table
             if (dateFilter) {
