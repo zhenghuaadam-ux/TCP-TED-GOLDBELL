@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>GOLDBELL SERVICE REQUEST - BOOKED</title>
 <style>
-/* All CSS remains the same as before */
+/* All CSS remains the same as before with additions for warning lights */
 /* Base styles */
 * {
   box-sizing: border-box;
@@ -210,6 +210,165 @@ input:focus, select:focus {
   margin-top: 8px;
 }
 
+/* Repair type section */
+.repair-type-section {
+  margin: 15px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  border-left: 4px solid #28a745;
+  display: none;
+}
+
+.repair-type-section h4 {
+  margin-bottom: 10px;
+  color: #003d82;
+}
+
+.repair-type-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.repair-type-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: normal;
+  cursor: pointer;
+}
+
+.repair-type-options input[type="radio"] {
+  width: auto;
+}
+
+/* Repair issues section */
+.repair-issues-section {
+  margin: 15px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 5px;
+  border-left: 4px solid #dc3545;
+  display: none;
+}
+
+.repair-issues-section h4 {
+  margin-bottom: 10px;
+  color: #003d82;
+}
+
+.repair-issues-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.repair-issues-options label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: normal;
+  cursor: pointer;
+  padding: 8px;
+  background: white;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  transition: all 0.3s;
+}
+
+.repair-issues-options label:hover {
+  background: #f0f0f0;
+  border-color: #005bbb;
+}
+
+.repair-issues-options input[type="checkbox"] {
+  width: auto;
+}
+
+/* Warning light images section */
+.warning-light-section {
+  margin: 15px 0;
+  padding: 15px;
+  background: #fff3cd;
+  border-radius: 5px;
+  border-left: 4px solid #ffc107;
+  display: none;
+}
+
+.warning-light-section h4 {
+  margin-bottom: 10px;
+  color: #856404;
+}
+
+.warning-light-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.warning-light-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  border: 2px solid #dee2e6;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.warning-light-item:hover {
+  border-color: #005bbb;
+  transform: translateY(-2px);
+}
+
+.warning-light-item.selected {
+  border-color: #28a745;
+  background: #f8fff9;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.warning-light-checkbox {
+  width: 20px;
+  height: 20px;
+}
+
+.warning-light-image {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.warning-light-symbol {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.warning-light-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  flex: 1;
+}
+
 /* Service examples */
 .service-examples {
   margin: 15px 0;
@@ -308,6 +467,19 @@ input:focus, select:focus {
     gap: 10px;
   }
   
+  .repair-type-options {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .repair-issues-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .warning-light-images {
+    grid-template-columns: 1fr;
+  }
+  
   .btn {
     width: 100%;
     margin-bottom: 10px;
@@ -320,6 +492,16 @@ input:focus, select:focus {
     margin-top: 10px;
   }
 }
+
+/* Specific warning light styles */
+.engsys-light { background: #ff4444; }
+.engsys-amber-light { background: #ffaa00; }
+.dpf-light { background: #ffaa00; }
+.overheat-light { background: #ff4444; }
+.battery-light { background: #ff4444; }
+.abs-light { background: #ffaa00; }
+.adblue-light { background: #ffaa00; }
+.retarder-light { background: #ffaa00; }
 </style>
 </head>
 <body id="mainPage">
@@ -400,6 +582,68 @@ input:focus, select:focus {
             </select>
             <div class="muted" id="serviceHelp" data-i18n="serviceHelp">Select the type of service required.</div>
             
+            <!-- Repair Type Selection (for Repair / Service) -->
+            <div class="repair-type-section" id="repairTypeSection">
+              <h4 id="repairTypeTitle">Please select repair type:</h4>
+              <div class="repair-type-options">
+                <label>
+                  <input type="radio" name="repairType" value="Repair" />
+                  <span>Repair</span>
+                </label>
+                <label>
+                  <input type="radio" name="repairType" value="Service" />
+                  <span>servicing</span>
+                </label>
+                <label>
+                  <input type="radio" name="repairType" value="Both" checked />
+                  <span>Repair & Servicing</span>
+                </label>
+              </div>
+            </div>
+            
+            <!-- Repair Issues Selection (for Repair or Both) -->
+            <div class="repair-issues-section" id="repairIssuesSection">
+              <h4 id="repairIssuesTitle">Please select the issues you're experiencing:</h4>
+              <div class="repair-issues-options">
+                <label>
+                  <input type="checkbox" name="repairIssues" value="Engine light on" />
+                  <span>Engine light on</span>
+                </label>
+                <label>
+                  <input type="checkbox" name="repairIssues" value="Dashboard no display" />
+                  <span>Dashboard no display</span>
+                </label>
+                <label>
+                  <input type="checkbox" name="repairIssues" value="Vehicle got sound" />
+                  <span>Vehicle got sound</span>
+                </label>
+                <label>
+                  <input type="checkbox" name="repairIssues" value="Air leak" />
+                  <span>Air leak</span>
+                </label>
+                <label>
+                  <input type="checkbox" name="repairIssues" value="A/C not cold" />
+                  <span>A/C not cold</span>
+                </label>
+                <label>
+                  <input type="checkbox" name="repairIssues" value="Got burning smell" />
+                  <span>Got burning smell</span>
+                </label>
+                <label>
+                  <input type="checkbox" name="repairIssues" value="Brake issues" />
+                  <span>Brake issues</span>
+                </label>
+              </div>
+            </div>
+            
+            <!-- Warning Light Images (for Engine light on) -->
+            <div class="warning-light-section" id="warningLightSection">
+              <h4>Select which warning lights are on:</h4>
+              <div class="warning-light-images" id="warningLightContainer">
+                <!-- Warning lights will be generated by JavaScript -->
+              </div>
+            </div>
+            
             <!-- Vehicle Model Selection (for Speed Limiter Installation) -->
             <div class="vehicle-model-section" id="vehicleModelSection">
               <h4 id="vehicleModelTitle">Please select vehicle model:</h4>
@@ -433,7 +677,7 @@ input:focus, select:focus {
               </div>
             </div>
             
-            <!-- Service Examples -->
+            <!-- Service Examples (for Other Services) -->
             <div class="service-examples" id="serviceExamples">
               <h4 id="examplesTitle">Service Examples:</h4>
               <ul id="examplesList">
@@ -481,6 +725,10 @@ input:focus, select:focus {
       const form = document.getElementById('jobForm');
       const serviceType = document.getElementById('serviceType');
       const vehicleModelSection = document.getElementById('vehicleModelSection');
+      const repairTypeSection = document.getElementById('repairTypeSection');
+      const repairIssuesSection = document.getElementById('repairIssuesSection');
+      const warningLightSection = document.getElementById('warningLightSection');
+      const warningLightContainer = document.getElementById('warningLightContainer');
       const serviceExamples = document.getElementById('serviceExamples');
       const examplesList = document.getElementById('examplesList');
       const defaultExample = document.getElementById('defaultExample');
@@ -489,21 +737,83 @@ input:focus, select:focus {
       const otherModelInput = document.getElementById('otherModelInput');
       const otherVehicleModel = document.getElementById('otherVehicleModel');
       const vehicleModelRadios = document.querySelectorAll('input[name="vehicleModel"]');
+      const repairTypeRadios = document.querySelectorAll('input[name="repairType"]');
+      const repairIssuesCheckboxes = document.querySelectorAll('input[name="repairIssues"]');
       const vehicleNoInput = document.getElementById('vehicleNo');
       const bookingTypeInput = document.getElementById('bookingType');
       
-      // Initially hide vehicle model section
-      vehicleModelSection.style.display = 'none';
+      // Fuso Truck Dashboard Warning Lights - Based on your screenshots
+      const warningLights = [
+        { 
+          id: 'engsys', 
+          name: 'Engine System', 
+          color: 'red',
+          symbol: 'ENGSYS',
+          class: 'engsys-light'
+        },
+        { 
+          id: 'engsys2', 
+          name: 'Engine System', 
+          color: 'amber',
+          symbol: 'ENGSYS',
+          class: 'engsys-amber-light'
+        },
+        { 
+          id: 'dpf', 
+          name: 'DPF Warning', 
+          color: 'amber',
+          symbol: 'DPF',
+          class: 'dpf-light'
+        },
+        { 
+          id: 'overheat', 
+          name: 'Overheat', 
+          color: 'red',
+          symbol: 'TEMP',
+          class: 'overheat-light'
+        },
+        { 
+          id: 'battery', 
+          name: 'Battery Charge', 
+          color: 'red',
+          symbol: 'BATT',
+          class: 'battery-light'
+        },
+        { 
+          id: 'abs', 
+          name: 'ABS Warning', 
+          color: 'amber',
+          symbol: 'ABS',
+          class: 'abs-light'
+        },
+        { 
+          id: 'adBlue', 
+          name: 'AdBlue System', 
+          color: 'amber',
+          symbol: 'ADBLUE',
+          class: 'adblue-light'
+        },
+        { 
+          id: 'retarder', 
+          name: 'Retarder System', 
+          color: 'amber',
+          symbol: 'RET',
+          class: 'retarder-light'
+        }
+      ];
       
-      // Service type examples
+      // Initialize warning lights
+      initializeWarningLights();
+      
+      // Initially hide sections
+      vehicleModelSection.style.display = 'none';
+      repairTypeSection.style.display = 'none';
+      repairIssuesSection.style.display = 'none';
+      warningLightSection.style.display = 'none';
+      serviceExamples.style.display = 'none';
+      
+      // Service type examples (only for Other Services now)
       const serviceExamplesData = {
-        'Repair / Service': [
-          'Engine diagnostics and repair',
-          'Brake system repair',
-          'Transmission repair',
-          'Electrical system repair',
-          'Suspension and steering repair'
-        ],
         'Speed Limiter Installation': [
           'Speed limiter device installation',
           'Calibration and testing',
@@ -522,30 +832,36 @@ input:focus, select:focus {
       serviceType.addEventListener('change', function() {
         const selectedService = this.value;
         
-        // Show/hide vehicle model section for Speed Limiter Installation
+        // Reset all sections first
+        resetAllSections();
+        
+        // Show/hide sections based on service type
         if (selectedService === 'Speed Limiter Installation') {
           vehicleModelSection.style.display = 'block';
-        } else {
-          vehicleModelSection.style.display = 'none';
-          otherModelInput.style.display = 'none';
-        }
-        
-        // Update service examples
-        if (selectedService && serviceExamplesData[selectedService]) {
-          defaultExample.style.display = 'none';
-          examplesList.innerHTML = '';
-          
-          serviceExamplesData[selectedService].forEach(example => {
-            const li = document.createElement('li');
-            li.textContent = example;
-            examplesList.appendChild(li);
-          });
-          
           serviceExamples.style.display = 'block';
-        } else {
-          serviceExamples.style.display = 'none';
-          defaultExample.style.display = 'block';
+          updateServiceExamples(selectedService);
+        } else if (selectedService === 'Repair / Service') {
+          repairTypeSection.style.display = 'block';
+          updateRepairIssuesVisibility();
+        } else if (selectedService === 'Other Services') {
+          serviceExamples.style.display = 'block';
+          updateServiceExamples(selectedService);
         }
+      });
+      
+      // Repair type change handler
+      repairTypeRadios.forEach(radio => {
+        radio.addEventListener('change', function() {
+          updateRepairIssuesVisibility();
+          checkEngineLightSelection();
+        });
+      });
+      
+      // Repair issues change handler
+      repairIssuesCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+          checkEngineLightSelection();
+        });
       });
       
       // Vehicle model radio button change handler
@@ -578,6 +894,138 @@ input:focus, select:focus {
           document.getElementById('contactError').style.display = 'none';
         }
       });
+      
+      // Function to initialize warning lights
+      function initializeWarningLights() {
+        warningLightContainer.innerHTML = '';
+        
+        warningLights.forEach(light => {
+          const lightItem = document.createElement('div');
+          lightItem.className = 'warning-light-item';
+          lightItem.innerHTML = `
+            <input type="checkbox" class="warning-light-checkbox" id="${light.id}" name="warningLights" value="${light.name}">
+            <div class="warning-light-image ${light.class}">
+              <div class="warning-light-symbol">${light.symbol}</div>
+            </div>
+            <div class="warning-light-label">${light.name}</div>
+          `;
+          warningLightContainer.appendChild(lightItem);
+          
+          // Add click handler for the entire item
+          lightItem.addEventListener('click', function(e) {
+            if (e.target.type !== 'checkbox') {
+              const checkbox = this.querySelector('input[type="checkbox"]');
+              checkbox.checked = !checkbox.checked;
+              updateWarningLightSelection(this, checkbox.checked);
+              handleEngineSystemSelection(checkbox);
+            }
+          });
+          
+          // Add change handler for checkbox
+          const checkbox = lightItem.querySelector('input[type="checkbox"]');
+          checkbox.addEventListener('change', function() {
+            updateWarningLightSelection(lightItem, this.checked);
+            handleEngineSystemSelection(this);
+          });
+        });
+      }
+      
+      // Function to handle engine system selection (only one can be selected)
+      function handleEngineSystemSelection(checkbox) {
+        if (checkbox.checked && (checkbox.id === 'engsys' || checkbox.id === 'engsys2')) {
+          // If an engine system light is selected, uncheck the other one
+          const otherEngineId = checkbox.id === 'engsys' ? 'engsys2' : 'engsys';
+          const otherEngineCheckbox = document.getElementById(otherEngineId);
+          
+          if (otherEngineCheckbox && otherEngineCheckbox.checked) {
+            otherEngineCheckbox.checked = false;
+            updateWarningLightSelection(otherEngineCheckbox.closest('.warning-light-item'), false);
+          }
+        }
+      }
+      
+      // Function to update warning light selection style
+      function updateWarningLightSelection(item, isSelected) {
+        if (isSelected) {
+          item.classList.add('selected');
+        } else {
+          item.classList.remove('selected');
+        }
+      }
+      
+      // Function to update repair issues visibility
+      function updateRepairIssuesVisibility() {
+        const selectedRepairType = document.querySelector('input[name="repairType"]:checked');
+        if (selectedRepairType && selectedRepairType.value === 'Service') {
+          // Hide repair issues and warning lights when Service is selected
+          repairIssuesSection.style.display = 'none';
+          warningLightSection.style.display = 'none';
+        } else if (selectedRepairType && (selectedRepairType.value === 'Repair' || selectedRepairType.value === 'Both')) {
+          // Show repair issues when Repair or Both is selected
+          repairIssuesSection.style.display = 'block';
+        } else {
+          repairIssuesSection.style.display = 'none';
+          warningLightSection.style.display = 'none';
+        }
+      }
+      
+      // Function to check if engine light is selected
+      function checkEngineLightSelection() {
+        const selectedRepairType = document.querySelector('input[name="repairType"]:checked');
+        const engineLightCheckbox = document.querySelector('input[name="repairIssues"][value="Engine light on"]');
+        
+        // Only show warning lights if:
+        // 1. Repair type is not "Service"
+        // 2. Engine light on is checked
+        if (selectedRepairType && selectedRepairType.value !== 'Service' && 
+            engineLightCheckbox && engineLightCheckbox.checked) {
+          warningLightSection.style.display = 'block';
+        } else {
+          warningLightSection.style.display = 'none';
+          // Uncheck all warning lights when section is hidden
+          document.querySelectorAll('input[name="warningLights"]').forEach(checkbox => {
+            checkbox.checked = false;
+            updateWarningLightSelection(checkbox.closest('.warning-light-item'), false);
+          });
+        }
+      }
+      
+      // Function to update service examples
+      function updateServiceExamples(serviceType) {
+        if (serviceType && serviceExamplesData[serviceType]) {
+          defaultExample.style.display = 'none';
+          examplesList.innerHTML = '';
+          
+          serviceExamplesData[serviceType].forEach(example => {
+            const li = document.createElement('li');
+            li.textContent = example;
+            examplesList.appendChild(li);
+          });
+        } else {
+          defaultExample.style.display = 'block';
+        }
+      }
+      
+      // Function to reset all sections
+      function resetAllSections() {
+        vehicleModelSection.style.display = 'none';
+        repairTypeSection.style.display = 'none';
+        repairIssuesSection.style.display = 'none';
+        warningLightSection.style.display = 'none';
+        serviceExamples.style.display = 'none';
+        otherModelInput.style.display = 'none';
+        
+        // Reset checkboxes
+        repairIssuesCheckboxes.forEach(checkbox => {
+          checkbox.checked = false;
+        });
+        
+        // Reset warning lights
+        document.querySelectorAll('input[name="warningLights"]').forEach(checkbox => {
+          checkbox.checked = false;
+          updateWarningLightSelection(checkbox.closest('.warning-light-item'), false);
+        });
+      }
       
       // Form submission handler
       form.addEventListener('submit', function(e) {
@@ -642,7 +1090,7 @@ input:focus, select:focus {
             status: 'waiting'
           };
           
-          // Get vehicle model data
+          // Get vehicle model data (if applicable)
           const vehicleModelRadio = document.querySelector('input[name="vehicleModel"]:checked');
           if (vehicleModelRadio) {
             if (vehicleModelRadio.value === 'OTHERS') {
@@ -650,6 +1098,26 @@ input:focus, select:focus {
             } else {
               formData.vehicleModel = vehicleModelRadio.value;
             }
+          }
+          
+          // Get repair type data (if applicable)
+          const repairTypeRadio = document.querySelector('input[name="repairType"]:checked');
+          if (repairTypeRadio) {
+            formData.repairType = repairTypeRadio.value;
+          }
+          
+          // Get repair issues data (if applicable)
+          const selectedRepairIssues = Array.from(document.querySelectorAll('input[name="repairIssues"]:checked'))
+            .map(checkbox => checkbox.value);
+          if (selectedRepairIssues.length > 0) {
+            formData.repairIssues = selectedRepairIssues;
+          }
+          
+          // Get warning lights data (if applicable)
+          const selectedWarningLights = Array.from(document.querySelectorAll('input[name="warningLights"]:checked'))
+            .map(checkbox => checkbox.value);
+          if (selectedWarningLights.length > 0) {
+            formData.warningLights = selectedWarningLights;
           }
           
           // Save form data to localStorage for thank you page
@@ -682,10 +1150,8 @@ input:focus, select:focus {
         const message = document.getElementById('formMessage');
         message.style.display = 'none';
         
-        vehicleModelSection.style.display = 'none';
-        serviceExamples.style.display = 'none';
+        resetAllSections();
         defaultExample.style.display = 'block';
-        otherModelInput.style.display = 'none';
         
         // Reset border color for other vehicle model input
         if (otherVehicleModel) {

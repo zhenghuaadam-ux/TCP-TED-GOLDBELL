@@ -179,49 +179,6 @@ input:focus, select:focus {
   margin-bottom: 10px;
   color: #003d82;
 }
-/* Vehicle model section */
-.vehicle-model-section {
-  margin: 15px 0;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 5px;
-  border-left: 4px solid #005bbb;
-}
-
-.vehicle-model-section h4 {
-  margin-bottom: 10px;
-  color: #003d82;
-}
-
-.vehicle-model-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 15px;
-}
-
-.vehicle-model-options label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: normal;
-  cursor: pointer;
-}
-
-.vehicle-model-options input[type="radio"] {
-  width: auto;
-}
-
-.other-model-input {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px dashed #ccc;
-  display: none;
-}
-
-.other-model-input input {
-  margin-top: 8px;
-}
 
 /* Service examples */
 .service-examples {
@@ -302,11 +259,6 @@ input:focus, select:focus {
     grid-template-columns: 1fr;
   }
   
-  .vehicle-model-options {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
   .btn {
     width: 100%;
     margin-bottom: 10px;
@@ -382,54 +334,20 @@ input:focus, select:focus {
     <div class="card" role="main" id="mainFormCard">
       <form id="jobForm" autocomplete="off" novalidate>
         <div class="grid">
-              <div class="booking-field full">
-              <h4>Walk In</h4>
-              <div class="muted">This service request is confirmed as Walk In.</div>
-              <input type="hidden" id="bookingType" value="Walk-in">
-            </div>
+          <div class="booking-field full">
+            <h4>Walk In</h4>
+            <div class="muted">This service request is confirmed as Walk In.</div>
+            <input type="hidden" id="bookingType" value="Walk-in">
+          </div>
+          
           <div class="full">
-            
             <label id="serviceTypeLabel" data-i18n="serviceType">Service Type</label>
             <select id="serviceType" required>
               <option value="" data-i18n="selectOption">-- Select --</option>
               <option value="Repair / Service" data-i18n="repairService">Repair / Service</option>
-              <option value="Speed Limiter Installation" data-i18n="speedLimiter">Speed Limiter Installation</option>
               <option value="Other Services" data-i18n="otherServices">Other Services</option>
             </select>
             <div class="muted" id="serviceHelp" data-i18n="serviceHelp">Select the type of service required.</div>
-            
-            <!-- Vehicle Model Selection (for Speed Limiter Installation) -->
-            <div class="vehicle-model-section" id="vehicleModelSection">
-              <h4 id="vehicleModelTitle">Please select vehicle model:</h4>
-              <div class="vehicle-model-options">
-                <label>
-                  <input type="radio" name="vehicleModel" value="HINO" />
-                  <span>HINO</span>
-                </label>
-                <label>
-                  <input type="radio" name="vehicleModel" value="NISSAN" />
-                  <span>NISSAN</span>
-                </label>
-                <label>
-                  <input type="radio" name="vehicleModel" value="TOYOTA" />
-                  <span>TOYOTA</span>
-                </label>
-                <label>
-                  <input type="radio" name="vehicleModel" value="FUSO" checked />
-                  <span>FUSO</span>
-                </label>
-                <label>
-                  <input type="radio" name="vehicleModel" value="OTHERS" />
-                  <span>OTHERS</span>
-                </label>
-              </div>
-              
-              <!-- Other Vehicle Model Input -->
-              <div class="other-model-input" id="otherModelInput">
-                <label for="otherVehicleModel">Please specify vehicle model:</label>
-                <input type="text" id="otherVehicleModel" placeholder="Enter vehicle model (e.g., ISUZU, MITSUBISHI, etc.)" />
-              </div>
-            </div>
             
             <!-- Service Examples -->
             <div class="service-examples" id="serviceExamples">
@@ -488,22 +406,15 @@ input:focus, select:focus {
       // Form elements
       const form = document.getElementById('jobForm');
       const serviceType = document.getElementById('serviceType');
-      const vehicleModelSection = document.getElementById('vehicleModelSection');
       const serviceExamples = document.getElementById('serviceExamples');
       const examplesList = document.getElementById('examplesList');
       const defaultExample = document.getElementById('defaultExample');
       const mileageInput = document.getElementById('mileage');
       const contactInput = document.getElementById('contactNo');
-      const otherModelInput = document.getElementById('otherModelInput');
-      const otherVehicleModel = document.getElementById('otherVehicleModel');
-      const vehicleModelRadios = document.querySelectorAll('input[name="vehicleModel"]');
       const customerNameInput = document.getElementById('customerName');
       const vehicleNoInput = document.getElementById('vehicleNo');
       const companyNameInput = document.getElementById('companyName');
       const bookingTypeInput = document.getElementById('bookingType');
-      
-      // Initially hide vehicle model section
-      vehicleModelSection.style.display = 'none';
       
       // Service type examples
       const serviceExamplesData = {
@@ -513,12 +424,6 @@ input:focus, select:focus {
           'Transmission repair',
           'Electrical system repair',
           'Suspension and steering repair'
-        ],
-        'Speed Limiter Installation': [
-          'Speed limiter device installation',
-          'Calibration and testing',
-          'Compliance certification',
-          'Regular maintenance check'
         ],
         'Other Services': [
           'Vehicle inspection',
@@ -531,14 +436,6 @@ input:focus, select:focus {
       // Service type change handler
       serviceType.addEventListener('change', function() {
         const selectedService = this.value;
-        
-        // Show/hide vehicle model section for Speed Limiter Installation
-        if (selectedService === 'Speed Limiter Installation') {
-          vehicleModelSection.style.display = 'block';
-        } else {
-          vehicleModelSection.style.display = 'none';
-          otherModelInput.style.display = 'none';
-        }
         
         // Update service examples
         if (selectedService && serviceExamplesData[selectedService]) {
@@ -556,20 +453,6 @@ input:focus, select:focus {
           serviceExamples.style.display = 'none';
           defaultExample.style.display = 'block';
         }
-      });
-      
-      // Vehicle model radio button change handler
-      vehicleModelRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-          if (this.value === 'OTHERS') {
-            otherModelInput.style.display = 'block';
-            otherVehicleModel.required = true;
-          } else {
-            otherModelInput.style.display = 'none';
-            otherVehicleModel.required = false;
-            otherVehicleModel.value = '';
-          }
-        });
       });
       
       // Mileage input validation - only allow numbers
@@ -635,16 +518,6 @@ input:focus, select:focus {
           isValid = false;
         }
         
-        // If "Others" is selected for vehicle model, validate the input
-        const selectedVehicleModel = document.querySelector('input[name="vehicleModel"]:checked');
-        if (selectedVehicleModel && selectedVehicleModel.value === 'OTHERS' && !otherVehicleModel.value.trim()) {
-          isValid = false;
-          // Add visual indication for required field
-          otherVehicleModel.style.borderColor = '#e74c3c';
-        } else if (otherVehicleModel) {
-          otherVehicleModel.style.borderColor = '#ddd';
-        }
-        
         // If form is valid, save data and redirect to thank you page
         if (isValid) {
           // Get all form data
@@ -658,16 +531,6 @@ input:focus, select:focus {
             mileage: mileageInput.value,
             status: 'waiting'
           };
-          
-          // Get vehicle model data
-          const vehicleModelRadio = document.querySelector('input[name="vehicleModel"]:checked');
-          if (vehicleModelRadio) {
-            if (vehicleModelRadio.value === 'OTHERS') {
-              formData.vehicleModel = otherVehicleModel.value;
-            } else {
-              formData.vehicleModel = vehicleModelRadio.value;
-            }
-          }
           
           // Save form data to localStorage for thank you page
           localStorage.setItem('latestFormData', JSON.stringify(formData));
@@ -699,15 +562,8 @@ input:focus, select:focus {
         const message = document.getElementById('formMessage');
         message.style.display = 'none';
         
-        vehicleModelSection.style.display = 'none';
         serviceExamples.style.display = 'none';
         defaultExample.style.display = 'block';
-        otherModelInput.style.display = 'none';
-        
-        // Reset border color for other vehicle model input
-        if (otherVehicleModel) {
-          otherVehicleModel.style.borderColor = '#ddd';
-        }
       });
     });
   </script>
