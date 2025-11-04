@@ -935,13 +935,6 @@ input:focus, select:focus {
         });
       }
       
-      // Generate queue number - FIXED to use the same format as thankyou.html
-      function generateQueueNumber() {
-        // Generate a random 6-digit number (same as thankyou.html)
-        const randomNumber = Math.floor(100000 + Math.random() * 900000);
-        return `E${randomNumber}`;
-      }
-      
       // Form submission handler
       form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -1015,8 +1008,7 @@ input:focus, select:focus {
             vehicleNo: vehicleNoInput.value,
             contactNo: contactInput.value,
             mileage: mileageInput.value,
-            status: 'waiting',
-            timestamp: new Date().toISOString()
+            status: 'waiting'
           };
           
           // Get vehicle model data (if applicable)
@@ -1042,7 +1034,7 @@ input:focus, select:focus {
             formData.warningLights = selectedWarningLights;
           }
           
-          // Generate queue number - FIXED to use same format as thankyou.html
+          // Generate queue number
           const queueNumber = generateQueueNumber();
           formData.queueNumber = queueNumber;
           
@@ -1054,11 +1046,11 @@ input:focus, select:focus {
           
           // Show success message
           const message = document.getElementById('formMessage');
-          message.textContent = 'Redirecting...';
+          message.textContent = 'Service request submitted successfully! Your queue number is ' + queueNumber + '. Redirecting...';
           message.className = 'message success';
           message.style.display = 'block';
           
-          // Redirect to thank you page with queue number
+          // Redirect to thank you page after 3 seconds
           setTimeout(() => {
             window.location.href = 'thankyou.html?queue=' + queueNumber;
           }, 3000);
@@ -1070,7 +1062,7 @@ input:focus, select:focus {
         }
       });
       
-      // Save to queue data - ENHANCED to properly handle warning lights
+      // Save to queue data
       function saveToQueueData(formData) {
         try {
           // Get existing queue data or initialize
@@ -1081,16 +1073,6 @@ input:focus, select:focus {
             submissions: []
           };
           
-          // Ensure warningLights is always an array
-          if (!formData.warningLights) {
-            formData.warningLights = [];
-          }
-          
-          // Add timestamp if not present
-          if (!formData.timestamp) {
-            formData.timestamp = new Date().toISOString();
-          }
-          
           // Add new submission
           queueData.submissions.push(formData);
           queueData.total = queueData.submissions.length;
@@ -1098,14 +1080,37 @@ input:focus, select:focus {
           // Save back to localStorage
           localStorage.setItem('goldbellQueue', JSON.stringify(queueData));
           
-          console.log('Queue data saved with warning lights:', formData);
-          
-          // Also save to a separate backup for debugging
-          localStorage.setItem('latestSubmission', JSON.stringify(formData));
+          console.log('Queue data saved:', formData);
           
         } catch (error) {
           console.error('Error saving queue data:', error);
         }
+      }
+      
+      // Generate queue number
+      function generateQueueNumber() {
+        // Get existing queue data to ensure unique number
+        const existingData = localStorage.getItem('goldbellQueue');
+        let existingNumbers = [];
+        
+        if (existingData) {
+          const queueData = JSON.parse(existingData);
+          existingNumbers = queueData.submissions.map(sub => sub.queueNumber);
+        }
+        
+        // Generate unique queue number
+        let queueNumber;
+        let attempts = 0;
+        
+        do {
+          const prefix = 'E';
+          const timestamp = Date.now().toString();
+          const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+          queueNumber = prefix + timestamp.slice(-6) + random;
+          attempts++;
+        } while (existingNumbers.includes(queueNumber) && attempts < 10);
+        
+        return queueNumber;
       }
       
       // Reset button handler
