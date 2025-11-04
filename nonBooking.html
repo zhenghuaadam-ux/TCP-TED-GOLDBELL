@@ -166,40 +166,6 @@ input:focus, select:focus {
   display: none;
 }
 
-/* Repair type section */
-.repair-type-section {
-  margin: 15px 0;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 5px;
-  border-left: 4px solid #28a745;
-  display: none;
-}
-
-.repair-type-section h4 {
-  margin-bottom: 10px;
-  color: #003d82;
-}
-
-.repair-type-options {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
-  margin-bottom: 15px;
-}
-
-.repair-type-options label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: normal;
-  cursor: pointer;
-}
-
-.repair-type-options input[type="radio"] {
-  width: auto;
-}
-
 /* Warning light images section */
 .warning-light-section {
   margin: 15px 0;
@@ -374,11 +340,6 @@ input:focus, select:focus {
     grid-template-columns: 1fr;
   }
   
-  .repair-type-options {
-    flex-direction: column;
-    gap: 10px;
-  }
-  
   .warning-light-images {
     grid-template-columns: 1fr;
   }
@@ -479,29 +440,11 @@ input:focus, select:focus {
             <label id="serviceTypeLabel" data-i18n="serviceType">Service Type</label>
             <select id="serviceType" required>
               <option value="" data-i18n="selectOption">-- Select --</option>
-              <option value="Repair / Service" data-i18n="repairService">Repair / Service</option>
+              <option value="Repair" data-i18n="repair">Repair</option>
+              <option value="Servicing" data-i18n="servicing">Servicing</option>
               <option value="Other Services" data-i18n="otherServices">Other Services</option>
             </select>
             <div class="muted" id="serviceHelp" data-i18n="serviceHelp">Select the type of service required.</div>
-            
-            <!-- Repair Type Selection (for Repair / Service) -->
-            <div class="repair-type-section" id="repairTypeSection">
-              <h4 id="repairTypeTitle">Please select repair type:</h4>
-              <div class="repair-type-options">
-                <label>
-                  <input type="radio" name="repairType" value="Repair" />
-                  <span>Repair</span>
-                </label>
-                <label>
-                  <input type="radio" name="repairType" value="Service" />
-                  <span>servicing</span>
-                </label>
-                <label>
-                  <input type="radio" name="repairType" value="Both" checked />
-                  <span>Repair & Servicing</span>
-                </label>
-              </div>
-            </div>
             
             <!-- Warning Light Images (for Engine light on) -->
             <div class="warning-light-section" id="warningLightSection">
@@ -568,7 +511,6 @@ input:focus, select:focus {
       // Form elements
       const form = document.getElementById('jobForm');
       const serviceType = document.getElementById('serviceType');
-      const repairTypeSection = document.getElementById('repairTypeSection');
       const warningLightSection = document.getElementById('warningLightSection');
       const warningLightContainer = document.getElementById('warningLightContainer');
       const serviceExamples = document.getElementById('serviceExamples');
@@ -580,7 +522,6 @@ input:focus, select:focus {
       const vehicleNoInput = document.getElementById('vehicleNo');
       const companyNameInput = document.getElementById('companyName');
       const bookingTypeInput = document.getElementById('bookingType');
-      const repairTypeRadios = document.querySelectorAll('input[name="repairType"]');
       
       // Fuso Truck Dashboard Warning Lights - Based on your screenshots
       const warningLights = [
@@ -675,7 +616,6 @@ input:focus, select:focus {
       initializeWarningLights();
       
       // Initially hide sections
-      repairTypeSection.style.display = 'none';
       warningLightSection.style.display = 'none';
       serviceExamples.style.display = 'none';
       
@@ -697,21 +637,12 @@ input:focus, select:focus {
         resetAllSections();
         
         // Show/hide sections based on service type
-        if (selectedService === 'Repair / Service') {
-          repairTypeSection.style.display = 'block';
+        if (selectedService === 'Repair' || selectedService === 'Servicing' || selectedService === 'Repair & Servicing') {
           warningLightSection.style.display = 'block'; // Always show warning lights for repair/service
         } else if (selectedService === 'Other Services') {
           serviceExamples.style.display = 'block';
           updateServiceExamples(selectedService);
         }
-      });
-      
-      // Repair type change handler
-      repairTypeRadios.forEach(radio => {
-        radio.addEventListener('change', function() {
-          // Always show warning lights for any repair type
-          warningLightSection.style.display = 'block';
-        });
       });
       
       // Mileage input validation - only allow numbers
@@ -807,7 +738,6 @@ input:focus, select:focus {
       
       // Function to reset all sections
       function resetAllSections() {
-        repairTypeSection.style.display = 'none';
         warningLightSection.style.display = 'none';
         serviceExamples.style.display = 'none';
         
@@ -877,12 +807,6 @@ input:focus, select:focus {
             mileage: mileageInput.value,
             status: 'waiting'
           };
-          
-          // Get repair type data (if applicable)
-          const repairTypeRadio = document.querySelector('input[name="repairType"]:checked');
-          if (repairTypeRadio) {
-            formData.repairType = repairTypeRadio.value;
-          }
           
           // Get warning lights data (if applicable)
           const selectedWarningLights = Array.from(document.querySelectorAll('input[name="warningLights"]:checked'))

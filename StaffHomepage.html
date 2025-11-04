@@ -598,6 +598,11 @@
             background-color: #6c757d;
         }
         
+        .warning-light-tag.selected {
+            animation: none;
+            opacity: 1;
+        }
+        
         @keyframes blink {
             0%, 50% { opacity: 1; }
             51%, 100% { opacity: 0.7; }
@@ -909,7 +914,8 @@
                             <label for="editServiceType">Service Type *</label>
                             <select id="editServiceType" name="editServiceType" required>
                                 <option value="">-- Select Service --</option>
-                                <option value="Repair / Service">Repair / Service</option>
+                                <option value="Repair">Repair</option>
+                                <option value="Servicing">Servicing</option>
                                 <option value="Speed Limiter Installation">Speed Limiter Installation</option>
                                 <option value="Other Services">Other Services</option>
                             </select>
@@ -1322,6 +1328,10 @@
                         // Generate unique company name if not provided
                         if (!sub.companyName) {
                             sub.companyName = generateUniqueCompanyName();
+                        }
+                        // Ensure warningLights exists
+                        if (!sub.warningLights) {
+                            sub.warningLights = [];
                         }
                     });
                 }
@@ -2152,20 +2162,27 @@
             showNotification(`History exported to ${filename}`, 'success');
         }
         
-        // Update queue display
+        // Update queue display - FIXED to show currently serving customer
         function updateQueueDisplay() {
             try {
                 // Find the currently serving customer
                 const servingCustomer = queue.submissions.find(sub => sub.status === 'serving');
-                const currentDisplayNumber = servingCustomer ? servingCustomer.queueNumber : 'E' + queue.current.toString().padStart(6, '0');
-                currentQueueNumber.textContent = currentDisplayNumber;
                 
-                // Update booking type badge for current customer
-                if (servingCustomer && servingCustomer.bookingType) {
-                    bookingTypeBadge.textContent = servingCustomer.bookingType;
-                    bookingTypeBadge.className = `booking-type-badge ${getBookingTypeClass(servingCustomer.bookingType)}`;
-                    bookingTypeBadge.style.display = 'inline-block';
+                if (servingCustomer) {
+                    // Show the actual serving customer
+                    currentQueueNumber.textContent = servingCustomer.queueNumber;
+                    
+                    // Update booking type badge for current customer
+                    if (servingCustomer.bookingType) {
+                        bookingTypeBadge.textContent = servingCustomer.bookingType;
+                        bookingTypeBadge.className = `booking-type-badge ${getBookingTypeClass(servingCustomer.bookingType)}`;
+                        bookingTypeBadge.style.display = 'inline-block';
+                    } else {
+                        bookingTypeBadge.style.display = 'none';
+                    }
                 } else {
+                    // No customer is currently being served
+                    currentQueueNumber.textContent = 'E' + queue.current.toString().padStart(6, '0');
                     bookingTypeBadge.style.display = 'none';
                 }
                 
