@@ -845,13 +845,14 @@
                         <div class="detail-value" id="detailCustomerName">-</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">Service & Warnings:</div>
+                        <div class="detail-label">Service Type:</div>
+                        <div class="detail-value" id="detailServiceType">-</div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Warning Lights:</div>
                         <div class="detail-value">
-                            <div class="service-warning-container">
-                                <div class="service-type-display" id="detailServiceType">-</div>
-                                <div class="warning-lights" id="warningLights">
-                                    <!-- Warning lights will be populated here -->
-                                </div>
+                            <div class="warning-lights" id="warningLights">
+                                <!-- Warning lights will be populated here -->
                             </div>
                         </div>
                     </div>
@@ -951,13 +952,11 @@
                             </select>
                         </div>
                     </div>
-                    <!-- Combined Service Type & Warning Lights in Edit Form -->
+                    <!-- Warning Lights in Edit Form -->
                     <div style="margin-bottom: 15px;">
-                        <label>Service & Warning Lights</label>
-                        <div class="service-warning-container">
-                            <div class="warning-lights" id="editWarningLights">
-                                <!-- Warning lights will be populated here -->
-                            </div>
+                        <label>Warning Lights</label>
+                        <div class="warning-lights" id="editWarningLights">
+                            <!-- Warning lights will be populated here -->
                         </div>
                     </div>
                     <div class="action-buttons">
@@ -1057,6 +1056,7 @@
                             <th>Customer Name</th>
                             <th>Service Type</th>
                             <th>Booking Type</th>
+                            <th>Warning Lights</th>
                             <th>Status</th>
                             <th>Counter</th>
                             <th>Added Time</th>
@@ -1322,6 +1322,10 @@
                         // Generate unique company name if not provided
                         if (!sub.companyName) {
                             sub.companyName = generateUniqueCompanyName();
+                        }
+                        // Ensure warningLights is always an array
+                        if (!sub.warningLights) {
+                            sub.warningLights = [];
                         }
                     });
                 }
@@ -2033,6 +2037,7 @@
                     <td>${submission.customerName || 'Customer'}</td>
                     <td>${submission.serviceType || '-'}</td>
                     <td>${submission.bookingType || 'Walk-in'}</td>
+                    <td>${(submission.warningLights || []).join(', ') || '-'}</td>
                     <td class="${submission.status}">${submission.status || 'waiting'}</td>
                     <td>${submission.counter || '-'}</td>
                     <td>${submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '-'}</td>
@@ -2090,6 +2095,7 @@
                 'Customer Name',
                 'Service Type',
                 'Booking Type',
+                'Warning Lights',
                 'Vehicle No',
                 'Status',
                 'Counter',
@@ -2099,8 +2105,7 @@
                 'Contact No',
                 'Company Name',
                 'Mileage',
-                'Vehicle Model',
-                'Warning Lights'
+                'Vehicle Model'
             ];
             
             // Add UTF-8 BOM for Excel compatibility
@@ -2115,6 +2120,7 @@
                     `"${(submission.customerName || 'Customer').replace(/"/g, '""')}"`,
                     `"${(submission.serviceType || '').replace(/"/g, '""')}"`,
                     `"${(submission.bookingType || 'Walk-in').replace(/"/g, '""')}"`,
+                    `"${((submission.warningLights || []).join(', ')).replace(/"/g, '""')}"`,
                     `"${(submission.vehicleNo || '').replace(/"/g, '""')}"`,
                     `"${(submission.status || 'waiting').replace(/"/g, '""')}"`,
                     `"${(submission.counter || '').replace(/"/g, '""')}"`,
@@ -2124,8 +2130,7 @@
                     `"${(submission.contactNo || '').replace(/"/g, '""')}"`,
                     `"${(submission.companyName || generateUniqueCompanyName()).replace(/"/g, '""')}"`,
                     `"${(submission.mileage || '').replace(/"/g, '""')}"`,
-                    `"${(submission.vehicleModel || 'FUSO').replace(/"/g, '""')}"`,
-                    `"${((submission.warningLights || []).join(', ')).replace(/"/g, '""')}"`
+                    `"${(submission.vehicleModel || 'FUSO').replace(/"/g, '""')}"`
                 ];
                 
                 csvContent += row.join(',') + '\n';
