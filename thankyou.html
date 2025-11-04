@@ -331,9 +331,9 @@ h2 {
   </div>
 
   <script>
-    // Generate random 6-digit number for queue number
+    // Generate random 6-digit number for queue number - FIXED to be consistent with forms
     function generateRandomQueueNumber() {
-      // Generate a random 6-digit number
+      // Generate a random 6-digit number (same as Booked and Walk-in forms)
       const randomNumber = Math.floor(100000 + Math.random() * 900000);
       return `E${randomNumber}`;
     }
@@ -370,7 +370,7 @@ h2 {
       };
     }
 
-    // Save queue submission to localStorage
+    // Save queue submission to localStorage - FIXED to use consistent queue number
     function saveQueueSubmission(queueNumber, customerData) {
       try {
         // Get existing queue data or initialize
@@ -380,6 +380,11 @@ h2 {
           current: 0,
           submissions: []
         };
+        
+        // Find if this customer already exists in queue (from form submission)
+        const existingIndex = queueData.submissions.findIndex(sub => 
+          sub.queueNumber === queueNumber
+        );
         
         // Create new submission with actual customer data
         const newSubmission = {
@@ -396,17 +401,19 @@ h2 {
           timestamp: new Date().toISOString()
         };
         
-        console.log('Saving submission:', newSubmission);
+        // Replace existing submission or add new one
+        if (existingIndex !== -1) {
+          queueData.submissions[existingIndex] = newSubmission;
+        } else {
+          queueData.submissions.push(newSubmission);
+        }
         
-        // Add to submissions
-        queueData.submissions.push(newSubmission);
         queueData.total = queueData.submissions.length;
         
         // Save back to localStorage
         localStorage.setItem('goldbellQueue', JSON.stringify(queueData));
         
         console.log('Queue submission saved:', newSubmission);
-        console.log('Current queue data:', queueData);
         
       } catch (error) {
         console.error('Error saving queue submission:', error);
@@ -438,7 +445,21 @@ h2 {
     // Update the queue number when the page loads
     document.addEventListener('DOMContentLoaded', function() {
       const queueNumberElement = document.getElementById('queueNumber');
-      const queueNumber = generateRandomQueueNumber();
+      
+      // Check if queue number is provided in URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlQueueNumber = urlParams.get('queue');
+      
+      let queueNumber;
+      
+      if (urlQueueNumber) {
+        // Use queue number from URL (from form submission)
+        queueNumber = urlQueueNumber;
+      } else {
+        // Generate new queue number (same format as forms)
+        queueNumber = generateRandomQueueNumber();
+      }
+      
       queueNumberElement.textContent = queueNumber;
       
       // Get customer data and save the queue submission
@@ -449,7 +470,7 @@ h2 {
       startCountdownTimer();
       
       console.log('Customer data:', customerData);
-      console.log('Queue number generated:', queueNumber);
+      console.log('Queue number:', queueNumber);
     });
   </script>
 </body>
