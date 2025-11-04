@@ -590,6 +590,10 @@
             animation: blink 2s infinite;
         }
         
+        .warning-light-tag.selected {
+            box-shadow: 0 0 0 2px var(--blue);
+        }
+        
         .warning-light-tag.amber {
             background-color: #ffaa00;
         }
@@ -1109,7 +1113,7 @@
         
         const companyNameTypes = ["Builders", "Contractors", "Developers", "Suppliers", "Traders", "Manufacturers"];
         
-        // Warning lights data from the service request form
+        // Warning lights data from the service request form - FIXED STRUCTURE
         const warningLightsData = [
             { 
                 id: 'engsys', 
@@ -1776,7 +1780,7 @@
             }
         }
         
-        // Update warning lights display
+        // Update warning lights display - FIXED FUNCTION
         function updateWarningLightsDisplay(container, selectedLights) {
             container.innerHTML = '';
             
@@ -1786,6 +1790,12 @@
                     if (lightData) {
                         const lightTag = document.createElement('span');
                         lightTag.className = `warning-light-tag ${lightData.color}`;
+                        lightTag.textContent = lightName;
+                        container.appendChild(lightTag);
+                    } else {
+                        // If no matching light data found, create a default tag
+                        const lightTag = document.createElement('span');
+                        lightTag.className = 'warning-light-tag gray';
                         lightTag.textContent = lightName;
                         container.appendChild(lightTag);
                     }
@@ -1822,7 +1832,7 @@
             }
         }
         
-        // Update warning lights in edit form
+        // Update warning lights in edit form - FIXED FUNCTION
         function updateWarningLightsEditForm(container, selectedLights) {
             container.innerHTML = '';
             

@@ -1015,7 +1015,8 @@ input:focus, select:focus {
             vehicleNo: vehicleNoInput.value,
             contactNo: contactInput.value,
             mileage: mileageInput.value,
-            status: 'waiting'
+            status: 'waiting',
+            timestamp: new Date().toISOString()
           };
           
           // Get vehicle model data (if applicable)
@@ -1069,7 +1070,7 @@ input:focus, select:focus {
         }
       });
       
-      // Save to queue data
+      // Save to queue data - ENHANCED to properly handle warning lights
       function saveToQueueData(formData) {
         try {
           // Get existing queue data or initialize
@@ -1080,6 +1081,16 @@ input:focus, select:focus {
             submissions: []
           };
           
+          // Ensure warningLights is always an array
+          if (!formData.warningLights) {
+            formData.warningLights = [];
+          }
+          
+          // Add timestamp if not present
+          if (!formData.timestamp) {
+            formData.timestamp = new Date().toISOString();
+          }
+          
           // Add new submission
           queueData.submissions.push(formData);
           queueData.total = queueData.submissions.length;
@@ -1087,7 +1098,10 @@ input:focus, select:focus {
           // Save back to localStorage
           localStorage.setItem('goldbellQueue', JSON.stringify(queueData));
           
-          console.log('Queue data saved:', formData);
+          console.log('Queue data saved with warning lights:', formData);
+          
+          // Also save to a separate backup for debugging
+          localStorage.setItem('latestSubmission', JSON.stringify(formData));
           
         } catch (error) {
           console.error('Error saving queue data:', error);
