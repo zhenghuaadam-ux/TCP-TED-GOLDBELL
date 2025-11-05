@@ -6,7 +6,7 @@
     <title>Goldbell Queue Management System - Dashboard</title>
     <style>
         :root {
-            --blue: hsl(211, 100%, 37%);
+            --blue: #005bbb;
             --light: #f4f8fb;
             --card: #ffffff;
             --muted: #6b7b8f;
@@ -556,58 +556,6 @@
             text-decoration: underline;
         }
         
-        /* Combined Service Type & Warning Lights Styles */
-        .service-warning-container {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .service-type-display {
-            font-weight: 600;
-            color: var(--blue);
-            padding: 8px 12px;
-            background: white;
-            border-radius: var(--radius);
-            border: 1px solid #d6e9fb;
-        }
-        
-        .warning-lights {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-        
-        .warning-light-tag {
-            display: inline-block;
-            padding: 4px 10px;
-            background-color: #ff6b6b;
-            color: white;
-            border-radius: 4px;
-            font-size: 0.8em;
-            font-weight: 600;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            animation: blink 2s infinite;
-        }
-        
-        .warning-light-tag.amber {
-            background-color: #ffaa00;
-        }
-        
-        .warning-light-tag.gray {
-            background-color: #6c757d;
-        }
-        
-        .warning-light-tag.selected {
-            animation: none;
-            opacity: 1;
-        }
-        
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0.7; }
-        }
-        
         /* History Modal Styles */
         .modal {
             display: none;
@@ -850,15 +798,13 @@
                         <div class="detail-value" id="detailCustomerName">-</div>
                     </div>
                     <div class="detail-row">
-                        <div class="detail-label">Service & Warnings:</div>
-                        <div class="detail-value">
-                            <div class="service-warning-container">
-                                <div class="service-type-display" id="detailServiceType">-</div>
-                                <div class="warning-lights" id="warningLights">
-                                    <!-- Warning lights will be populated here -->
-                                </div>
-                            </div>
-                        </div>
+                        <div class="detail-label">Service Type:</div>
+                        <div class="detail-value" id="detailServiceType">-</div>
+                    </div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-label">Warning Lights / Issues :</div>
+                        <div class="detail-value" id="detailServiceType">-</div>
                     </div>
                     <div class="detail-row">
                         <div class="detail-label">Vehicle No:</div>
@@ -914,7 +860,7 @@
                             <label for="editServiceType">Service Type *</label>
                             <select id="editServiceType" name="editServiceType" required>
                                 <option value="">-- Select Service --</option>
-                                <option value="Repair">Repair</option>
+                                <option value="repair">Repair</option>
                                 <option value="Servicing">Servicing</option>
                                 <option value="Speed Limiter Installation">Speed Limiter Installation</option>
                                 <option value="Other Services">Other Services</option>
@@ -934,7 +880,7 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                         <div>
                             <label for="editCompanyName">Company Name</label>
-                            <input type="text" id="editCompanyName" name="editCompanyName" placeholder="Enter company name">
+                            <input type="text" id="editCompanyName" name="editCompanyName">
                         </div>
                         <div>
                             <label for="editMileage">Mileage</label>
@@ -944,8 +890,11 @@
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                         <div>
                             <label for="editVehicleModel">Vehicle Model</label>
-                            <input type="text" id="editVehicleModel" name="editVehicleModel" placeholder="FUSO">
+                            <input type="text" id="editVehicleModel" name="editVehicleModel" value="FUSO">
                         </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                         <div>
                             <label for="editBookingType">Booking Type *</label>
                             <select id="editBookingType" name="editBookingType" required>
@@ -957,15 +906,6 @@
                             </select>
                         </div>
                     </div>
-                    <!-- Combined Service Type & Warning Lights in Edit Form -->
-                    <div style="margin-bottom: 15px;">
-                        <label>Service & Warning Lights</label>
-                        <div class="service-warning-container">
-                            <div class="warning-lights" id="editWarningLights">
-                                <!-- Warning lights will be populated here -->
-                            </div>
-                        </div>
-                    </div>
                     <div class="action-buttons">
                         <button type="submit" class="btn btn-success">Save Changes</button>
                         <button type="button" id="cancelEditBtn" class="btn btn-secondary">Cancel</button>
@@ -974,7 +914,7 @@
                 <div id="editMessage" class="message"></div>
             </div>
 
-            <!-- Queue Lists - Four Column Layout -->
+            <!-- Queue Lists - Four Column Layout (removed Warning Lights column) -->
             <div id="queuesView" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;">
                 <!-- Waiting Queue -->
                 <div class="form-group">
@@ -1063,6 +1003,7 @@
                             <th>Customer Name</th>
                             <th>Service Type</th>
                             <th>Booking Type</th>
+                            <th>Warning / Issues</th>
                             <th>Status</th>
                             <th>Counter</th>
                             <th>Added Time</th>
@@ -1102,94 +1043,6 @@
                 8: { assignedTo: null, currentCustomer: null }
             }
         };
-        
-        // History data - Store reset queue history
-        let queueHistory = [];
-        
-        // Company name generator components
-        const companyNamePrefixes = ["Alpha", "Beta", "Gamma", "Delta", "Epsilon", "Zeta", "Eta", "Theta", "Iota", "Kappa", 
-                                    "Prime", "Elite", "Superior", "Advanced", "Premium", "Global", "National", "International"];
-        
-        const companyNameSuffixes = ["Construction", "Engineering", "Logistics", "Transport", "Services", "Solutions", 
-                                    "Enterprises", "Holdings", "Group", "Corporation", "Limited", "PTE LTD", "PTD LTD"];
-        
-        const companyNameTypes = ["Builders", "Contractors", "Developers", "Suppliers", "Traders", "Manufacturers"];
-        
-        // Warning lights data from the service request form
-        const warningLightsData = [
-            { 
-                id: 'engsys', 
-                name: 'Engine System', 
-                color: 'red',
-                symbol: 'ENGSYS'
-            },
-            { 
-                id: 'engsys2', 
-                name: 'Engine System', 
-                color: 'amber',
-                symbol: 'ENGSYS'
-            },
-            { 
-                id: 'dpf', 
-                name: 'DPF Warning', 
-                color: 'amber',
-                symbol: 'DPF'
-            },
-            { 
-                id: 'overheat', 
-                name: 'Overheat', 
-                color: 'red',
-                symbol: 'TEMP'
-            },
-            { 
-                id: 'battery', 
-                name: 'Battery Charge', 
-                color: 'red',
-                symbol: 'BATT'
-            },
-            { 
-                id: 'abs', 
-                name: 'ABS Warning', 
-                color: 'amber',
-                symbol: 'ABS'
-            },
-            { 
-                id: 'adBlue', 
-                name: 'AdBlue System', 
-                color: 'amber',
-                symbol: 'ADBLUE'
-            },
-            { 
-                id: 'retarder', 
-                name: 'Retarder System', 
-                color: 'amber',
-                symbol: 'RET'
-            },
-            { 
-                id: 'brakeIssue', 
-                name: 'Brake Issue', 
-                color: 'gray',
-                symbol: 'BRAKE'
-            },
-            { 
-                id: 'acNotCold', 
-                name: 'A/C Not Cold', 
-                color: 'gray',
-                symbol: 'A/C'
-            },
-            { 
-                id: 'vehicleSound', 
-                name: 'Vehicle Got Sound', 
-                color: 'gray',
-                symbol: 'SOUND'
-            },
-            { 
-                id: 'burningSmell', 
-                name: 'Burning Smell', 
-                color: 'gray',
-                symbol: 'SMELL'
-            }
-        ];
         
         // DOM elements
         const countersGrid = document.getElementById('countersGrid');
@@ -1254,7 +1107,6 @@
         const detailBookingType = document.getElementById('detailBookingType');
         const detailStatus = document.getElementById('detailStatus');
         const detailAddedTime = document.getElementById('detailAddedTime');
-        const warningLights = document.getElementById('warningLights');
         
         // Edit form elements
         const editQueueNumber = document.getElementById('editQueueNumber');
@@ -1266,13 +1118,11 @@
         const editMileage = document.getElementById('editMileage');
         const editVehicleModel = document.getElementById('editVehicleModel');
         const editBookingType = document.getElementById('editBookingType');
-        const editWarningLights = document.getElementById('editWarningLights');
         
         // Initialize the application
         function init() {
             showAuthenticatedUI();
             loadQueueData();
-            loadHistoryData();
             generateCounters();
             setupEventListeners();
             updateQueueDisplay();
@@ -1280,27 +1130,6 @@
             // Set today's date as default for history filter
             const today = new Date().toISOString().split('T')[0];
             historyDateFilter.value = today;
-        }
-        
-        // Generate a unique company name
-        function generateUniqueCompanyName() {
-            const prefix = companyNamePrefixes[Math.floor(Math.random() * companyNamePrefixes.length)];
-            const suffix = companyNameSuffixes[Math.floor(Math.random() * companyNameSuffixes.length)];
-            const type = companyNameTypes[Math.floor(Math.random() * companyNameTypes.length)];
-            
-            // Randomly choose between different name formats
-            const formats = [
-                `${prefix} ${suffix}`,
-                `${prefix} ${type}`,
-                `${prefix} ${suffix} ${type}`,
-                `${prefix} ${type} ${suffix}`
-            ];
-            
-            const name = formats[Math.floor(Math.random() * formats.length)];
-            
-            // Add a random number to ensure uniqueness
-            const randomNum = Math.floor(Math.random() * 1000);
-            return `${name} ${randomNum}`;
         }
         
         // Load queue data from localStorage
@@ -1325,41 +1154,11 @@
                         if (!sub.vehicleModel) {
                             sub.vehicleModel = 'FUSO'; // Default to FUSO if not specified
                         }
-                        // Generate unique company name if not provided
-                        if (!sub.companyName) {
-                            sub.companyName = generateUniqueCompanyName();
-                        }
-                        // Ensure warningLights exists
-                        if (!sub.warningLights) {
-                            sub.warningLights = [];
-                        }
                     });
                 }
             } catch (error) {
                 console.error('Error loading queue data:', error);
                 initializeSampleData();
-            }
-        }
-        
-        // Load history data from localStorage
-        function loadHistoryData() {
-            try {
-                const savedHistory = localStorage.getItem('goldbellQueueHistory');
-                if (savedHistory) {
-                    queueHistory = JSON.parse(savedHistory);
-                }
-            } catch (error) {
-                console.error('Error loading history data:', error);
-                queueHistory = [];
-            }
-        }
-        
-        // Save history data to localStorage
-        function saveHistoryData() {
-            try {
-                localStorage.setItem('goldbellQueueHistory', JSON.stringify(queueHistory));
-            } catch (error) {
-                console.error('Error saving history data:', error);
             }
         }
         
@@ -1371,43 +1170,40 @@
                         queueNumber: "E100001",
                         customerName: "John Lee",
                         serviceType: "Repair / Service",
-                        vehicleNo: "V001",
+                        vehicleNo: "SBA1234A",
                         contactNo: "91234567",
-                        companyName: generateUniqueCompanyName(),
+                        companyName: "Goldbell Group",
                         mileage: "12345",
-                        vehicleModel: "TOYOTA",
+                        vehicleModel: "FUSO",
                         bookingType: "Walk-in",
                         status: "waiting",
-                        timestamp: new Date(Date.now() - 30 * 60000).toISOString(),
-                        warningLights: ["Engine System", "DPF Warning", "Brake Issue"]
+                        timestamp: new Date(Date.now() - 30 * 60000).toISOString()
                     },
                     {
                         queueNumber: "E100002", 
                         customerName: "Sarah Tan",
                         serviceType: "Speed Limiter Installation",
-                        vehicleNo: "V002",
+                        vehicleNo: "SBB5678B",
                         contactNo: "98765432",
-                        companyName: generateUniqueCompanyName(),
+                        companyName: "Tan Transport",
                         mileage: "67890",
-                        vehicleModel: "HINO",
+                        vehicleModel: "FUSO",
                         bookingType: "Booked",
                         status: "waiting",
-                        timestamp: new Date(Date.now() - 15 * 60000).toISOString(),
-                        warningLights: ["ABS Warning"]
+                        timestamp: new Date(Date.now() - 15 * 60000).toISOString()
                     },
                     {
                         queueNumber: "E100003", 
                         customerName: "Michael Wong",
-                        serviceType: "Other Services",
-                        vehicleNo: "V003",
+                        serviceType: "Repair / Service",
+                        vehicleNo: "SBC9012C",
                         contactNo: "87654321",
-                        companyName: generateUniqueCompanyName(),
+                        companyName: "Wong Logistics",
                         mileage: "54321",
-                        vehicleModel: "NISSAN",
+                        vehicleModel: "FUSO",
                         bookingType: "Booked",
                         status: "waiting",
-                        timestamp: new Date(Date.now() - 10 * 60000).toISOString(),
-                        warningLights: ["A/C Not Cold", "Vehicle Got Sound"]
+                        timestamp: new Date(Date.now() - 10 * 60000).toISOString()
                     }
                 ];
                 
@@ -1560,15 +1356,10 @@
                 submission.serviceType = editServiceType.value;
                 submission.vehicleNo = editVehicleNo.value;
                 submission.contactNo = editContactNo.value;
-                submission.companyName = editCompanyName.value || generateUniqueCompanyName();
+                submission.companyName = editCompanyName.value;
                 submission.mileage = editMileage.value;
                 submission.vehicleModel = editVehicleModel.value || 'FUSO'; // Default to FUSO if empty
                 submission.bookingType = editBookingType.value;
-                
-                // Get selected warning lights from edit form
-                const selectedWarningLights = Array.from(editWarningLights.querySelectorAll('.warning-light-tag.selected'))
-                    .map(tag => tag.textContent);
-                submission.warningLights = selectedWarningLights;
                 
                 saveQueueData();
                 updateQueueDisplay();
@@ -1659,12 +1450,12 @@
                 return;
             }
             
-            if (submission.status === 'serving') {
+            if (submission.Serving === 'serving') {
                 showMessage(specificMessage, `Customer ${numberToCall} is already being served`, 'info');
                 return;
             }
             
-            if (submission.status === 'completed') {
+            if (submission.Completed === 'completed') {
                 showMessage(specificMessage, `Customer ${numberToCall} has already been completed`, 'info');
                 return;
             }
@@ -1766,42 +1557,16 @@
                 detailServiceType.textContent = submission.serviceType || '-';
                 detailVehicleNo.textContent = submission.vehicleNo || '-';
                 detailContactNo.textContent = submission.contactNo || '-';
-                detailCompanyName.textContent = submission.companyName || generateUniqueCompanyName();
+                detailCompanyName.textContent = submission.companyName || '-';
                 detailMileage.textContent = submission.mileage || '-';
-                detailVehicleModel.textContent = submission.vehicleModel || 'FUSO'; // Default to FUSO if not specified
+                detailVehicleModel.textContent = submission.vehicleModel || 'FUSO';
                 detailBookingType.textContent = submission.bookingType || 'Walk-in';
                 detailStatus.textContent = submission.status || '-';
                 detailAddedTime.textContent = submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '-';
                 
-                // Update warning lights display
-                updateWarningLightsDisplay(warningLights, submission.warningLights || []);
-                
                 editCustomerBtn.classList.remove('hidden');
                 sendSMSBtn.classList.remove('hidden');
                 customerDetailsView.classList.remove('hidden');
-            }
-        }
-        
-        // Update warning lights display
-        function updateWarningLightsDisplay(container, selectedLights) {
-            container.innerHTML = '';
-            
-            if (selectedLights && selectedLights.length > 0) {
-                selectedLights.forEach(lightName => {
-                    const lightData = warningLightsData.find(light => light.name === lightName);
-                    if (lightData) {
-                        const lightTag = document.createElement('span');
-                        lightTag.className = `warning-light-tag ${lightData.color}`;
-                        lightTag.textContent = lightName;
-                        container.appendChild(lightTag);
-                    }
-                });
-            } else {
-                const noLights = document.createElement('span');
-                noLights.textContent = 'No warning lights selected';
-                noLights.style.color = 'var(--muted)';
-                noLights.style.fontStyle = 'italic';
-                container.appendChild(noLights);
             }
         }
         
@@ -1816,34 +1581,13 @@
                 editServiceType.value = submission.serviceType || '';
                 editVehicleNo.value = submission.vehicleNo || '';
                 editContactNo.value = submission.contactNo || '';
-                editCompanyName.value = submission.companyName || generateUniqueCompanyName();
+                editCompanyName.value = submission.companyName || '';
                 editMileage.value = submission.mileage || '';
-                editVehicleModel.value = submission.vehicleModel || 'FUSO'; // Default to FUSO if empty
+                editVehicleModel.value = submission.vehicleModel || 'FUSO';
                 editBookingType.value = submission.bookingType || 'Walk-in';
-                
-                // Update warning lights in edit form
-                updateWarningLightsEditForm(editWarningLights, submission.warningLights || []);
                 
                 editCustomerForm.classList.remove('hidden');
             }
-        }
-        
-        // Update warning lights in edit form
-        function updateWarningLightsEditForm(container, selectedLights) {
-            container.innerHTML = '';
-            
-            warningLightsData.forEach(light => {
-                const lightTag = document.createElement('span');
-                lightTag.className = `warning-light-tag ${light.color} ${selectedLights.includes(light.name) ? 'selected' : ''}`;
-                lightTag.textContent = light.name;
-                lightTag.style.cursor = 'pointer';
-                
-                lightTag.addEventListener('click', function() {
-                    this.classList.toggle('selected');
-                });
-                
-                container.appendChild(lightTag);
-            });
         }
         
         // Complete a customer
@@ -1868,7 +1612,7 @@
         function markAsMissed(queueNumber) {
             const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
             if (submission) {
-                submission.status = 'missed';
+                submission.Missed = 'missed';
                 submission.missedAt = new Date();
                 submission.missedBy = currentUser.username;
                 
@@ -1931,40 +1675,19 @@
             }
         }
         
-        // Reset queue with history preservation
+        // Reset queue
         function resetQueue() {
-            if (confirm('Are you sure you want to reset the entire queue? This will archive current queue data to history.')) {
-                // Create a history entry with the current queue data
-                const historyEntry = {
-                    resetDate: new Date().toISOString(),
-                    resetBy: currentUser.username,
-                    queueData: JSON.parse(JSON.stringify(queue)) // Deep copy of queue data
-                };
-                
-                // Add to history
-                queueHistory.push(historyEntry);
-                saveHistoryData();
-                
-                // Reset the current queue
+            if (confirm('Are you sure you want to reset the entire queue? This cannot be undone.')) {
                 queue = {
                     total: 0,
                     current: 0,
                     submissions: [],
-                    counters: {
-                        1: { assignedTo: null, currentCustomer: null },
-                        2: { assignedTo: null, currentCustomer: null },
-                        3: { assignedTo: null, currentCustomer: null },
-                        4: { assignedTo: null, currentCustomer: null },
-                        5: { assignedTo: null, currentCustomer: null },
-                        6: { assignedTo: null, currentCustomer: null },
-                        7: { assignedTo: null, currentCustomer: null },
-                        8: { assignedTo: null, currentCustomer: null }
-                    }
+                    counters: queue.counters
                 };
                 
                 saveQueueData();
                 updateQueueDisplay();
-                showNotification('Queue has been reset. Previous data saved to history.', 'success');
+                showNotification('Queue has been reset', 'success');
             }
         }
         
@@ -1981,15 +1704,7 @@
             const serviceFilter = historyServiceFilter.value;
             const bookingFilter = historyBookingFilter.value;
             
-            // Combine current queue data and history data
-            let allData = [...queue.submissions];
-            
-            // Add data from history entries
-            queueHistory.forEach(historyEntry => {
-                allData = [...allData, ...historyEntry.queueData.submissions];
-            });
-            
-            let filteredData = allData;
+            let filteredData = [...queue.submissions];
             
             // Filter by date if selected
             if (dateFilter) {
@@ -2027,7 +1742,7 @@
             if (data.length === 0) {
                 historyTableBody.innerHTML = `
                     <tr>
-                        <td colspan="10" style="text-align: center; padding: 20px;">
+                        <td colspan="9" style="text-align: center; padding: 20px;">
                             No queue history found for the selected filters.
                         </td>
                     </tr>
@@ -2043,6 +1758,7 @@
                     <td>${submission.customerName || 'Customer'}</td>
                     <td>${submission.serviceType || '-'}</td>
                     <td>${submission.bookingType || 'Walk-in'}</td>
+                    <td>
                     <td class="${submission.status}">${submission.status || 'waiting'}</td>
                     <td>${submission.counter || '-'}</td>
                     <td>${submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '-'}</td>
@@ -2054,22 +1770,14 @@
             });
         }
         
-        // Export history to CSV - FIXED for Excel compatibility
+        // Export history to CSV
         function exportToCSV() {
             const dateFilter = historyDateFilter.value;
             const statusFilter = historyStatusFilter.value;
             const serviceFilter = historyServiceFilter.value;
             const bookingFilter = historyBookingFilter.value;
             
-            // Combine current queue data and history data
-            let allData = [...queue.submissions];
-            
-            // Add data from history entries
-            queueHistory.forEach(historyEntry => {
-                allData = [...allData, ...historyEntry.queueData.submissions];
-            });
-            
-            let filteredData = allData;
+            let filteredData = [...queue.submissions];
             
             // Apply the same filters as the table
             if (dateFilter) {
@@ -2094,48 +1802,42 @@
             // Sort by timestamp (newest first)
             filteredData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             
-            // Create CSV content with BOM for Excel compatibility
+            // Create CSV content
             const headers = [
                 'Queue Number',
                 'Customer Name',
                 'Service Type',
                 'Booking Type',
-                'Vehicle No',
                 'Status',
                 'Counter',
                 'Added Time',
                 'Called Time',
                 'Completed Time',
+                'Vehicle No',
                 'Contact No',
                 'Company Name',
                 'Mileage',
-                'Vehicle Model',
-                'Warning Lights'
+                'Vehicle Model'
             ];
             
-            // Add UTF-8 BOM for Excel compatibility
-            let csvContent = '\uFEFF'; // UTF-8 BOM
-            
-            // Add headers
-            csvContent += headers.join(',') + '\n';
+            let csvContent = headers.join(',') + '\n';
             
             filteredData.forEach(submission => {
                 const row = [
                     submission.queueNumber,
                     `"${(submission.customerName || 'Customer').replace(/"/g, '""')}"`,
-                    `"${(submission.serviceType || '').replace(/"/g, '""')}"`,
-                    `"${(submission.bookingType || 'Walk-in').replace(/"/g, '""')}"`,
-                    `"${(submission.vehicleNo || '').replace(/"/g, '""')}"`,
-                    `"${(submission.status || 'waiting').replace(/"/g, '""')}"`,
-                    `"${(submission.counter || '').replace(/"/g, '""')}"`,
-                    `"${(submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '').replace(/"/g, '""')}"`,
-                    `"${(submission.calledAt ? new Date(submission.calledAt).toLocaleString() : '').replace(/"/g, '""')}"`,
-                    `"${(submission.completedAt ? new Date(submission.completedAt).toLocaleString() : '').replace(/"/g, '""')}"`,
-                    `"${(submission.contactNo || '').replace(/"/g, '""')}"`,
-                    `"${(submission.companyName || generateUniqueCompanyName()).replace(/"/g, '""')}"`,
-                    `"${(submission.mileage || '').replace(/"/g, '""')}"`,
-                    `"${(submission.vehicleModel || 'FUSO').replace(/"/g, '""')}"`,
-                    `"${((submission.warningLights || []).join(', ')).replace(/"/g, '""')}"`
+                    submission.serviceType || '',
+                    submission.bookingType || 'Walk-in',
+                    submission.status || 'waiting',
+                    submission.counter || '',
+                    submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '',
+                    submission.calledAt ? new Date(submission.calledAt).toLocaleString() : '',
+                    submission.completedAt ? new Date(submission.completedAt).toLocaleString() : '',
+                    submission.vehicleNo || '',
+                    submission.contactNo || '',
+                    submission.companyName || '',
+                    submission.mileage || '',
+                    submission.vehicleModel || 'FUSO'
                 ];
                 
                 csvContent += row.join(',') + '\n';
@@ -2162,27 +1864,19 @@
             showNotification(`History exported to ${filename}`, 'success');
         }
         
-        // Update queue display - FIXED to show currently serving customer
+        // Update queue display
         function updateQueueDisplay() {
             try {
-                // Find the currently serving customer
-                const servingCustomer = queue.submissions.find(sub => sub.status === 'serving');
+                const currentDisplayNumber = 'E' + queue.current.toString().padStart(6, '0');
+                currentQueueNumber.textContent = currentDisplayNumber;
                 
-                if (servingCustomer) {
-                    // Show the actual serving customer
-                    currentQueueNumber.textContent = servingCustomer.queueNumber;
-                    
-                    // Update booking type badge for current customer
-                    if (servingCustomer.bookingType) {
-                        bookingTypeBadge.textContent = servingCustomer.bookingType;
-                        bookingTypeBadge.className = `booking-type-badge ${getBookingTypeClass(servingCustomer.bookingType)}`;
-                        bookingTypeBadge.style.display = 'inline-block';
-                    } else {
-                        bookingTypeBadge.style.display = 'none';
-                    }
+                // Update booking type badge for current customer
+                const currentSubmission = queue.submissions.find(sub => sub.queueNumber === currentDisplayNumber);
+                if (currentSubmission && currentSubmission.bookingType) {
+                    bookingTypeBadge.textContent = currentSubmission.bookingType;
+                    bookingTypeBadge.className = `booking-type-badge ${getBookingTypeClass(currentSubmission.bookingType)}`;
+                    bookingTypeBadge.style.display = 'inline-block';
                 } else {
-                    // No customer is currently being served
-                    currentQueueNumber.textContent = 'E' + queue.current.toString().padStart(6, '0');
                     bookingTypeBadge.style.display = 'none';
                 }
                 
@@ -2284,24 +1978,14 @@
             const bookingTypeBadgeHTML = submission.bookingType ? 
                 `<span class="booking-type-badge ${getBookingTypeClass(submission.bookingType)}" style="margin-left: 5px;">${submission.bookingType}</span>` : '';
             
-            // Show warning lights in queue item if available
-            const warningLightsHTML = submission.warningLights && submission.warningLights.length > 0 ? 
-                `<div style="font-size: 0.8em; color: #dc3545; margin-top: 5px;">
-                    <strong>Warning Lights:</strong> ${submission.warningLights.join(', ')}
-                </div>` : '';
-            
-            // Show vehicle info in queue item if available
-            const vehicleInfo = submission.vehicleNo ? `| Vehicle: ${submission.vehicleNo}` : '';
-            
             queueItem.innerHTML = `
                 <div onclick="showCustomerDetails('${submission.queueNumber}')" style="cursor: pointer;">
                     <strong>${submission.queueNumber}</strong> ${bookingTypeBadgeHTML} ${priorityBadgeHTML} - ${submission.serviceType}
                     <div style="font-size: 0.9em; color: #666;">
                         <strong>${submission.customerName || 'Customer'}</strong>
-                        ${vehicleInfo}
+                        ${submission.vehicleNo ? '| Vehicle: ' + submission.vehicleNo : ''}
                         ${submission.contactNo ? '| Contact: ' + submission.contactNo : ''}
                     </div>
-                    ${warningLightsHTML}
                     <div style="font-size: 0.8em; color: #888;">
                         ${getQueueItemTimeText(submission, status)}
                     </div>

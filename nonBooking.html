@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>GOLDBELL SERVICE REQUEST - WALK IN</title>
 <style>
-/* All CSS remains the same as before with additions for warning lights */
+/* All CSS remains the same as before */
 /* Base styles */
 * {
   box-sizing: border-box;
@@ -166,85 +166,18 @@ input:focus, select:focus {
   display: none;
 }
 
-/* Warning light images section */
-.warning-light-section {
+/* Booking field styles */
+.booking-field {
   margin: 15px 0;
   padding: 15px;
-  background: #fff3cd;
+  background: #f8f9fa;
   border-radius: 5px;
-  border-left: 4px solid #ffc107;
-  display: none;
+  border-left: 4px solid #005bbb;
 }
 
-.warning-light-section h4 {
+.booking-field h4 {
   margin-bottom: 10px;
-  color: #856404;
-}
-
-.warning-light-images {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 15px;
-  margin: 15px 0;
-}
-
-.warning-light-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px;
-  background: white;
-  border-radius: 8px;
-  border: 2px solid #dee2e6;
-  transition: all 0.3s;
-  cursor: pointer;
-}
-
-.warning-light-item:hover {
-  border-color: #005bbb;
-  transform: translateY(-2px);
-}
-
-.warning-light-item.selected {
-  border-color: #28a745;
-  background: #f8fff9;
-  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
-}
-
-.warning-light-checkbox {
-  width: 20px;
-  height: 20px;
-}
-
-.warning-light-image {
-  width: 50px;
-  height: 50px;
-  border-radius: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.warning-light-symbol {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-  color: white;
-  font-size: 12px;
-  text-align: center;
-  line-height: 1.2;
-}
-
-.warning-light-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: #333;
-  flex: 1;
+  color: #003d82;
 }
 
 /* Service examples */
@@ -269,18 +202,109 @@ input:focus, select:focus {
   margin-bottom: 5px;
 }
 
-/* Booking field styles */
-.booking-field {
+/* Warning Light Styles */
+.warning-light-section {
   margin: 15px 0;
   padding: 15px;
   background: #f8f9fa;
   border-radius: 5px;
-  border-left: 4px solid #005bbb;
+  border-left: 4px solid #e74c3c;
+  display: none;
 }
 
-.booking-field h4 {
+.warning-light-section h4 {
   margin-bottom: 10px;
   color: #003d82;
+}
+
+.warning-light-images {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.warning-light-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.warning-light-item:hover {
+  transform: translateY(-2px);
+}
+
+.warning-light-item.selected .warning-light-image {
+  box-shadow: 0 0 0 3px #005bbb;
+}
+
+.warning-light-checkbox {
+  display: none;
+}
+
+.warning-light-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  border: 2px solid #ddd;
+  transition: all 0.3s;
+}
+
+.warning-light-symbol {
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+}
+
+.warning-light-label {
+  font-size: 12px;
+  text-align: center;
+  font-weight: 600;
+  color: #003d82;
+}
+
+/* Warning light color variations */
+.engsys-light {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.engsys-amber-light {
+  background: linear-gradient(135deg, #f39c12, #e67e22);
+}
+
+.dpf-light {
+  background: linear-gradient(135deg, #8e44ad, #9b59b6);
+}
+
+.overheat-light {
+  background: linear-gradient(135deg, #e74c3c, #c0392b);
+}
+
+.battery-light {
+  background: linear-gradient(135deg, #f1c40f, #f39c12);
+}
+
+.abs-light {
+  background: linear-gradient(135deg, #3498db, #2980b9);
+}
+
+.adblue-light {
+  background: linear-gradient(135deg, #1abc9c, #16a085);
+}
+
+.retarder-light {
+  background: linear-gradient(135deg, #34495e, #2c3e50);
+}
+
+.issue-light {
+  background: linear-gradient(135deg, #95a5a6, #7f8c8d);
 }
 
 /* Button styles */
@@ -341,7 +365,7 @@ input:focus, select:focus {
   }
   
   .warning-light-images {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   }
   
   .btn {
@@ -356,17 +380,6 @@ input:focus, select:focus {
     margin-top: 10px;
   }
 }
-
-/* Specific warning light styles */
-.engsys-light { background: #ff4444; }
-.engsys-amber-light { background: #ffaa00; }
-.dpf-light { background: #ffaa00; }
-.overheat-light { background: #ff4444; }
-.battery-light { background: #ff4444; }
-.abs-light { background: #ffaa00; }
-.adblue-light { background: #ffaa00; }
-.retarder-light { background: #ffaa00; }
-.issue-light { background: #6c757d; } /* Gray for general issues */
 </style>
 </head>
 <body id="mainPage">
@@ -430,6 +443,7 @@ input:focus, select:focus {
     <div class="card" role="main" id="mainFormCard">
       <form id="jobForm" autocomplete="off" novalidate>
         <div class="grid">
+          <!-- Booking Field -->
           <div class="booking-field full">
             <h4>Walk In</h4>
             <div class="muted">This service request is confirmed as Walk In.</div>
@@ -441,20 +455,103 @@ input:focus, select:focus {
             <select id="serviceType" required>
               <option value="" data-i18n="selectOption">-- Select --</option>
               <option value="Repair" data-i18n="repair">Repair</option>
-              <option value="Servicing" data-i18n="servicing">Servicing</option>
+              <option value="Servicing" data-i18n="Servicing">Servicing</option>
               <option value="Other Services" data-i18n="otherServices">Other Services</option>
             </select>
             <div class="muted" id="serviceHelp" data-i18n="serviceHelp">Select the type of service required.</div>
             
-            <!-- Warning Light Images (for Engine light on) -->
+            <!-- Warning Light Section (for Repair and Servicing) -->
             <div class="warning-light-section" id="warningLightSection">
-              <h4>Select which warning lights and issues you're experiencing:</h4>
+              <h4>Select warning lights (if any):</h4>
               <div class="warning-light-images" id="warningLightContainer">
-                <!-- Warning lights will be generated by JavaScript -->
+                <div class="warning-light-item">
+                  <input type="checkbox" class="warning-light-checkbox" id="engsys" name="warningLights" value="Engine System">
+                  <div class="warning-light-image engsys-light">
+                    <div class="warning-light-symbol">ENGSYS</div>
+                  </div>
+                  <div class="warning-light-label">Red Engine Light</div>
+                </div>
+                <div class="warning-light-item">
+                  <input type="checkbox" class="warning-light-checkbox" id="engsys2" name="warningLights" value="Engine System Amber">
+                  <div class="warning-light-image engsys-amber-light">
+                    <div class="warning-light-symbol">ENGSYS</div>
+                  </div>
+                  <div class="warning-light-label">Amber Engine Light</div>
+                </div>
+                <div class="warning-light-item">
+                  <input type="checkbox" class="warning-light-checkbox" id="dpf" name="warningLights" value="DPF Warning">
+                  <div class="warning-light-image dpf-light">
+                    <div class="warning-light-symbol">DPF</div>
+                  </div>
+                  <div class="warning-light-label">DPF Warning</div>
+                </div>
+                <div class="warning-light-item">
+                  <input type="checkbox" class="warning-light-checkbox" id="overheat" name="warningLights" value="Overheat">
+                  <div class="warning-light-image overheat-light">
+                    <div class="warning-light-symbol">TEMP</div>
+                  </div>
+                  <div class="warning-light-label">Overheat</div>
+                </div>
+                <div class="warning-light-item">
+                  <input type="checkbox" class="warning-light-checkbox" id="battery" name="warningLights" value="Battery Charge">
+                  <div class="warning-light-image battery-light">
+                    <div class="warning-light-symbol">BATT</div>
+                  </div>
+                  <div class="warning-light-label">Battery Charge</div>
+                </div>
+                <div class="warning-light-item">
+                  <input type="checkbox" class="warning-light-checkbox" id="abs" name="warningLights" value="ABS Warning">
+                  <div class="warning-light-image abs-light">
+                    <div class="warning-light-symbol">ABS</div>
+                  </div>
+                  <div class="warning-light-label">ABS Warning</div>
+                </div>
+                <div class="warning-light-item">
+                  <input type="checkbox" class="warning-light-checkbox" id="adBlue" name="warningLights" value="AdBlue System">
+                  <div class="warning-light-image adblue-light">
+                    <div class="warning-light-symbol">ADBLUE</div>
+                  </div>
+                  <div class="warning-light-label">AdBlue System</div>
+                </div>
+                <div class="warning-light-item">
+                  <input type="checkbox" class="warning-light-checkbox" id="retarder" name="warningLights" value="Retarder System">
+                  <div class="warning-light-image retarder-light">
+                    <div class="warning-light-symbol">RET</div>
+                  </div>
+                  <div class="warning-light-label">Retarder System</div>
+                </div>
+                <div class="warning-light-item">
+                  <input type="checkbox" class="warning-light-checkbox" id="brakeIssue" name="warningLights" value="Brake Issue">
+                  <div class="warning-light-image issue-light">
+                    <div class="warning-light-symbol">BRAKE</div>
+                  </div>
+                  <div class="warning-light-label">Brake Issue</div>
+                </div>
+                <div class="warning-light-item">
+                  <input type="checkbox" class="warning-light-checkbox" id="acNotCold" name="warningLights" value="A/C Not Cold">
+                  <div class="warning-light-image issue-light">
+                    <div class="warning-light-symbol">A/C</div>
+                  </div>
+                  <div class="warning-light-label">A/C Not Cold</div>
+                </div>
+                <div class="warning-light-item">
+                  <input type="checkbox" class="warning-light-checkbox" id="vehicleSound" name="warningLights" value="Vehicle Got Sound">
+                  <div class="warning-light-image issue-light">
+                    <div class="warning-light-symbol">SOUND</div>
+                  </div>
+                  <div class="warning-light-label">Vehicle Got Sound</div>
+                </div>
+                <div class="warning-light-item">
+                  <input type="checkbox" class="warning-light-checkbox" id="burningSmell" name="warningLights" value="Burning Smell">
+                  <div class="warning-light-image issue-light">
+                    <div class="warning-light-symbol">SMELL</div>
+                  </div>
+                  <div class="warning-light-label">Burning Smell</div>
+                </div>
               </div>
             </div>
             
-            <!-- Service Examples (for Other Services) -->
+            <!-- Service Examples -->
             <div class="service-examples" id="serviceExamples">
               <h4 id="examplesTitle">Service Examples:</h4>
               <ul id="examplesList">
@@ -512,7 +609,6 @@ input:focus, select:focus {
       const form = document.getElementById('jobForm');
       const serviceType = document.getElementById('serviceType');
       const warningLightSection = document.getElementById('warningLightSection');
-      const warningLightContainer = document.getElementById('warningLightContainer');
       const serviceExamples = document.getElementById('serviceExamples');
       const examplesList = document.getElementById('examplesList');
       const defaultExample = document.getElementById('defaultExample');
@@ -522,104 +618,12 @@ input:focus, select:focus {
       const vehicleNoInput = document.getElementById('vehicleNo');
       const companyNameInput = document.getElementById('companyName');
       const bookingTypeInput = document.getElementById('bookingType');
+      const warningLightItems = document.querySelectorAll('.warning-light-item');
       
-      // Fuso Truck Dashboard Warning Lights - Based on your screenshots
-      const warningLights = [
-        { 
-          id: 'engsys', 
-          name: 'Engine System', 
-          color: 'red',
-          symbol: 'ENGSYS',
-          class: 'engsys-light'
-        },
-        { 
-          id: 'engsys2', 
-          name: 'Engine System', 
-          color: 'amber',
-          symbol: 'ENGSYS',
-          class: 'engsys-amber-light'
-        },
-        { 
-          id: 'dpf', 
-          name: 'DPF Warning', 
-          color: 'amber',
-          symbol: 'DPF',
-          class: 'dpf-light'
-        },
-        { 
-          id: 'overheat', 
-          name: 'Overheat', 
-          color: 'red',
-          symbol: 'TEMP',
-          class: 'overheat-light'
-        },
-        { 
-          id: 'battery', 
-          name: 'Battery Charge', 
-          color: 'red',
-          symbol: 'BATT',
-          class: 'battery-light'
-        },
-        { 
-          id: 'abs', 
-          name: 'ABS Warning', 
-          color: 'amber',
-          symbol: 'ABS',
-          class: 'abs-light'
-        },
-        { 
-          id: 'adBlue', 
-          name: 'AdBlue System', 
-          color: 'amber',
-          symbol: 'ADBLUE',
-          class: 'adblue-light'
-        },
-        { 
-          id: 'retarder', 
-          name: 'Retarder System', 
-          color: 'amber',
-          symbol: 'RET',
-          class: 'retarder-light'
-        },
-        // Added the requested issues as warning light items
-        { 
-          id: 'brakeIssue', 
-          name: 'Brake Issue', 
-          color: 'gray',
-          symbol: 'BRAKE',
-          class: 'issue-light'
-        },
-        { 
-          id: 'acNotCold', 
-          name: 'A/C Not Cold', 
-          color: 'gray',
-          symbol: 'A/C',
-          class: 'issue-light'
-        },
-        { 
-          id: 'vehicleSound', 
-          name: 'Vehicle Got Sound', 
-          color: 'gray',
-          symbol: 'SOUND',
-          class: 'issue-light'
-        },
-        { 
-          id: 'burningSmell', 
-          name: 'Burning Smell', 
-          color: 'gray',
-          symbol: 'SMELL',
-          class: 'issue-light'
-        }
-      ];
-      
-      // Initialize warning lights
-      initializeWarningLights();
-      
-      // Initially hide sections
+      // Initially hide warning light section
       warningLightSection.style.display = 'none';
-      serviceExamples.style.display = 'none';
       
-      // Service type examples (only for Other Services now)
+      // Service type examples
       const serviceExamplesData = {
         'Other Services': [
           'Vehicle inspection',
@@ -633,16 +637,44 @@ input:focus, select:focus {
       serviceType.addEventListener('change', function() {
         const selectedService = this.value;
         
-        // Reset all sections first
-        resetAllSections();
-        
-        // Show/hide sections based on service type
-        if (selectedService === 'Repair' || selectedService === 'Servicing' || selectedService === 'Repair & Servicing') {
-          warningLightSection.style.display = 'block'; // Always show warning lights for repair/service
-        } else if (selectedService === 'Other Services') {
-          serviceExamples.style.display = 'block';
-          updateServiceExamples(selectedService);
+        // Show/hide warning light section for Repair and Servicing
+        if (selectedService === 'Repair' || selectedService === 'Servicing') {
+          warningLightSection.style.display = 'block';
+        } else {
+          warningLightSection.style.display = 'none';
         }
+        
+        // Update service examples (only for Other Services)
+        if (selectedService === 'Other Services' && serviceExamplesData[selectedService]) {
+          defaultExample.style.display = 'none';
+          examplesList.innerHTML = '';
+          
+          serviceExamplesData[selectedService].forEach(example => {
+            const li = document.createElement('li');
+            li.textContent = example;
+            examplesList.appendChild(li);
+          });
+          
+          serviceExamples.style.display = 'block';
+        } else {
+          // Hide service examples for Repair and Servicing
+          serviceExamples.style.display = 'none';
+          defaultExample.style.display = 'block';
+        }
+      });
+      
+      // Warning light item click handler
+      warningLightItems.forEach(item => {
+        item.addEventListener('click', function() {
+          const checkbox = this.querySelector('.warning-light-checkbox');
+          checkbox.checked = !checkbox.checked;
+          
+          if (checkbox.checked) {
+            this.classList.add('selected');
+          } else {
+            this.classList.remove('selected');
+          }
+        });
       });
       
       // Mileage input validation - only allow numbers
@@ -661,92 +693,6 @@ input:focus, select:focus {
           document.getElementById('contactError').style.display = 'none';
         }
       });
-      
-      // Function to initialize warning lights
-      function initializeWarningLights() {
-        warningLightContainer.innerHTML = '';
-        
-        warningLights.forEach(light => {
-          const lightItem = document.createElement('div');
-          lightItem.className = 'warning-light-item';
-          lightItem.innerHTML = `
-            <input type="checkbox" class="warning-light-checkbox" id="${light.id}" name="warningLights" value="${light.name}">
-            <div class="warning-light-image ${light.class}">
-              <div class="warning-light-symbol">${light.symbol}</div>
-            </div>
-            <div class="warning-light-label">${light.name}</div>
-          `;
-          warningLightContainer.appendChild(lightItem);
-          
-          // Add click handler for the entire item
-          lightItem.addEventListener('click', function(e) {
-            if (e.target.type !== 'checkbox') {
-              const checkbox = this.querySelector('input[type="checkbox"]');
-              checkbox.checked = !checkbox.checked;
-              updateWarningLightSelection(this, checkbox.checked);
-              handleEngineSystemSelection(checkbox);
-            }
-          });
-          
-          // Add change handler for checkbox
-          const checkbox = lightItem.querySelector('input[type="checkbox"]');
-          checkbox.addEventListener('change', function() {
-            updateWarningLightSelection(lightItem, this.checked);
-            handleEngineSystemSelection(this);
-          });
-        });
-      }
-      
-      // Function to handle engine system selection (only one can be selected)
-      function handleEngineSystemSelection(checkbox) {
-        if (checkbox.checked && (checkbox.id === 'engsys' || checkbox.id === 'engsys2')) {
-          // If an engine system light is selected, uncheck the other one
-          const otherEngineId = checkbox.id === 'engsys' ? 'engsys2' : 'engsys';
-          const otherEngineCheckbox = document.getElementById(otherEngineId);
-          
-          if (otherEngineCheckbox && otherEngineCheckbox.checked) {
-            otherEngineCheckbox.checked = false;
-            updateWarningLightSelection(otherEngineCheckbox.closest('.warning-light-item'), false);
-          }
-        }
-      }
-      
-      // Function to update warning light selection style
-      function updateWarningLightSelection(item, isSelected) {
-        if (isSelected) {
-          item.classList.add('selected');
-        } else {
-          item.classList.remove('selected');
-        }
-      }
-      
-      // Function to update service examples
-      function updateServiceExamples(serviceType) {
-        if (serviceType && serviceExamplesData[serviceType]) {
-          defaultExample.style.display = 'none';
-          examplesList.innerHTML = '';
-          
-          serviceExamplesData[serviceType].forEach(example => {
-            const li = document.createElement('li');
-            li.textContent = example;
-            examplesList.appendChild(li);
-          });
-        } else {
-          defaultExample.style.display = 'block';
-        }
-      }
-      
-      // Function to reset all sections
-      function resetAllSections() {
-        warningLightSection.style.display = 'none';
-        serviceExamples.style.display = 'none';
-        
-        // Reset warning lights
-        document.querySelectorAll('input[name="warningLights"]').forEach(checkbox => {
-          checkbox.checked = false;
-          updateWarningLightSelection(checkbox.closest('.warning-light-item'), false);
-        });
-      }
       
       // Form submission handler
       form.addEventListener('submit', function(e) {
@@ -808,32 +754,25 @@ input:focus, select:focus {
             status: 'waiting'
           };
           
-          // Get warning lights data (if applicable)
-          const selectedWarningLights = Array.from(document.querySelectorAll('input[name="warningLights"]:checked'))
-            .map(checkbox => checkbox.value);
-          if (selectedWarningLights.length > 0) {
-            formData.warningLights = selectedWarningLights;
-          }
+          // Get selected warning lights
+          const selectedWarningLights = [];
+          document.querySelectorAll('.warning-light-checkbox:checked').forEach(checkbox => {
+            selectedWarningLights.push(checkbox.value);
+          });
+          formData.warningLights = selectedWarningLights;
           
-          // Generate queue number
-          const queueNumber = generateQueueNumber();
-          formData.queueNumber = queueNumber;
-          
-          // Save form data to localStorage for dashboard
+          // Save form data to localStorage for thank you page
           localStorage.setItem('latestFormData', JSON.stringify(formData));
-          
-          // Save to queue data
-          saveToQueueData(formData);
           
           // Show success message
           const message = document.getElementById('formMessage');
-          message.textContent = 'Service request submitted successfully! Your queue number is ' + queueNumber + '. Redirecting...';
+          message.textContent = 'Service request submitted successfully! Redirecting...';
           message.className = 'message success';
           message.style.display = 'block';
           
           // Redirect to thank you page after 3 seconds
           setTimeout(() => {
-            window.location.href = 'thankyou.html?queue=' + queueNumber;
+            window.location.href = 'thankyou.html';
           }, 3000);
         } else {
           const message = document.getElementById('formMessage');
@@ -842,57 +781,6 @@ input:focus, select:focus {
           message.style.display = 'block';
         }
       });
-      
-      // Save to queue data
-      function saveToQueueData(formData) {
-        try {
-          // Get existing queue data or initialize
-          const existingData = localStorage.getItem('goldbellQueue');
-          let queueData = existingData ? JSON.parse(existingData) : {
-            total: 0,
-            current: 0,
-            submissions: []
-          };
-          
-          // Add new submission
-          queueData.submissions.push(formData);
-          queueData.total = queueData.submissions.length;
-          
-          // Save back to localStorage
-          localStorage.setItem('goldbellQueue', JSON.stringify(queueData));
-          
-          console.log('Queue data saved:', formData);
-          
-        } catch (error) {
-          console.error('Error saving queue data:', error);
-        }
-      }
-      
-      // Generate queue number
-      function generateQueueNumber() {
-        // Get existing queue data to ensure unique number
-        const existingData = localStorage.getItem('goldbellQueue');
-        let existingNumbers = [];
-        
-        if (existingData) {
-          const queueData = JSON.parse(existingData);
-          existingNumbers = queueData.submissions.map(sub => sub.queueNumber);
-        }
-        
-        // Generate unique queue number
-        let queueNumber;
-        let attempts = 0;
-        
-        do {
-          const prefix = 'E';
-          const timestamp = Date.now().toString();
-          const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-          queueNumber = prefix + timestamp.slice(-6) + random;
-          attempts++;
-        } while (existingNumbers.includes(queueNumber) && attempts < 10);
-        
-        return queueNumber;
-      }
       
       // Reset button handler
       document.getElementById('resetBtn').addEventListener('click', function() {
@@ -903,8 +791,17 @@ input:focus, select:focus {
         const message = document.getElementById('formMessage');
         message.style.display = 'none';
         
-        resetAllSections();
+        warningLightSection.style.display = 'none';
+        serviceExamples.style.display = 'none';
         defaultExample.style.display = 'block';
+        
+        // Reset warning light selections
+        document.querySelectorAll('.warning-light-checkbox').forEach(checkbox => {
+          checkbox.checked = false;
+        });
+        document.querySelectorAll('.warning-light-item').forEach(item => {
+          item.classList.remove('selected');
+        });
       });
     });
   </script>
