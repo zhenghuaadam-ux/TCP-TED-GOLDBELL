@@ -611,6 +611,47 @@
             background: linear-gradient(135deg, #95a5a6, #7f8c8d);
         }
         
+        /* Warning Lights Checkbox Styles */
+        .warning-lights-checkboxes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: var(--radius);
+            border: 1px solid #e1e8ed;
+        }
+        
+        .warning-light-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e1e8ed;
+            transition: all 0.2s;
+        }
+        
+        .warning-light-checkbox:hover {
+            background: #f0f8ff;
+            border-color: var(--blue);
+        }
+        
+        .warning-light-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        
+        .warning-light-checkbox label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+            color: #333;
+        }
+        
         /* History Modal Styles */
         .modal {
             display: none;
@@ -761,6 +802,10 @@
             .history-table th,
             .history-table td {
                 padding: 8px 10px;
+            }
+            
+            .warning-lights-checkboxes {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -950,9 +995,6 @@
                             <label for="editVehicleModel">Vehicle Model</label>
                             <input type="text" id="editVehicleModel" name="editVehicleModel" value="FUSO">
                         </div>
-                    </div>
-                    
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                         <div>
                             <label for="editBookingType">Booking Type *</label>
                             <select id="editBookingType" name="editBookingType" required>
@@ -964,6 +1006,15 @@
                             </select>
                         </div>
                     </div>
+                    
+                    <!-- Warning Lights Selection -->
+                    <div style="margin-bottom: 15px;">
+                        <label style="margin-bottom: 10px;">Warning Lights / Issues:</label>
+                        <div class="warning-lights-checkboxes" id="editWarningLightsContainer">
+                            <!-- Warning lights checkboxes will be generated here -->
+                        </div>
+                    </div>
+                    
                     <div class="action-buttons">
                         <button type="submit" class="btn btn-success">Save Changes</button>
                         <button type="button" id="cancelEditBtn" class="btn btn-secondary">Cancel</button>
@@ -1101,6 +1152,20 @@
                 8: { assignedTo: null, currentCustomer: null }
             }
         };
+
+        // Warning lights options
+        const warningLightsOptions = [
+            "Engine System",
+            "Amber Warning Light", 
+            "DPF Warning Light",
+            "Overheat Warning",
+            "Battery Charge Warning",
+            "ABS Warning Light",
+            "AdBlue System Warning",
+            "Retarder Warning Light",
+            "A/C Not Cold",
+            "Other Issues"
+        ];
         
         // DOM elements
         const countersGrid = document.getElementById('countersGrid');
@@ -1153,6 +1218,7 @@
         const applyHistoryFilters = document.getElementById('applyHistoryFilters');
         const exportHistory = document.getElementById('exportHistory');
         const warningLightsContainer = document.getElementById('warningLightsContainer');
+        const editWarningLightsContainer = document.getElementById('editWarningLightsContainer');
         
         // Detail elements
         const detailQueueNumber = document.getElementById('detailQueueNumber');
@@ -1184,12 +1250,28 @@
             showAuthenticatedUI();
             loadQueueData();
             generateCounters();
+            generateWarningLightsCheckboxes();
             setupEventListeners();
             updateQueueDisplay();
             
             // Set today's date as default for history filter
             const today = new Date().toISOString().split('T')[0];
             historyDateFilter.value = today;
+        }
+        
+        // Generate warning lights checkboxes for edit form
+        function generateWarningLightsCheckboxes() {
+            editWarningLightsContainer.innerHTML = '';
+            
+            warningLightsOptions.forEach(light => {
+                const checkboxDiv = document.createElement('div');
+                checkboxDiv.className = 'warning-light-checkbox';
+                checkboxDiv.innerHTML = `
+                    <input type="checkbox" id="edit_${light.replace(/\s+/g, '_')}" name="warningLights" value="${light}">
+                    <label for="edit_${light.replace(/\s+/g, '_')}">${light}</label>
+                `;
+                editWarningLightsContainer.appendChild(checkboxDiv);
+            });
         }
         
         // Load queue data from localStorage
@@ -1245,7 +1327,7 @@
                         bookingType: "Walk-in",
                         status: "waiting",
                         timestamp: new Date(Date.now() - 30 * 60000).toISOString(),
-                        warningLights: ["Engine System", "DPF Warning"]
+                        warningLights: ["Engine System", "DPF Warning Light"]
                     },
                     {
                         queueNumber: "E100002", 
@@ -1259,7 +1341,7 @@
                         bookingType: "Booked",
                         status: "waiting",
                         timestamp: new Date(Date.now() - 15 * 60000).toISOString(),
-                        warningLights: ["Battery Charge"]
+                        warningLights: ["Battery Charge Warning"]
                     },
                     {
                         queueNumber: "E100003", 
@@ -1273,7 +1355,7 @@
                         bookingType: "Booked",
                         status: "waiting",
                         timestamp: new Date(Date.now() - 10 * 60000).toISOString(),
-                        warningLights: ["ABS Warning", "A/C Not Cold"]
+                        warningLights: ["ABS Warning Light", "A/C Not Cold"]
                     }
                 ];
                 
@@ -1422,6 +1504,13 @@
             const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
             
             if (submission) {
+                // Get selected warning lights
+                const selectedWarningLights = [];
+                const warningLightCheckboxes = editWarningLightsContainer.querySelectorAll('input[type="checkbox"]:checked');
+                warningLightCheckboxes.forEach(checkbox => {
+                    selectedWarningLights.push(checkbox.value);
+                });
+                
                 submission.customerName = editCustomerName.value;
                 submission.serviceType = editServiceType.value;
                 submission.vehicleNo = editVehicleNo.value;
@@ -1430,6 +1519,7 @@
                 submission.mileage = editMileage.value;
                 submission.vehicleModel = editVehicleModel.value || 'FUSO'; // Default to FUSO if empty
                 submission.bookingType = editBookingType.value;
+                submission.warningLights = selectedWarningLights;
                 
                 saveQueueData();
                 updateQueueDisplay();
@@ -1691,6 +1781,12 @@
                 editVehicleModel.value = submission.vehicleModel || 'FUSO';
                 editBookingType.value = submission.bookingType || 'Walk-in';
                 
+                // Set warning lights checkboxes
+                const warningLightCheckboxes = editWarningLightsContainer.querySelectorAll('input[type="checkbox"]');
+                warningLightCheckboxes.forEach(checkbox => {
+                    checkbox.checked = submission.warningLights && submission.warningLights.includes(checkbox.value);
+                });
+                
                 editCustomerForm.classList.remove('hidden');
             }
         }
@@ -1879,7 +1975,7 @@
             });
         }
         
-        // Export history to CSV
+        // Export history to CSV - FIXED VERSION
         function exportToCSV() {
             const dateFilter = historyDateFilter.value;
             const statusFilter = historyStatusFilter.value;
@@ -1911,7 +2007,7 @@
             // Sort by timestamp (newest first)
             filteredData.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             
-            // Create CSV content
+            // Create CSV content with proper formatting
             const headers = [
                 'Queue Number',
                 'Customer Name',
@@ -1930,28 +2026,31 @@
                 'Vehicle Model'
             ];
             
-            let csvContent = headers.join(',') + '\n';
+            // Add BOM for UTF-8 encoding to handle special characters
+            let csvContent = '\uFEFF';
+            csvContent += headers.join(',') + '\r\n';
             
             filteredData.forEach(submission => {
                 const row = [
                     submission.queueNumber,
                     `"${(submission.customerName || 'Customer').replace(/"/g, '""')}"`,
-                    submission.serviceType || '',
-                    submission.bookingType || 'Walk-in',
-                    Array.isArray(submission.warningLights) && submission.warningLights.length > 0 ? submission.warningLights.join(', ') : 'NIL',
-                    submission.status || 'waiting',
-                    submission.counter || '',
-                    submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '',
-                    submission.calledAt ? new Date(submission.calledAt).toLocaleString() : '',
-                    submission.completedAt ? new Date(submission.completedAt).toLocaleString() : '',
-                    submission.vehicleNo || '',
-                    submission.contactNo || '',
-                    submission.companyName || '',
-                    submission.mileage || '',
-                    submission.vehicleModel || 'FUSO'
+                    `"${(submission.serviceType || '').replace(/"/g, '""')}"`,
+                    `"${(submission.bookingType || 'Walk-in').replace(/"/g, '""')}"`,
+                    `"${(Array.isArray(submission.warningLights) && submission.warningLights.length > 0 ? 
+                        submission.warningLights.join(', ') : 'NIL').replace(/"/g, '""')}"`,
+                    `"${(submission.status || 'waiting').replace(/"/g, '""')}"`,
+                    `"${(submission.counter || '').replace(/"/g, '""')}"`,
+                    `"${(submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '').replace(/"/g, '""')}"`,
+                    `"${(submission.calledAt ? new Date(submission.calledAt).toLocaleString() : '').replace(/"/g, '""')}"`,
+                    `"${(submission.completedAt ? new Date(submission.completedAt).toLocaleString() : '').replace(/"/g, '""')}"`,
+                    `"${(submission.vehicleNo || '').replace(/"/g, '""')}"`,
+                    `"${(submission.contactNo || '').replace(/"/g, '""')}"`,
+                    `"${(submission.companyName || '').replace(/"/g, '""')}"`,
+                    `"${(submission.mileage || '').replace(/"/g, '""')}"`,
+                    `"${(submission.vehicleModel || 'FUSO').replace(/"/g, '""')}"`
                 ];
                 
-                csvContent += row.join(',') + '\n';
+                csvContent += row.join(',') + '\r\n';
             });
             
             // Create and download the CSV file
