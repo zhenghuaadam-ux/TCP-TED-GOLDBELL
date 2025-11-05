@@ -556,6 +556,61 @@
             text-decoration: underline;
         }
         
+        /* Warning Lights Display Styles */
+        .warning-lights-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        
+        .warning-light-tag {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .warning-light-tag.engine {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .warning-light-tag.amber {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+        }
+        
+        .warning-light-tag.dpf {
+            background: linear-gradient(135deg, #8e44ad, #9b59b6);
+        }
+        
+        .warning-light-tag.overheat {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .warning-light-tag.battery {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+        }
+        
+        .warning-light-tag.abs {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        .warning-light-tag.adblue {
+            background: linear-gradient(135deg, #1abc9c, #16a085);
+        }
+        
+        .warning-light-tag.retarder {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+        }
+        
+        .warning-light-tag.issue {
+            background: linear-gradient(135deg, #95a5a6, #7f8c8d);
+        }
+        
         /* History Modal Styles */
         .modal {
             display: none;
@@ -801,10 +856,13 @@
                         <div class="detail-label">Service Type:</div>
                         <div class="detail-value" id="detailServiceType">-</div>
                     </div>
-                    </div>
                     <div class="detail-row">
-                        <div class="detail-label">Warning Lights / Issues :</div>
-                        <div class="detail-value" id="detailServiceType">-</div>
+                        <div class="detail-label">Warning Lights / Issues:</div>
+                        <div class="detail-value" id="detailWarningLights">
+                            <div class="warning-lights-container" id="warningLightsContainer">
+                                <!-- Warning lights will be displayed here -->
+                            </div>
+                        </div>
                     </div>
                     <div class="detail-row">
                         <div class="detail-label">Vehicle No:</div>
@@ -914,7 +972,7 @@
                 <div id="editMessage" class="message"></div>
             </div>
 
-            <!-- Queue Lists - Four Column Layout (removed Warning Lights column) -->
+            <!-- Queue Lists - Four Column Layout -->
             <div id="queuesView" style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 20px;">
                 <!-- Waiting Queue -->
                 <div class="form-group">
@@ -1094,11 +1152,13 @@
         const historyBookingFilter = document.getElementById('historyBookingFilter');
         const applyHistoryFilters = document.getElementById('applyHistoryFilters');
         const exportHistory = document.getElementById('exportHistory');
+        const warningLightsContainer = document.getElementById('warningLightsContainer');
         
         // Detail elements
         const detailQueueNumber = document.getElementById('detailQueueNumber');
         const detailCustomerName = document.getElementById('detailCustomerName');
         const detailServiceType = document.getElementById('detailServiceType');
+        const detailWarningLights = document.getElementById('detailWarningLights');
         const detailVehicleNo = document.getElementById('detailVehicleNo');
         const detailContactNo = document.getElementById('detailContactNo');
         const detailCompanyName = document.getElementById('detailCompanyName');
@@ -1154,6 +1214,13 @@
                         if (!sub.vehicleModel) {
                             sub.vehicleModel = 'FUSO'; // Default to FUSO if not specified
                         }
+                        // Ensure warningLights is always an array
+                        if (!sub.warningLights) {
+                            sub.warningLights = [];
+                        } else if (!Array.isArray(sub.warningLights)) {
+                            // Convert string to array if needed
+                            sub.warningLights = [sub.warningLights];
+                        }
                     });
                 }
             } catch (error) {
@@ -1177,7 +1244,8 @@
                         vehicleModel: "FUSO",
                         bookingType: "Walk-in",
                         status: "waiting",
-                        timestamp: new Date(Date.now() - 30 * 60000).toISOString()
+                        timestamp: new Date(Date.now() - 30 * 60000).toISOString(),
+                        warningLights: ["Engine System", "DPF Warning"]
                     },
                     {
                         queueNumber: "E100002", 
@@ -1190,7 +1258,8 @@
                         vehicleModel: "FUSO",
                         bookingType: "Booked",
                         status: "waiting",
-                        timestamp: new Date(Date.now() - 15 * 60000).toISOString()
+                        timestamp: new Date(Date.now() - 15 * 60000).toISOString(),
+                        warningLights: ["Battery Charge"]
                     },
                     {
                         queueNumber: "E100003", 
@@ -1203,7 +1272,8 @@
                         vehicleModel: "FUSO",
                         bookingType: "Booked",
                         status: "waiting",
-                        timestamp: new Date(Date.now() - 10 * 60000).toISOString()
+                        timestamp: new Date(Date.now() - 10 * 60000).toISOString(),
+                        warningLights: ["ABS Warning", "A/C Not Cold"]
                     }
                 ];
                 
@@ -1450,12 +1520,12 @@
                 return;
             }
             
-            if (submission.Serving === 'serving') {
+            if (submission.status === 'serving') {
                 showMessage(specificMessage, `Customer ${numberToCall} is already being served`, 'info');
                 return;
             }
             
-            if (submission.Completed === 'completed') {
+            if (submission.status === 'completed') {
                 showMessage(specificMessage, `Customer ${numberToCall} has already been completed`, 'info');
                 return;
             }
@@ -1551,10 +1621,15 @@
         // Show customer details
         function showCustomerDetails(queueNumber) {
             const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
+            
             if (submission) {
                 detailQueueNumber.textContent = submission.queueNumber;
                 detailCustomerName.textContent = submission.customerName || '-';
                 detailServiceType.textContent = submission.serviceType || '-';
+                
+                // Display warning lights with visual tags
+                displayWarningLights(submission.warningLights);
+                
                 detailVehicleNo.textContent = submission.vehicleNo || '-';
                 detailContactNo.textContent = submission.contactNo || '-';
                 detailCompanyName.textContent = submission.companyName || '-';
@@ -1568,6 +1643,36 @@
                 sendSMSBtn.classList.remove('hidden');
                 customerDetailsView.classList.remove('hidden');
             }
+        }
+        
+        // Display warning lights with visual tags - UPDATED TO SHOW "NIL"
+        function displayWarningLights(warningLights) {
+            warningLightsContainer.innerHTML = '';
+            
+            if (!warningLights || warningLights.length === 0) {
+                warningLightsContainer.innerHTML = '<span style="color: #666; font-style: italic;">NIL</span>';
+                return;
+            }
+            
+            warningLights.forEach(light => {
+                const tag = document.createElement('span');
+                tag.className = `warning-light-tag ${getWarningLightClass(light)}`;
+                tag.textContent = light;
+                warningLightsContainer.appendChild(tag);
+            });
+        }
+        
+        // Get CSS class for warning light based on type
+        function getWarningLightClass(light) {
+            if (light.includes('Engine System')) return 'engine';
+            if (light.includes('Amber')) return 'amber';
+            if (light.includes('DPF')) return 'dpf';
+            if (light.includes('Overheat') || light.includes('TEMP')) return 'overheat';
+            if (light.includes('Battery') || light.includes('BATT')) return 'battery';
+            if (light.includes('ABS')) return 'abs';
+            if (light.includes('AdBlue')) return 'adblue';
+            if (light.includes('Retarder') || light.includes('RET')) return 'retarder';
+            return 'issue';
         }
         
         // Show edit form
@@ -1612,7 +1717,7 @@
         function markAsMissed(queueNumber) {
             const submission = queue.submissions.find(sub => sub.queueNumber === queueNumber);
             if (submission) {
-                submission.Missed = 'missed';
+                submission.status = 'missed';
                 submission.missedAt = new Date();
                 submission.missedBy = currentUser.username;
                 
@@ -1742,7 +1847,7 @@
             if (data.length === 0) {
                 historyTableBody.innerHTML = `
                     <tr>
-                        <td colspan="9" style="text-align: center; padding: 20px;">
+                        <td colspan="10" style="text-align: center; padding: 20px;">
                             No queue history found for the selected filters.
                         </td>
                     </tr>
@@ -1753,12 +1858,16 @@
             data.forEach(submission => {
                 const row = document.createElement('tr');
                 
+                // Format warning lights for display - UPDATED TO SHOW "NIL"
+                const warningLightsDisplay = Array.isArray(submission.warningLights) && submission.warningLights.length > 0 ? 
+                    submission.warningLights.join(', ') : 'NIL';
+                
                 row.innerHTML = `
                     <td><strong>${submission.queueNumber}</strong></td>
                     <td>${submission.customerName || 'Customer'}</td>
                     <td>${submission.serviceType || '-'}</td>
                     <td>${submission.bookingType || 'Walk-in'}</td>
-                    <td>
+                    <td>${warningLightsDisplay}</td>
                     <td class="${submission.status}">${submission.status || 'waiting'}</td>
                     <td>${submission.counter || '-'}</td>
                     <td>${submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '-'}</td>
@@ -1808,6 +1917,7 @@
                 'Customer Name',
                 'Service Type',
                 'Booking Type',
+                'Warning Lights',
                 'Status',
                 'Counter',
                 'Added Time',
@@ -1828,6 +1938,7 @@
                     `"${(submission.customerName || 'Customer').replace(/"/g, '""')}"`,
                     submission.serviceType || '',
                     submission.bookingType || 'Walk-in',
+                    Array.isArray(submission.warningLights) && submission.warningLights.length > 0 ? submission.warningLights.join(', ') : 'NIL',
                     submission.status || 'waiting',
                     submission.counter || '',
                     submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '',
@@ -1867,16 +1978,22 @@
         // Update queue display
         function updateQueueDisplay() {
             try {
-                const currentDisplayNumber = 'E' + queue.current.toString().padStart(6, '0');
-                currentQueueNumber.textContent = currentDisplayNumber;
+                // Find the currently serving customer
+                const servingSubmission = queue.submissions.find(sub => sub.status === 'serving');
                 
-                // Update booking type badge for current customer
-                const currentSubmission = queue.submissions.find(sub => sub.queueNumber === currentDisplayNumber);
-                if (currentSubmission && currentSubmission.bookingType) {
-                    bookingTypeBadge.textContent = currentSubmission.bookingType;
-                    bookingTypeBadge.className = `booking-type-badge ${getBookingTypeClass(currentSubmission.bookingType)}`;
-                    bookingTypeBadge.style.display = 'inline-block';
+                if (servingSubmission) {
+                    currentQueueNumber.textContent = servingSubmission.queueNumber;
+                    
+                    // Update booking type badge for current customer
+                    if (servingSubmission.bookingType) {
+                        bookingTypeBadge.textContent = servingSubmission.bookingType;
+                        bookingTypeBadge.className = `booking-type-badge ${getBookingTypeClass(servingSubmission.bookingType)}`;
+                        bookingTypeBadge.style.display = 'inline-block';
+                    } else {
+                        bookingTypeBadge.style.display = 'none';
+                    }
                 } else {
+                    currentQueueNumber.textContent = 'E000000';
                     bookingTypeBadge.style.display = 'none';
                 }
                 
@@ -1978,6 +2095,15 @@
             const bookingTypeBadgeHTML = submission.bookingType ? 
                 `<span class="booking-type-badge ${getBookingTypeClass(submission.bookingType)}" style="margin-left: 5px;">${submission.bookingType}</span>` : '';
             
+            // Display warning lights in queue item if available - UPDATED TO SHOW "NIL"
+            const warningLightsHTML = Array.isArray(submission.warningLights) && submission.warningLights.length > 0 ? 
+                `<div style="font-size: 0.8em; color: #e74c3c; margin-top: 5px;">
+                    <strong>Warning Lights:</strong> ${submission.warningLights.join(', ')}
+                </div>` : 
+                `<div style="font-size: 0.8em; color: #666; font-style: italic; margin-top: 5px;">
+                    <strong>Warning Lights:</strong> NIL
+                </div>`;
+            
             queueItem.innerHTML = `
                 <div onclick="showCustomerDetails('${submission.queueNumber}')" style="cursor: pointer;">
                     <strong>${submission.queueNumber}</strong> ${bookingTypeBadgeHTML} ${priorityBadgeHTML} - ${submission.serviceType}
@@ -1986,6 +2112,7 @@
                         ${submission.vehicleNo ? '| Vehicle: ' + submission.vehicleNo : ''}
                         ${submission.contactNo ? '| Contact: ' + submission.contactNo : ''}
                     </div>
+                    ${warningLightsHTML}
                     <div style="font-size: 0.8em; color: #888;">
                         ${getQueueItemTimeText(submission, status)}
                     </div>

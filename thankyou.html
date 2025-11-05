@@ -331,46 +331,31 @@ h2 {
   </div>
 
   <script>
-    // Generate random 6-digit number for queue number
+    // Generate random 6-digit number for queue number - ONLY HERE
     function generateRandomQueueNumber() {
       // Generate a random 6-digit number
       const randomNumber = Math.floor(100000 + Math.random() * 900000);
       return `E${randomNumber}`;
     }
 
-    // Get customer data from URL parameters or form submission
+    // Get customer data from localStorage (from form submission)
     function getCustomerData() {
-      // Try to get from URL parameters first
-      const urlParams = new URLSearchParams(window.location.search);
-      const customerName = urlParams.get('customerName') || 'Customer';
-      const serviceType = urlParams.get('serviceType') || 'General Service';
-      const vehicleNo = urlParams.get('vehicleNo') || '';
-      const contactNo = urlParams.get('contactNo') || '';
-      
-      // If no URL parameters, try to get from localStorage (from form submission)
-      if (customerName === 'Customer') {
-        const formData = JSON.parse(localStorage.getItem('latestFormData') || '{}');
-        return {
-          customerName: formData.customerName || 'Customer',
-          serviceType: formData.serviceType || 'General Service',
-          vehicleNo: formData.vehicleNo || '',
-          contactNo: formData.contactNo || '',
-          companyName: formData.companyName || '',
-          mileage: formData.mileage || '',
-          vehicleModel: formData.vehicleModel || '',
-          bookingType: formData.bookingType || 'Walk-in'
-        };
-      }
-      
+      const formData = JSON.parse(localStorage.getItem('latestFormData') || '{}');
       return {
-        customerName,
-        serviceType,
-        vehicleNo,
-        contactNo
+        customerName: formData.customerName || 'Customer',
+        serviceType: formData.serviceType || 'General Service',
+        vehicleNo: formData.vehicleNo || '',
+        contactNo: formData.contactNo || '',
+        companyName: formData.companyName || '',
+        mileage: formData.mileage || '',
+        vehicleModel: formData.vehicleModel || 'FUSO',
+        bookingType: formData.bookingType || 'Walk-in',
+        warningLights: formData.warningLights || [],
+        timestamp: formData.timestamp || new Date().toISOString()
       };
     }
 
-    // Save queue submission to localStorage
+    // Save queue submission to localStorage with the generated queue number
     function saveQueueSubmission(queueNumber, customerData) {
       try {
         // Get existing queue data or initialize
@@ -378,10 +363,20 @@ h2 {
         let queueData = existingData ? JSON.parse(existingData) : {
           total: 0,
           current: 0,
-          submissions: []
+          submissions: [],
+          counters: {
+            1: { assignedTo: null, currentCustomer: null },
+            2: { assignedTo: null, currentCustomer: null },
+            3: { assignedTo: null, currentCustomer: null },
+            4: { assignedTo: null, currentCustomer: null },
+            5: { assignedTo: null, currentCustomer: null },
+            6: { assignedTo: null, currentCustomer: null },
+            7: { assignedTo: null, currentCustomer: null },
+            8: { assignedTo: null, currentCustomer: null }
+          }
         };
         
-        // Create new submission with actual customer data
+        // Create new submission with actual customer data and queue number
         const newSubmission = {
           queueNumber: queueNumber,
           customerName: customerData.customerName,
@@ -390,10 +385,11 @@ h2 {
           contactNo: customerData.contactNo,
           companyName: customerData.companyName || '',
           mileage: customerData.mileage || '',
-          vehicleModel: customerData.vehicleModel || '',
+          vehicleModel: customerData.vehicleModel || 'FUSO',
           bookingType: customerData.bookingType || 'Walk-in',
           status: "waiting",
-          timestamp: new Date().toISOString()
+          timestamp: customerData.timestamp,
+          warningLights: customerData.warningLights || []
         };
         
         console.log('Saving submission:', newSubmission);
@@ -415,7 +411,7 @@ h2 {
 
     // Start countdown timer for auto-redirect
     function startCountdownTimer() {
-      let countdown = 10; // Changed from 30 to 10 seconds
+      let countdown = 10;
       const countdownElement = document.getElementById('countdownTimer');
       const newRequestBtn = document.getElementById('newRequestBtn');
       
@@ -438,10 +434,12 @@ h2 {
     // Update the queue number when the page loads
     document.addEventListener('DOMContentLoaded', function() {
       const queueNumberElement = document.getElementById('queueNumber');
+      
+      // Generate ONE queue number here only
       const queueNumber = generateRandomQueueNumber();
       queueNumberElement.textContent = queueNumber;
       
-      // Get customer data and save the queue submission
+      // Get customer data and save the queue submission with the generated queue number
       const customerData = getCustomerData();
       saveQueueSubmission(queueNumber, customerData);
       

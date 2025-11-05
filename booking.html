@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>GOLDBELL SERVICE REQUEST - BOOKED</title>
 <style>
 /* All CSS remains the same as before */
-/* Base styles */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -28,7 +27,6 @@ body {
   position: relative;
 }
 
-/* Header styles */
 header {
   background: rgba(255, 255, 255, 0.1);
   padding: 20px;
@@ -112,7 +110,6 @@ h1 {
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Card styles */
 .card {
   background: white;
   border-radius: 10px;
@@ -120,7 +117,6 @@ h1 {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* Form styles */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -166,7 +162,6 @@ input:focus, select:focus {
   display: none;
 }
 
-/* Vehicle model section */
 .vehicle-model-section {
   margin: 15px 0;
   padding: 15px;
@@ -210,7 +205,6 @@ input:focus, select:focus {
   margin-top: 8px;
 }
 
-/* Service examples */
 .service-examples {
   margin: 15px 0;
   padding: 15px;
@@ -232,7 +226,6 @@ input:focus, select:focus {
   margin-bottom: 5px;
 }
 
-/* Booking field styles */
 .booking-field {
   margin: 15px 0;
   padding: 15px;
@@ -246,7 +239,6 @@ input:focus, select:focus {
   color: #003d82;
 }
 
-/* Warning Light Styles */
 .warning-light-section {
   margin: 15px 0;
   padding: 15px;
@@ -274,14 +266,18 @@ input:focus, select:focus {
   align-items: center;
   cursor: pointer;
   transition: transform 0.2s;
+  padding: 5px;
+  border-radius: 8px;
 }
 
 .warning-light-item:hover {
   transform: translateY(-2px);
+  background-color: rgba(0, 91, 187, 0.05);
 }
 
-.warning-light-item.selected .warning-light-image {
-  box-shadow: 0 0 0 3px #005bbb;
+.warning-light-item.selected {
+  background-color: rgba(0, 91, 187, 0.1);
+  box-shadow: 0 0 0 2px #005bbb;
 }
 
 .warning-light-checkbox {
@@ -300,6 +296,11 @@ input:focus, select:focus {
   transition: all 0.3s;
 }
 
+.warning-light-item.selected .warning-light-image {
+  border-color: #005bbb;
+  box-shadow: 0 0 0 3px #005bbb;
+}
+
 .warning-light-symbol {
   font-weight: bold;
   font-size: 14px;
@@ -314,7 +315,42 @@ input:focus, select:focus {
   color: #003d82;
 }
 
-/* Warning light color variations */
+.selected-warning-lights {
+  margin-top: 15px;
+  padding: 10px;
+  background: #e8f4fd;
+  border-radius: 5px;
+  border: 1px solid #b3d9ff;
+}
+
+.selected-warning-lights h5 {
+  margin-bottom: 8px;
+  color: #003d82;
+}
+
+.selected-lights-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.selected-light-tag {
+  background: #005bbb;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.remove-light {
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+
 .engsys-light {
   background: linear-gradient(135deg, #e74c3c, #c0392b);
 }
@@ -351,7 +387,6 @@ input:focus, select:focus {
   background: linear-gradient(135deg, #95a5a6, #7f8c8d);
 }
 
-/* Button styles */
 .btn {
   padding: 12px 25px;
   border: none;
@@ -382,7 +417,6 @@ input:focus, select:focus {
   background: #d0d0d0;
 }
 
-/* Message styles */
 .message {
   padding: 12px;
   border-radius: 5px;
@@ -402,7 +436,6 @@ input:focus, select:focus {
   border: 1px solid #f5c6cb;
 }
 
-/* Responsive styles */
 @media (max-width: 768px) {
   .grid {
     grid-template-columns: 1fr;
@@ -436,7 +469,6 @@ input:focus, select:focus {
   <div class="wrap">
     <header>
       <div class="logo-container">
-        <!-- Goldbell Professional Logo -->
         <svg class="logo-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -450,24 +482,19 @@ input:focus, select:focus {
             </linearGradient>
           </defs>
           
-          <!-- Background Shield -->
           <path d="M20,20 L80,20 L90,50 L80,80 L20,80 L10,50 Z" 
                 fill="url(#blueGradient)" stroke="#fff" stroke-width="2"/>
           
-          <!-- Golden Bell -->
           <path d="M35,35 Q50,25 65,35 Q65,50 60,60 L55,75 Q50,80 45,75 L40,60 Q35,50 35,35" 
                 fill="url(#goldGradient)" stroke="#D4AF37" stroke-width="1.5"/>
           
-          <!-- Bell Clapper -->
           <circle cx="50" cy="78" r="3" fill="#8B4513"/>
           <line x1="50" y1="81" x2="50" y2="88" stroke="#8B4513" stroke-width="2"/>
           <circle cx="50" cy="90" r="4" fill="#8B4513"/>
           
-          <!-- Shine Effects -->
           <circle cx="42" cy="38" r="2" fill="#fff" opacity="0.8"/>
           <circle cx="58" cy="38" r="2" fill="#fff" opacity="0.8"/>
           
-          <!-- Goldbell Text -->
           <text x="50" y="105" text-anchor="middle" fill="#005bbb" font-family="Arial, sans-serif" font-size="12" font-weight="bold">
             GOLDBELL
           </text>
@@ -488,11 +515,9 @@ input:focus, select:focus {
       <a href="option.html" class="back-btn" id="backBtn">Back</a>
     </header>
 
-    <!-- Main Form Card -->
     <div class="card" role="main" id="mainFormCard">
       <form id="jobForm" autocomplete="off" novalidate>
         <div class="grid">
-          <!-- Booking Field -->
           <div class="booking-field full">
             <h4>Booked</h4>
             <div class="muted">This service request is confirmed as booked.</div>
@@ -510,7 +535,6 @@ input:focus, select:focus {
             </select>
             <div class="muted" id="serviceHelp" data-i18n="serviceHelp">Select the type of service required.</div>
             
-            <!-- Vehicle Model Selection (for Speed Limiter Installation) -->
             <div class="vehicle-model-section" id="vehicleModelSection">
               <h4 id="vehicleModelTitle">Please select vehicle model:</h4>
               <div class="vehicle-model-options">
@@ -536,16 +560,16 @@ input:focus, select:focus {
                 </label>
               </div>
               
-              <!-- Other Vehicle Model Input -->
               <div class="other-model-input" id="otherModelInput">
                 <label for="otherVehicleModel">Please specify vehicle model:</label>
                 <input type="text" id="otherVehicleModel" placeholder="Enter vehicle model (e.g., ISUZU, MITSUBISHI, etc.)" />
               </div>
             </div>
             
-            <!-- Warning Light Section (for Repair and Servicing) -->
             <div class="warning-light-section" id="warningLightSection">
               <h4>Select warning lights (if any):</h4>
+              <p class="muted">Click on the warning lights that are currently active on your vehicle dashboard.</p>
+              
               <div class="warning-light-images" id="warningLightContainer">
                 <div class="warning-light-item">
                   <input type="checkbox" class="warning-light-checkbox" id="engsys" name="warningLights" value="Engine System">
@@ -632,9 +656,14 @@ input:focus, select:focus {
                   <div class="warning-light-label">Burning Smell</div>
                 </div>
               </div>
+              
+              <div class="selected-warning-lights" id="selectedWarningLights" style="display: none;">
+                <h5>Selected Warning Lights:</h5>
+                <div class="selected-lights-list" id="selectedLightsList">
+                </div>
+              </div>
             </div>
             
-            <!-- Service Examples -->
             <div class="service-examples" id="serviceExamples">
               <h4 id="examplesTitle">Service Examples:</h4>
               <ul id="examplesList">
@@ -678,7 +707,6 @@ input:focus, select:focus {
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      // Form elements
       const form = document.getElementById('jobForm');
       const serviceType = document.getElementById('serviceType');
       const vehicleModelSection = document.getElementById('vehicleModelSection');
@@ -694,12 +722,14 @@ input:focus, select:focus {
       const vehicleNoInput = document.getElementById('vehicleNo');
       const bookingTypeInput = document.getElementById('bookingType');
       const warningLightItems = document.querySelectorAll('.warning-light-item');
+      const selectedWarningLights = document.getElementById('selectedWarningLights');
+      const selectedLightsList = document.getElementById('selectedLightsList');
       
-      // Initially hide vehicle model and warning light sections
+      let selectedLights = [];
+      
       vehicleModelSection.style.display = 'none';
       warningLightSection.style.display = 'none';
       
-      // Service type examples
       const serviceExamplesData = {
         'Speed Limiter Installation': [
           'Speed limiter device installation',
@@ -715,11 +745,9 @@ input:focus, select:focus {
         ]
       };
       
-      // Service type change handler
       serviceType.addEventListener('change', function() {
         const selectedService = this.value;
         
-        // Show/hide vehicle model section for Speed Limiter Installation
         if (selectedService === 'Speed Limiter Installation') {
           vehicleModelSection.style.display = 'block';
           warningLightSection.style.display = 'none';
@@ -727,7 +755,6 @@ input:focus, select:focus {
           vehicleModelSection.style.display = 'none';
           otherModelInput.style.display = 'none';
           
-          // Show/hide warning light section for Repair and Servicing
           if (selectedService === 'Repair' || selectedService === 'Servicing') {
             warningLightSection.style.display = 'block';
           } else {
@@ -735,7 +762,6 @@ input:focus, select:focus {
           }
         }
         
-        // Update service examples (only for Speed Limiter and Other Services)
         if ((selectedService === 'Speed Limiter Installation' || selectedService === 'Other Services') && 
             serviceExamplesData[selectedService]) {
           defaultExample.style.display = 'none';
@@ -749,13 +775,11 @@ input:focus, select:focus {
           
           serviceExamples.style.display = 'block';
         } else {
-          // Hide service examples for Repair and Servicing
           serviceExamples.style.display = 'none';
           defaultExample.style.display = 'block';
         }
       });
       
-      // Vehicle model radio button change handler
       vehicleModelRadios.forEach(radio => {
         radio.addEventListener('change', function() {
           if (this.value === 'OTHERS') {
@@ -769,30 +793,88 @@ input:focus, select:focus {
         });
       });
       
-      // Warning light item click handler
       warningLightItems.forEach(item => {
         item.addEventListener('click', function() {
           const checkbox = this.querySelector('.warning-light-checkbox');
+          const lightValue = checkbox.value;
+          const lightLabel = this.querySelector('.warning-light-label').textContent;
+          
           checkbox.checked = !checkbox.checked;
           
           if (checkbox.checked) {
             this.classList.add('selected');
+            if (!selectedLights.includes(lightValue)) {
+              selectedLights.push(lightValue);
+              updateSelectedLightsDisplay(lightValue, lightLabel);
+            }
           } else {
             this.classList.remove('selected');
+            const index = selectedLights.indexOf(lightValue);
+            if (index > -1) {
+              selectedLights.splice(index, 1);
+              updateSelectedLightsDisplay(lightValue, lightLabel);
+            }
+          }
+          
+          if (selectedLights.length > 0) {
+            selectedWarningLights.style.display = 'block';
+          } else {
+            selectedWarningLights.style.display = 'none';
           }
         });
       });
       
-      // Mileage input validation - only allow numbers
+      function updateSelectedLightsDisplay(lightValue, lightLabel) {
+        selectedLightsList.innerHTML = '';
+        
+        selectedLights.forEach(light => {
+          const label = Array.from(warningLightItems).find(item => 
+            item.querySelector('.warning-light-checkbox').value === light
+          ).querySelector('.warning-light-label').textContent;
+          
+          const tag = document.createElement('div');
+          tag.className = 'selected-light-tag';
+          tag.innerHTML = `
+            ${label}
+            <span class="remove-light" data-value="${light}">×</span>
+          `;
+          selectedLightsList.appendChild(tag);
+        });
+        
+        document.querySelectorAll('.remove-light').forEach(button => {
+          button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const value = this.getAttribute('data-value');
+            
+            const index = selectedLights.indexOf(value);
+            if (index > -1) {
+              selectedLights.splice(index, 1);
+            }
+            
+            const checkbox = document.querySelector(`.warning-light-checkbox[value="${value}"]`);
+            if (checkbox) {
+              checkbox.checked = false;
+              checkbox.closest('.warning-light-item').classList.remove('selected');
+            }
+            
+            updateSelectedLightsDisplay();
+            
+            if (selectedLights.length > 0) {
+              selectedWarningLights.style.display = 'block';
+            } else {
+              selectedWarningLights.style.display = 'none';
+            }
+          });
+        });
+      }
+      
       mileageInput.addEventListener('input', function() {
         this.value = this.value.replace(/[^0-9]/g, '');
       });
       
-      // Contact number input validation - only allow numbers and check first digit
       contactInput.addEventListener('input', function() {
         this.value = this.value.replace(/[^0-9]/g, '');
         
-        // If first digit is entered and not 6, 8, or 9, show error
         if (this.value.length > 0 && !['6', '8', '9'].includes(this.value[0])) {
           document.getElementById('contactError').style.display = 'block';
         } else {
@@ -800,18 +882,26 @@ input:focus, select:focus {
         }
       });
       
-      // Form submission handler
+      function saveFormData(formData) {
+        try {
+          localStorage.setItem('latestFormData', JSON.stringify(formData));
+          console.log('Form data saved:', formData);
+          return true;
+        } catch (error) {
+          console.error('Error saving form data:', error);
+          return false;
+        }
+      }
+      
       form.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Reset previous errors
         document.querySelectorAll('.error-text').forEach(el => {
           el.style.display = 'none';
         });
         
         let isValid = true;
         
-        // Vehicle No validation (Singapore format)
         const vehicleNo = vehicleNoInput.value;
         const vehicleNoPattern = /^[A-Z]{2,}\d{1,4}[A-Z]$/i;
         if (!vehicleNoPattern.test(vehicleNo)) {
@@ -819,7 +909,6 @@ input:focus, select:focus {
           isValid = false;
         }
         
-        // Mileage validation
         const mileage = mileageInput.value;
         const mileagePattern = /^\d{1,7}$/;
         if (!mileagePattern.test(mileage)) {
@@ -827,7 +916,6 @@ input:focus, select:focus {
           isValid = false;
         }
         
-        // Contact No validation
         const contactNo = contactInput.value;
         const contactPattern = /^[689]\d{7}$/;
         if (!contactPattern.test(contactNo)) {
@@ -835,35 +923,31 @@ input:focus, select:focus {
           isValid = false;
         }
         
-        // Service type validation
         if (!serviceType.value) {
           isValid = false;
         }
         
-        // If "Others" is selected for vehicle model, validate the input
         const selectedVehicleModel = document.querySelector('input[name="vehicleModel"]:checked');
         if (selectedVehicleModel && selectedVehicleModel.value === 'OTHERS' && !otherVehicleModel.value.trim()) {
           isValid = false;
-          // Add visual indication for required field
           otherVehicleModel.style.borderColor = '#e74c3c';
         } else if (otherVehicleModel) {
           otherVehicleModel.style.borderColor = '#ddd';
         }
         
-        // If form is valid, save data and redirect to thank you page
         if (isValid) {
-          // Get all form data
           const formData = {
             serviceType: serviceType.value,
-            bookingType: bookingTypeInput.value, // This captures "Booked"
+            bookingType: bookingTypeInput.value,
             vehicleNo: vehicleNoInput.value,
             contactNo: contactInput.value,
             mileage: mileageInput.value,
-            customerName: 'Customer', // Default for booked forms
-            status: 'waiting'
+            customerName: 'Customer',
+            status: 'waiting',
+            warningLights: selectedLights,
+            timestamp: new Date().toISOString()
           };
           
-          // Get vehicle model data
           const vehicleModelRadio = document.querySelector('input[name="vehicleModel"]:checked');
           if (vehicleModelRadio) {
             if (vehicleModelRadio.value === 'OTHERS') {
@@ -873,26 +957,23 @@ input:focus, select:focus {
             }
           }
           
-          // Get selected warning lights
-          const selectedWarningLights = [];
-          document.querySelectorAll('.warning-light-checkbox:checked').forEach(checkbox => {
-            selectedWarningLights.push(checkbox.value);
-          });
-          formData.warningLights = selectedWarningLights;
+          const saved = saveFormData(formData);
           
-          // Save form data to localStorage for thank you page
-          localStorage.setItem('latestFormData', JSON.stringify(formData));
-          
-          // Show success message
-          const message = document.getElementById('formMessage');
-          message.textContent = 'Service request submitted successfully! Redirecting...';
-          message.className = 'message success';
-          message.style.display = 'block';
-          
-          // Redirect to thank you page after 3 seconds
-          setTimeout(() => {
-            window.location.href = 'thankyou.html';
-          }, 3000);
+          if (saved) {
+            const message = document.getElementById('formMessage');
+            message.textContent = 'Service request submitted successfully! Redirecting...';
+            message.className = 'message success';
+            message.style.display = 'block';
+            
+            setTimeout(() => {
+              window.location.href = 'thankyou.html';
+            }, 2000);
+          } else {
+            const message = document.getElementById('formMessage');
+            message.textContent = 'Error saving your request. Please try again.';
+            message.className = 'message error';
+            message.style.display = 'block';
+          }
         } else {
           const message = document.getElementById('formMessage');
           message.textContent = 'Please correct the errors above.';
@@ -901,7 +982,6 @@ input:focus, select:focus {
         }
       });
       
-      // Reset button handler
       document.getElementById('resetBtn').addEventListener('click', function() {
         document.querySelectorAll('.error-text').forEach(el => {
           el.style.display = 'none';
@@ -915,13 +995,14 @@ input:focus, select:focus {
         serviceExamples.style.display = 'none';
         defaultExample.style.display = 'block';
         otherModelInput.style.display = 'none';
+        selectedWarningLights.style.display = 'none';
         
-        // Reset border color for other vehicle model input
+        selectedLights = [];
+        
         if (otherVehicleModel) {
           otherVehicleModel.style.borderColor = '#ddd';
         }
         
-        // Reset warning light selections
         document.querySelectorAll('.warning-light-checkbox').forEach(checkbox => {
           checkbox.checked = false;
         });

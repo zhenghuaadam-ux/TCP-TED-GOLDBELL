@@ -694,6 +694,19 @@ input:focus, select:focus {
         }
       });
       
+      // Function to save form data WITHOUT queue number
+      function saveFormData(formData) {
+        try {
+          // Save form data for thank you page
+          localStorage.setItem('latestFormData', JSON.stringify(formData));
+          console.log('Form data saved:', formData);
+          return true;
+        } catch (error) {
+          console.error('Error saving form data:', error);
+          return false;
+        }
+      }
+      
       // Form submission handler
       form.addEventListener('submit', function(e) {
         e.preventDefault();
@@ -751,7 +764,8 @@ input:focus, select:focus {
             contactNo: contactInput.value,
             companyName: companyNameInput.value || '',
             mileage: mileageInput.value,
-            status: 'waiting'
+            status: 'waiting',
+            timestamp: new Date().toISOString()
           };
           
           // Get selected warning lights
@@ -762,18 +776,25 @@ input:focus, select:focus {
           formData.warningLights = selectedWarningLights;
           
           // Save form data to localStorage for thank you page
-          localStorage.setItem('latestFormData', JSON.stringify(formData));
+          const saved = saveFormData(formData);
           
-          // Show success message
-          const message = document.getElementById('formMessage');
-          message.textContent = 'Service request submitted successfully! Redirecting...';
-          message.className = 'message success';
-          message.style.display = 'block';
-          
-          // Redirect to thank you page after 3 seconds
-          setTimeout(() => {
-            window.location.href = 'thankyou.html';
-          }, 3000);
+          if (saved) {
+            // Show success message
+            const message = document.getElementById('formMessage');
+            message.textContent = 'Service request submitted successfully! Redirecting...';
+            message.className = 'message success';
+            message.style.display = 'block';
+            
+            // Redirect to thank you page after 2 seconds
+            setTimeout(() => {
+              window.location.href = 'thankyou.html';
+            }, 2000);
+          } else {
+            const message = document.getElementById('formMessage');
+            message.textContent = 'Error saving your request. Please try again.';
+            message.className = 'message error';
+            message.style.display = 'block';
+          }
         } else {
           const message = document.getElementById('formMessage');
           message.textContent = 'Please correct the errors above.';
