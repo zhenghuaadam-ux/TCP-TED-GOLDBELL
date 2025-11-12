@@ -1469,9 +1469,7 @@
         
         // Handle logout
         function handleLogout() {
-            const confirmLogout = confirm('Are you sure you want to log out?');
-            
-            if (confirmLogout) {
+            if (confirm('Are you sure you want to log out?')) {
                 if (currentCounter) {
                     queue.counters[currentCounter].assignedTo = null;
                     saveQueueData();
@@ -1728,6 +1726,18 @@
                 detailBookingType.textContent = submission.bookingType || 'Walk-in';
                 detailStatus.textContent = submission.status || '-';
                 detailAddedTime.textContent = submission.timestamp ? new Date(submission.timestamp).toLocaleString() : '-';
+                
+                // Update the "Now Serving" display with this customer's queue number
+                currentQueueNumber.textContent = submission.queueNumber;
+                
+                // Update booking type badge for the selected customer
+                if (submission.bookingType) {
+                    bookingTypeBadge.textContent = submission.bookingType;
+                    bookingTypeBadge.className = `booking-type-badge ${getBookingTypeClass(submission.bookingType)}`;
+                    bookingTypeBadge.style.display = 'inline-block';
+                } else {
+                    bookingTypeBadge.style.display = 'none';
+                }
                 
                 editCustomerBtn.classList.remove('hidden');
                 sendSMSBtn.classList.remove('hidden');
